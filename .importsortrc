@@ -1,0 +1,10 @@
+{
+  ".js, .jsx": {
+    "parser": "typescript",
+    "style": "vmv"
+  },
+  ".ts, .tsx": {
+    "parser": "typescript",
+    "style": "vmv"
+  }
+}
