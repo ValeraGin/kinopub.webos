@@ -5,6 +5,7 @@ A Kinopub client for LG Smart TVs with webOS - using EnactJS, Moonstone
 ## Requirements
 
 - LG Smart TV with webOS v5+
+- [Node.js](https://nodejs.org/)
 - [webOS CLI](https://webostv.developer.lge.com/sdk/tools/using-webos-tv-cli/)
 
 ## Installation
