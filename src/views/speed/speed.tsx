@@ -9,7 +9,7 @@ import MainLayout from '../../layouts/main';
 
 const Locations = styled.div`
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
 `;
 
 const Location = styled.div`
