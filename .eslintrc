@@ -1,3 +1,6 @@
 {
-  "extends": "eslint-config-enact"
+  "extends": "eslint-config-enact",
+  "rules": {
+    "no-shadow": "off"
+  }
 }

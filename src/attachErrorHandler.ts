@@ -1,4 +1,3 @@
-import { onWindowReady } from '@enact/core/snapshot';
 import { error } from '@enact/webos/pmloglib';
 
 // Logs any uncaught exceptions to the system logs for future troubleshooting. Payload can be
@@ -11,22 +10,18 @@ const handleError = (ev) => {
     stack = ev.error.stack.substring(0, 512);
   }
 
-  error(
-    'app.onerror',
-    {
-      message: ev.message,
-      url: ev.filename,
-      line: ev.lineno,
-      column: ev.colno,
-      stack,
-    },
-    '',
-  );
+  const errorInfo = {
+    message: ev.message,
+    url: ev.filename,
+    line: ev.lineno,
+    column: ev.colno,
+    stack,
+  };
+
+  error('app.onerror', errorInfo, '');
 
   // Calling preventDefault() will avoid logging the error to the console
   // ev.preventDefault();
 };
 
-onWindowReady(() => {
-  window.addEventListener('error', handleError);
-});
+window.addEventListener('error', handleError);

@@ -1,5 +1,3 @@
-import '../attachErrorHandler';
-
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router-dom';
 import MoonstoneDecorator from '@enact/moonstone/MoonstoneDecorator';

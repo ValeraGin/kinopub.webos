@@ -1,3 +1,6 @@
-node_modules/
-dist/
-out/
+build/*
+config/*
+dist/*
+out/*
+node_modules/*
+scripts/*
