@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { ItemDetails, Season, Video } from '../../api';
+import { ItemDetails, Season, Streaming, Video } from '../../api';
 import Player, { PlayerProps } from '../../components/player';
 import useApiMutation from '../../hooks/useApiMutation';
+import useStorageState from '../../hooks/useStorageState';
 import FillLayout from '../../layouts/fill';
 
 import { getItemTitle } from '../../utils/item';
@@ -50,6 +51,7 @@ const VideoView: React.FC<Props> = () => {
   const history = useHistory();
   const location = useLocation<{ title: string; item: ItemDetails; video: Video; season: Season }>();
   const { watchingMarkTime } = useApiMutation('watchingMarkTime');
+  const [streamingType] = useStorageState<Streaming>('streaming_type');
   const { item, video, season } = location.state;
 
   const [currentVideo, setCurrentVideo] = useState(video);
@@ -68,10 +70,10 @@ const VideoView: React.FC<Props> = () => {
       description: currentVideo.title,
       poster: item.posters.wide || item.posters.big,
       audios: mapAudios(currentVideo.audios),
-      sources: mapSources(currentVideo.files),
+      sources: mapSources(currentVideo.files, streamingType),
       subtitles: mapSubtitles(currentVideo.subtitles),
     }),
-    [item, season, currentVideo],
+    [item, season, currentVideo, streamingType],
   );
 
   const handlePause = useCallback(

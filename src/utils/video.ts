@@ -2,7 +2,7 @@ import filter from 'lodash/filter';
 import map from 'lodash/map';
 import toUpper from 'lodash/toUpper';
 
-import { Audio, Subtitle } from '../api';
+import { Audio, Streaming, Subtitle } from '../api';
 import { AudioSetting, SourceSetting, SubtitleSetting } from '../components/player/settings';
 
 export function mapAudios(audios: Audio[]): AudioSetting[] {
@@ -18,10 +18,13 @@ export function mapAudios(audios: Audio[]): AudioSetting[] {
   }));
 }
 
-export function mapSources(files: { url: string | { http: string; hls4?: string }; quality?: string }[]): SourceSetting[] {
+export function mapSources(
+  files: { url: string | { [key in Streaming]?: string }; quality?: string }[],
+  streamingType?: Streaming,
+): SourceSetting[] {
   return map(files, (file) => ({
     src: typeof file.url === 'string' ? file.url : file.url.http,
-    hls: typeof file.url !== 'string' ? file.url.hls4 : null,
+    hls: typeof file.url !== 'string' ? (streamingType !== 'http' ? file.url[streamingType] || file.url.hls4 : null) : null,
     type: 'video/mp4',
     quality: file.quality,
   }));

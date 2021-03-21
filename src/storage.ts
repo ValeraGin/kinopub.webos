@@ -1,6 +1,6 @@
 export type Value = string | number | boolean | null;
 
-export type Key = 'is_logged' | 'access_token' | 'refresh_token';
+export type Key = 'is_logged' | 'access_token' | 'refresh_token' | 'streaming_type';
 
 function getItem(prefix: string, key: string) {
   const data = JSON.parse(window.localStorage.getItem(prefix)) || {};

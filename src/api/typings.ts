@@ -5,6 +5,8 @@ export enum Bool {
   False = 0,
 }
 
+export type Streaming = 'http' | 'hls' | 'hls2' | 'hls4';
+
 export type DeviceInfo = {
   /**
    * Название устройства.
@@ -44,7 +46,7 @@ export type ServerLocation = {
 
 export type StreamingType = {
   id: string;
-  code: string;
+  code: Streaming;
   name: string;
   description: string;
 };

@@ -12,6 +12,7 @@ const ICONS_MAP = {
   new_releases: <>&#xe031;</>,
   library_music: <>&#xe030;</>,
   live_tv: <>&#xe639;</>,
+  play_arrow: <>&#xe037;</>,
   play_circle_outline: <>&#xe039;</>,
   sports_soccer: <>&#xea2f;</>,
 };

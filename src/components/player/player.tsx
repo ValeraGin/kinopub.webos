@@ -4,6 +4,7 @@ import Hls from 'hls.js';
 import VTTConverter from 'srt-webvtt';
 import styled from 'styled-components';
 
+import useAsyncEffect from '../../hooks/useAsyncEffect';
 import Popup from '../popup';
 import Text from '../text';
 import Settings, { AudioSetting, SourceSetting, SubtitleSetting } from './settings';
@@ -75,7 +76,7 @@ const useCurrentSource = (sources: SourceSetting[], nodeRef: React.MutableRefObj
         hls.destroy();
       }
     };
-  }, [currentSource, nodeRef]);
+  }, [currentSource.hls, nodeRef]);
 
   return [currentSource, setCurrentSource] as const;
 };
@@ -83,7 +84,7 @@ const useCurrentSource = (sources: SourceSetting[], nodeRef: React.MutableRefObj
 const useCurrentSubtitle = (subtitles: SubtitleSetting[], nodeRef: React.MutableRefObject<HTMLDivElement>) => {
   const [currentSubtitle, setCurrentSubtitle] = useState<SubtitleSetting>(null);
 
-  useEffect(() => {
+  useAsyncEffect(async () => {
     if (nodeRef.current) {
       const videoTag = nodeRef.current.querySelector('video');
 
@@ -91,43 +92,43 @@ const useCurrentSubtitle = (subtitles: SubtitleSetting[], nodeRef: React.Mutable
         for (let i = 0, ln = videoTag['textTracks'].length; i < ln; i++) {
           const track = videoTag['textTracks'][i];
 
-          track.mode = track.id === currentSubtitle?.id ? 'showing' : 'disabled';
+          track.mode = 'disabled';
         }
-      }
-    }
-  }, [currentSubtitle, nodeRef]);
 
-  useEffect(() => {
-    if (nodeRef.current) {
-      const videoTag = nodeRef.current.querySelector('video');
-      if (videoTag) {
         const trackTags = videoTag.querySelectorAll('track');
-
         trackTags.forEach((trackTag) => {
           videoTag.removeChild(trackTag);
         });
 
-        subtitles?.forEach(async (subtitle) => {
+        if (currentSubtitle) {
           const track = document.createElement('track');
 
           track.kind = 'captions';
-          track.id = subtitle.id;
-          track.srclang = subtitle.lang;
-          track.label = subtitle.label;
+          track.id = currentSubtitle.id;
+          track.srclang = currentSubtitle.lang;
+          track.label = currentSubtitle.label;
 
-          if (subtitle.src.endsWith('.srt')) {
-            const file = await (await fetch(subtitle.src)).blob();
+          if (currentSubtitle.src.endsWith('.srt')) {
+            const file = await (await fetch(currentSubtitle.src)).blob();
             const converter = new VTTConverter(file);
             track.src = await converter.getURL();
           } else {
-            track.src = subtitle.src;
+            track.src = currentSubtitle.src;
           }
 
           videoTag.appendChild(track);
-        });
+
+          setTimeout(() => {
+            for (let i = 0, ln = videoTag['textTracks'].length; i < ln; i++) {
+              const track = videoTag['textTracks'][i];
+
+              track.mode = track.id === currentSubtitle.id ? 'showing' : 'disabled';
+            }
+          }, 500);
+        }
       }
     }
-  }, [subtitles, nodeRef]);
+  }, [currentSubtitle, nodeRef]);
 
   return [currentSubtitle, setCurrentSubtitle] as const;
 };

@@ -134,7 +134,17 @@ const SpeedView: React.FC<Props> = () => {
         ))}
       </Locations>
 
-      <Actions>{started ? <Button onClick={handleStop}>Стоп</Button> : <Button onClick={handleStart}>Начать</Button>}</Actions>
+      <Actions>
+        {started ? (
+          <Button icon="stop" onClick={handleStop}>
+            Стоп
+          </Button>
+        ) : (
+          <Button icon="play_arrow" onClick={handleStart}>
+            Начать
+          </Button>
+        )}
+      </Actions>
     </MainLayout>
   );
 };

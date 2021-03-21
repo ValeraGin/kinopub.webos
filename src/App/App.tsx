@@ -26,7 +26,13 @@ import WatchingView from '../views/watching';
 
 import './styles.less';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+    },
+  },
+});
 
 type Props = {};
 

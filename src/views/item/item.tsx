@@ -12,6 +12,7 @@ import Text from '../../components/text';
 import Bookmarks from '../../containers/bookmarks';
 import useApi from '../../hooks/useApi';
 import useApiMutation from '../../hooks/useApiMutation';
+import useStreamingTypeEffect from '../../hooks/useStreamingTypeEffect';
 import FillLayout from '../../layouts/fill';
 import { PATHS, RouteParams, generatePath } from '../../routes';
 
@@ -130,6 +131,8 @@ const ItemView: React.FC<Props> = () => {
     await watchingToggleWatchlistAsync([itemId]);
     refetch();
   }, [itemId, watchingToggleWatchlistAsync, refetch]);
+
+  useStreamingTypeEffect();
 
   return (
     <FillLayout>

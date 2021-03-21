@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import CheckboxItem from '@enact/moonstone/CheckboxItem';
 import ExpandableList from '@enact/moonstone/ExpandableList';
 import filter from 'lodash/filter';
@@ -6,7 +6,7 @@ import findIndex from 'lodash/findIndex';
 import map from 'lodash/map';
 import styled from 'styled-components';
 
-import { Bool, DeviceSettingBoolean, DeviceSettingList } from '../../api';
+import { Bool, DeviceSettingBoolean, DeviceSettingList, DeviceSettingsParams } from '../../api';
 import Button from '../../components/button';
 import Text from '../../components/text';
 import useApi from '../../hooks/useApi';
@@ -69,8 +69,9 @@ type Props = {};
 const SettingsView: React.FC<Props> = () => {
   const { data } = useApi('user');
   const { data: deviceInfo } = useApi('deviceInfo');
-  const { saveDeviceSettings } = useApiMutation('saveDeviceSettings');
+  const { saveDeviceSettingsAsync } = useApiMutation('saveDeviceSettings');
   const { deactivate } = useApiMutation('deactivate');
+  const [newSettings, setNewSettings] = useState<DeviceSettingsParams>({});
 
   const boolSettings = useMemo(
     () =>
@@ -91,20 +92,22 @@ const SettingsView: React.FC<Props> = () => {
 
   const handleBoolSettingToggle = useCallback(
     (setting: DeviceSettingBoolean) => async ({ selected }) => {
-      if (deviceInfo?.device.id) {
-        saveDeviceSettings([deviceInfo.device.id, { [setting['key']]: selected }]);
-      }
+      setNewSettings({ ...newSettings, [setting['key']]: selected });
     },
-    [deviceInfo?.device.id, saveDeviceSettings],
+    [newSettings],
   );
   const handleListSettingSelect = useCallback(
     (setting: DeviceSettingList) => ({ selected }) => {
-      if (deviceInfo?.device.id) {
-        saveDeviceSettings([deviceInfo.device.id, { [setting['key']]: setting.value[selected].id }]);
-      }
+      setNewSettings({ ...newSettings, [setting['key']]: setting.value[selected].id });
     },
-    [deviceInfo?.device.id, saveDeviceSettings],
+    [newSettings],
   );
+
+  const handleSaveClick = useCallback(async () => {
+    await saveDeviceSettingsAsync([deviceInfo?.device.id, newSettings]);
+
+    window.location.reload();
+  }, [newSettings, deviceInfo?.device, saveDeviceSettingsAsync]);
   const handleLogoutClick = useCallback(() => {
     deactivate([]);
   }, [deactivate]);
@@ -129,6 +132,12 @@ const SettingsView: React.FC<Props> = () => {
               </Setting>
             ))}
           </Settings>
+        </div>
+
+        <div>
+          <Button icon="done" onClick={handleSaveClick}>
+            Сохранить
+          </Button>
         </div>
 
         {data?.user && (
