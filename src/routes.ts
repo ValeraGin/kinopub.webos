@@ -16,6 +16,7 @@ export const PATHS = {
   Video: '/video/:videoId',
   Trailer: '/trailer/:trailerId',
   Pair: '/pair',
+  Speed: '/speed',
   Settings: '/settings',
 };
 

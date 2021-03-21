@@ -92,6 +92,11 @@ const menuItems: {
   ],
   [
     {
+      name: 'Спидтест',
+      icon: 'speed',
+      href: PATHS.Speed,
+    },
+    {
       name: 'Настройки',
       icon: 'settings',
       href: PATHS.Settings,

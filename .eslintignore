@@ -1,5 +1,6 @@
 build/*
 config/*
+public/*
 dist/*
 out/*
 node_modules/*

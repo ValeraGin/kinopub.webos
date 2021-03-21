@@ -19,6 +19,7 @@ import NotFoundView from '../views/notFound';
 import PairView from '../views/pair';
 import SearchView from '../views/search';
 import SettingsView from '../views/settings';
+import SpeedView from '../views/speed';
 import TrailerView from '../views/trailer';
 import VideoView from '../views/video';
 import WatchingView from '../views/watching';
@@ -49,6 +50,7 @@ const App: React.FC<Props> = (props) => {
           <View path={PATHS.Video} component={VideoView} />
           <View path={PATHS.Trailer} component={TrailerView} />
           <View path={PATHS.Pair} component={PairView} />
+          <View path={PATHS.Speed} component={SpeedView} />
           <View path={PATHS.Settings} component={SettingsView} />
           <View component={NotFoundView} />
         </Views>
