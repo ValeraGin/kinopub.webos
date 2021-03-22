@@ -66,7 +66,9 @@ const useDeviceAuthorizationEffect = () => {
       if (!isLogged) {
         await deviceAuthorizationAsync([deviceInfo, handleOnConfirm]);
 
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       }
     }, 500);
 
