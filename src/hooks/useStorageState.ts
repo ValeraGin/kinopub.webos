@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import storage, { Key, Value } from '../storage';
 
 function useStorageState<T extends Value = Value>(key: Key) {
-  const [value, _setValue] = useState<T>(null);
+  const [value, _setValue] = useState<T>(storage.getItem<T>(key));
   const setValue = useCallback(
     (newValue: Value, expire?: number) => {
       storage.setItem(key, newValue, expire);

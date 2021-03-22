@@ -35,9 +35,7 @@ const useCurrentAudio = (audios: AudioSetting[], nodeRef: React.MutableRefObject
       for (let i = 0, ln = videoTag?.['audioTracks']?.length; i < ln; i++) {
         const track = videoTag?.['audioTracks'][i];
 
-        if (track.id === currentAudio.id) {
-          track.enabled = true;
-        }
+        track.enabled = track.id === currentAudio.id;
       }
     }
   }, [currentAudio, nodeRef]);
