@@ -28,19 +28,20 @@ class BaseApiClient {
     const accessToken = this.getAccessToken();
 
     const headers = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      'Content-Type': 'text/plain',
     };
 
-    if (accessToken) {
-      headers['Authorization'] = `Bearer ${accessToken}`;
-    }
-
-    const response = await fetch(`${this.baseUrl}${url}?${normalizeParams(params)}`, {
-      method,
-      headers,
-      body: stringifyParams(data),
-    });
+    const response = await fetch(
+      `${this.baseUrl}${url}?${normalizeParams({
+        ...params,
+        access_token: accessToken,
+      })}`,
+      {
+        method,
+        headers,
+        body: stringifyParams(data),
+      },
+    );
 
     if (response.status === 401) {
       this.clearTokens();
