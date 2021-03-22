@@ -37,7 +37,7 @@ const useBackButtonEffect = () => {
 const useDeviceAuthorizationEffect = () => {
   const history = useHistory();
   const deviceInfo = useDeviceInfo();
-  const { deviceAuthorization } = useApiMutation('deviceAuthorization');
+  const { deviceAuthorizationAsync } = useApiMutation('deviceAuthorization');
   const { deviceNotify } = useApiMutation('deviceNotify');
   const [isLogged] = useStorageState<boolean>('is_logged');
 
@@ -62,16 +62,18 @@ const useDeviceAuthorizationEffect = () => {
   }, [deviceInfo, deviceNotify]);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(async () => {
       if (!isLogged) {
-        deviceAuthorization([deviceInfo, handleOnConfirm]);
+        await deviceAuthorizationAsync([deviceInfo, handleOnConfirm]);
+
+        window.location.reload();
       }
     }, 500);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [isLogged, deviceInfo, handleOnConfirm, deviceAuthorization]);
+  }, [isLogged, deviceInfo, handleOnConfirm, deviceAuthorizationAsync]);
 
   useEffect(() => {
     if (isLogged) {
