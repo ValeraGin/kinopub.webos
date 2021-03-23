@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import VideoPlayer, { Video, VideoPlayerBase, VideoPlayerBaseProps } from '@enact/moonstone/VideoPlayer';
 import Hls from 'hls.js';
-import VTTConverter from 'srt-webvtt';
 import styled from 'styled-components';
 
 import useAsyncEffect from '../../hooks/useAsyncEffect';
 import Popup from '../popup';
 import Text from '../text';
 import Settings, { AudioSetting, SourceSetting, SubtitleSetting } from './settings';
+
+import { convertToVTT } from '../../utils/subtitles';
 
 const Wrapper = styled.div`
   video {
@@ -107,9 +108,7 @@ const useCurrentSubtitle = (subtitles: SubtitleSetting[], nodeRef: React.Mutable
           track.label = currentSubtitle.label;
 
           if (currentSubtitle.src.endsWith('.srt')) {
-            const file = await (await fetch(currentSubtitle.src)).blob();
-            const converter = new VTTConverter(file);
-            track.src = await converter.getURL();
+            track.src = await convertToVTT(currentSubtitle.src);
           } else {
             track.src = currentSubtitle.src;
           }

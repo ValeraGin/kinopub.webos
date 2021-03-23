@@ -36,19 +36,25 @@ class BaseApiClient {
       headers['Authorization'] = `Bearer ${accessToken}`;
     }
 
-    const response = await fetch(`${this.baseUrl}${url}?${normalizeParams(params)}`, {
-      method,
-      headers,
-      body: stringifyParams(data),
-    });
+    try {
+      const response = await fetch(`${this.baseUrl}${url}?${normalizeParams(params)}`, {
+        method,
+        headers,
+        body: stringifyParams(data),
+      });
 
-    if (response.status === 401) {
-      this.clearTokens();
+      if (response.status === 401) {
+        this.clearTokens();
+      }
+
+      const json = await response.json();
+
+      return json as T;
+    } catch (ex) {
+      return ({
+        error: ex.toString() as string,
+      } as unknown) as T;
     }
-
-    const json = await response.json();
-
-    return json as T;
   }
 
   protected get<T>(url: string, params?: Record<string, Param>) {
