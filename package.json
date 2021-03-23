@@ -19,16 +19,6 @@
     "test-watch": "node ./scripts/test.js --watch",
     "postinstall": "husky install"
   },
-  "eslintConfig": {
-    "extends": "enact"
-  },
-  "eslintIgnore": [
-    "build/*",
-    "config/*",
-    "dist/*",
-    "node_modules/*",
-    "scripts/*"
-  ],
   "dependencies": {
     "@babel/runtime": "7.12.1",
     "@enact/core": "4.0.0-alpha.1",

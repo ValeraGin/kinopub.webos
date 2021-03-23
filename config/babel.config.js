@@ -52,9 +52,6 @@ module.exports = function (api) {
           useBuiltIns: 'entry',
           corejs: 3,
           bugfixes: true,
-          targets: {
-            chrome: '40',
-          },
         },
       ],
       [
