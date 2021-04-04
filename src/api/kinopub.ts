@@ -161,7 +161,7 @@ class KinopubApiClient extends BaseApiClient {
           } catch (ex) {
             reject(ex);
           }
-        }, interval * 1000);
+        }, (interval || 10) * 1000);
       });
     }
   }

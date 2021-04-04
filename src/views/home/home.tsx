@@ -7,16 +7,16 @@ import MainLayout from '../../layouts/main';
 type Props = {};
 
 const HomeView: React.FC<Props> = () => {
-  const { data: popularMovies, isLoading: popularMoviesLoading } = useApi('itemsPopular', 'movie', 0, 12);
-  const { data: newMovies, isLoading: newMoviesLoading } = useApi('items', { type: 'movie', sort: 'created-' }, 0, 12);
+  const { data: popularMovies, isLoading: popularMoviesLoading } = useApi('itemsPopular', 'movie', 0, 10);
+  const { data: newMovies, isLoading: newMoviesLoading } = useApi('items', { type: 'movie', sort: 'created-' }, 0, 10);
 
-  const { data: popularSerials, isLoading: popularSerialsLoading } = useApi('items', { type: 'serial', sort: 'watchers-' }, 0, 12);
-  const { data: newSerials, isLoading: newSerialsLoading } = useApi('items', { type: 'serial', sort: 'created-' }, 0, 12);
+  const { data: popularSerials, isLoading: popularSerialsLoading } = useApi('items', { type: 'serial', sort: 'watchers-' }, 0, 10);
+  const { data: newSerials, isLoading: newSerialsLoading } = useApi('items', { type: 'serial', sort: 'created-' }, 0, 10);
 
-  const { data: newConcerts, isLoading: newConcertsLoading } = useApi('items', { type: 'concert', sort: 'created-' }, 0, 12);
-  const { data: newDocuMovies, isLoading: newDocuMoviesLoading } = useApi('items', { type: 'documovie', sort: 'created-' }, 0, 12);
-  const { data: newDocuSerials, isLoading: newDocuSerialsLoading } = useApi('items', { type: 'docuserial', sort: 'created-' }, 0, 12);
-  const { data: newTVShows, isLoading: newTVShowsLoading } = useApi('items', { type: 'tvshow', sort: 'created-' }, 0, 12);
+  const { data: newConcerts, isLoading: newConcertsLoading } = useApi('items', { type: 'concert', sort: 'created-' }, 0, 10);
+  const { data: newDocuMovies, isLoading: newDocuMoviesLoading } = useApi('items', { type: 'documovie', sort: 'created-' }, 0, 10);
+  const { data: newDocuSerials, isLoading: newDocuSerialsLoading } = useApi('items', { type: 'docuserial', sort: 'created-' }, 0, 10);
+  const { data: newTVShows, isLoading: newTVShowsLoading } = useApi('items', { type: 'tvshow', sort: 'created-' }, 0, 10);
 
   return (
     <MainLayout>

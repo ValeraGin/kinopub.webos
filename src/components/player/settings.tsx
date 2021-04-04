@@ -1,9 +1,15 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import CheckboxItem from '@enact/moonstone/CheckboxItem';
+import { VideoPlayerBase } from '@enact/moonstone/VideoPlayer';
 import map from 'lodash/map';
 import styled from 'styled-components';
 
+import Popup from '../popup';
 import Text from '../text';
+
+import { isArrowUpButton, isPlayButton } from '../../utils/keyboard';
+
+const NONE = 'NONE';
 
 const Wrapper = styled.div`
   display: flex;
@@ -31,131 +37,160 @@ const SectionContentItem = styled.div<{ width?: string | number }>`
   box-sizing: border-box;
 `;
 
-export type SourceSetting = {
-  src: string;
-  hls?: string;
-  type: string;
-  quality?: string;
-};
-
-export type SubtitleSetting = {
-  id: string;
-  src: string;
-  lang: string;
-  default?: boolean;
-  label?: string;
-};
-
-export type AudioSetting = {
-  id: string;
-  lang: string;
-  label?: string;
-};
-
 type Props = {
-  audios?: AudioSetting[];
-  currentAudio: AudioSetting;
-  onAudioChange: (audio: AudioSetting) => void;
-  sources: SourceSetting[];
-  currentSource: SourceSetting;
-  onSourceChange: (source: SourceSetting) => void;
-  subtitles?: SubtitleSetting[];
-  currentSubtitle?: SubtitleSetting;
-  onSubtitleChange?: (subtitle: SubtitleSetting) => void;
+  player: React.MutableRefObject<VideoPlayerBase>;
 };
 
-const formatIdx = (idx: number) => (idx < 10 ? `0${idx}` : idx);
+const Settings: React.FC<Props> = ({ player }) => {
+  const [visible, setVisible] = useState(false);
 
-const Settings: React.FC<Props> = ({
-  audios,
-  currentAudio,
-  onAudioChange,
-  sources,
-  currentSource,
-  onSourceChange,
-  subtitles,
-  currentSubtitle,
-  onSubtitleChange,
-}) => {
-  const handleAudioChange = useCallback(
-    (audio: AudioSetting) => () => {
-      if (audio !== currentAudio) {
-        onAudioChange(audio);
+  const [audios, setAudios] = useState<string[]>([]);
+  const [currentAudio, setCurrentAudio] = useState<string>(null);
+  const [sources, setSources] = useState<string[]>([]);
+  const [currentSource, setCurrentSource] = useState<string>(null);
+  const [subtitles, setSubtitles] = useState<string[]>([]);
+  const [currentSubtitle, setCurrentSubtitle] = useState<string>(null);
+
+  const handleVideoUpdate = useCallback(
+    (name: string, value: string) => {
+      if (player.current) {
+        const video = player.current.getVideoNode();
+
+        const currentTime = video['currentTime'];
+
+        video[name] = value;
+
+        setTimeout(() => {
+          video['currentTime'] = currentTime - 1;
+        }, 500);
       }
     },
-    [currentAudio, onAudioChange],
+    [player],
+  );
+
+  const handleAudioChange = useCallback(
+    (audio: string) => () => {
+      setCurrentAudio(audio);
+      handleVideoUpdate('audioTrack', audio);
+    },
+    [handleVideoUpdate],
   );
   const handleSourceChange = useCallback(
-    (source: SourceSetting) => () => {
-      if (source !== currentSource) {
-        onSourceChange(source);
-      }
+    (source: string) => () => {
+      setCurrentSource(source);
+      handleVideoUpdate('sourceTrack', source);
     },
-    [currentSource, onSourceChange],
+    [handleVideoUpdate],
   );
   const handleSubtitleChange = useCallback(
-    (subtitle: SubtitleSetting) => () => {
-      if (subtitle !== currentSubtitle) {
-        onSubtitleChange(subtitle);
-      }
+    (subtitle: string) => () => {
+      setCurrentSubtitle(subtitle);
+      handleVideoUpdate('subtitleTrack', subtitle);
     },
-    [currentSubtitle, onSubtitleChange],
+    [handleVideoUpdate],
   );
 
+  const handleVisibilityChange = useCallback(
+    (newVisible: boolean) => {
+      setVisible(newVisible);
+
+      if (player.current && !newVisible) {
+        player.current.play();
+      }
+    },
+    [player],
+  );
+
+  useEffect(() => {
+    const listiner = (e: KeyboardEvent) => {
+      if (isArrowUpButton(e)) {
+        if (player.current) {
+          const video: any = player.current.getVideoNode();
+          const { audioTracks, audioTrack, sourceTracks, sourceTrack, subtitleTracks, subtitleTrack } = video;
+
+          if (audioTracks?.length > 1 || sourceTracks?.length > 1 || subtitleTracks?.length > 0) {
+            setAudios(audioTracks);
+            setCurrentAudio(audioTrack);
+
+            setSources(sourceTracks);
+            setCurrentSource(sourceTrack);
+
+            setSubtitles(subtitleTracks);
+            setCurrentSubtitle(subtitleTrack);
+
+            player.current.pause();
+
+            setVisible(true);
+          }
+        }
+      } else if (isPlayButton(e)) {
+        setVisible(false);
+      }
+    };
+
+    window.addEventListener('keydown', listiner);
+
+    return () => {
+      window.removeEventListener('keydown', listiner);
+    };
+  }, [visible, player]);
+
   return (
-    <Wrapper>
-      {audios?.length > 1 && (
-        <Section>
-          <SectionTitle>Звук</SectionTitle>
+    <Popup visible={visible} onVisibilityChange={handleVisibilityChange}>
+      <Wrapper>
+        {audios?.length > 1 && (
+          <Section>
+            <SectionTitle>Звук</SectionTitle>
 
-          <SectionContent>
-            {map(audios, (audio, idx) => (
-              <SectionContentItem key={audio.id} width="50%">
-                <CheckboxItem selected={audio.id === currentAudio.id} onToggle={handleAudioChange(audio)}>
-                  {formatIdx(idx + 1)}. {audio.label}
+            <SectionContent>
+              {map(audios, (audio) => (
+                <SectionContentItem key={audio} width="50%">
+                  <CheckboxItem selected={audio === currentAudio} onToggle={handleAudioChange(audio)}>
+                    {audio}
+                  </CheckboxItem>
+                </SectionContentItem>
+              ))}
+            </SectionContent>
+          </Section>
+        )}
+        {sources?.length > 1 && (
+          <Section>
+            <SectionTitle>Качество</SectionTitle>
+
+            <SectionContent>
+              {map(sources, (source) => (
+                <SectionContentItem key={source} width="15%">
+                  <CheckboxItem selected={source === currentSource} onToggle={handleSourceChange(source)}>
+                    {source}
+                  </CheckboxItem>
+                </SectionContentItem>
+              ))}
+            </SectionContent>
+          </Section>
+        )}
+        {subtitles?.length > 0 && (
+          <Section>
+            <SectionTitle>Субтитры</SectionTitle>
+
+            <SectionContent>
+              <SectionContentItem width="15%">
+                <CheckboxItem selected={!currentSubtitle || currentSubtitle === NONE} onToggle={handleSubtitleChange(NONE)}>
+                  Нет
                 </CheckboxItem>
               </SectionContentItem>
-            ))}
-          </SectionContent>
-        </Section>
-      )}
-      {sources?.length > 1 && (
-        <Section>
-          <SectionTitle>Качество</SectionTitle>
 
-          <SectionContent>
-            {map(sources, (source, idx) => (
-              <SectionContentItem key={source.quality} width="15%">
-                <CheckboxItem selected={source.quality === currentSource.quality} onToggle={handleSourceChange(source)}>
-                  {formatIdx(idx + 1)}. {source.quality}
-                </CheckboxItem>
-              </SectionContentItem>
-            ))}
-          </SectionContent>
-        </Section>
-      )}
-      {subtitles?.length > 0 && (
-        <Section>
-          <SectionTitle>Субтитры</SectionTitle>
-
-          <SectionContent>
-            <SectionContentItem width="15%">
-              <CheckboxItem selected={!currentSubtitle} onToggle={handleSubtitleChange(null)}>
-                Нет
-              </CheckboxItem>
-            </SectionContentItem>
-
-            {map(subtitles, (subtitle, idx) => (
-              <SectionContentItem key={subtitle.id} width="15%">
-                <CheckboxItem selected={subtitle.id === currentSubtitle?.id} onToggle={handleSubtitleChange(subtitle)}>
-                  {formatIdx(idx + 1)}. {subtitle.label}
-                </CheckboxItem>
-              </SectionContentItem>
-            ))}
-          </SectionContent>
-        </Section>
-      )}
-    </Wrapper>
+              {map(subtitles, (subtitle) => (
+                <SectionContentItem key={subtitle} width="15%">
+                  <CheckboxItem selected={subtitle === currentSubtitle} onToggle={handleSubtitleChange(subtitle)}>
+                    {subtitle}
+                  </CheckboxItem>
+                </SectionContentItem>
+              ))}
+            </SectionContent>
+          </Section>
+        )}
+      </Wrapper>
+    </Popup>
   );
 };
 

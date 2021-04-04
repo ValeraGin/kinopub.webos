@@ -76,18 +76,18 @@ const SettingsView: React.FC<Props> = () => {
   const boolSettings = useMemo(
     () =>
       filter(
-        map(deviceInfo?.device.settings, (setting, key) => ({ ...setting, key })),
+        map(deviceInfo?.device?.settings, (setting, key) => ({ ...setting, key })),
         (setting) => typeof setting['type'] === 'undefined',
       ) as DeviceSettingBoolean[],
-    [deviceInfo?.device.settings],
+    [deviceInfo?.device?.settings],
   );
   const listSettings = useMemo(
     () =>
       filter(
-        map(deviceInfo?.device.settings, (setting, key) => ({ ...setting, key })),
+        map(deviceInfo?.device?.settings, (setting, key) => ({ ...setting, key })),
         (setting: DeviceSettingBoolean) => setting['type'] === 'list',
       ) as DeviceSettingList[],
-    [deviceInfo?.device.settings],
+    [deviceInfo?.device?.settings],
   );
 
   const handleBoolSettingToggle = useCallback(
@@ -117,44 +117,48 @@ const SettingsView: React.FC<Props> = () => {
       <Text>Настройки устройства</Text>
 
       <Content>
-        <div>
-          <Settings key={`bool-${deviceInfo?.device.updated}`}>
-            {map(boolSettings, (setting) => (
-              <Setting key={setting['key']}>
-                <SettingBool setting={setting} onToggle={handleBoolSettingToggle(setting)} />
-              </Setting>
-            ))}
-          </Settings>
-          <Settings key={`list-${deviceInfo?.device.updated}`}>
-            {map(listSettings, (setting) => (
-              <Setting key={setting['key']}>
-                <SettingList setting={setting} onSelect={handleListSettingSelect(setting)} />
-              </Setting>
-            ))}
-          </Settings>
-        </div>
+        {deviceInfo?.device && (
+          <>
+            <div>
+              <Settings key={`bool-${deviceInfo?.device.updated}`}>
+                {map(boolSettings, (setting) => (
+                  <Setting key={setting['key']}>
+                    <SettingBool setting={setting} onToggle={handleBoolSettingToggle(setting)} />
+                  </Setting>
+                ))}
+              </Settings>
+              <Settings key={`list-${deviceInfo?.device.updated}`}>
+                {map(listSettings, (setting) => (
+                  <Setting key={setting['key']}>
+                    <SettingList setting={setting} onSelect={handleListSettingSelect(setting)} />
+                  </Setting>
+                ))}
+              </Settings>
+            </div>
+
+            <div>
+              <Button icon="done" onClick={handleSaveClick}>
+                Сохранить
+              </Button>
+            </div>
+          </>
+        )}
 
         <div>
-          <Button icon="done" onClick={handleSaveClick}>
-            Сохранить
-          </Button>
-        </div>
+          <Text>Пользователь</Text>
 
-        {data?.user && (
-          <div>
-            <Text>Пользователь</Text>
-
-            <User>
+          <User>
+            {data?.user && (
               <Text>
                 {data.user.profile.name || data.user.username} ({Math.floor(data.user.subscription.days)} дн.)
               </Text>
+            )}
 
-              <Button icon="logout" onClick={handleLogoutClick}>
-                Выход
-              </Button>
-            </User>
-          </div>
-        )}
+            <Button icon="logout" onClick={handleLogoutClick}>
+              Выход
+            </Button>
+          </User>
+        </div>
       </Content>
     </MainLayout>
   );

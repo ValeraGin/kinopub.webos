@@ -51,9 +51,7 @@ module.exports = function (api) {
           forceAllTransforms: es5Standalone,
           useBuiltIns: 'entry',
           corejs: 3,
-          targets: {
-            chrome: '53',
-          },
+          bugfixes: true,
         },
       ],
       [

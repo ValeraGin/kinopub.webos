@@ -1,6 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import MoonstonePopup, { PopupProps } from '@enact/moonstone/Popup';
 
+import { isBackButton } from '../../utils/keyboard';
+
 type Props = {
   visible: boolean;
   onVisibilityChange: (visible: boolean) => void;
@@ -16,7 +18,7 @@ const Popup: React.FC<Props> = ({ visible, onVisibilityChange, ...props }) => {
 
   useEffect(() => {
     const listiner = (e: KeyboardEvent) => {
-      if (e.keyCode === 461 && visible) {
+      if (isBackButton(e) && visible) {
         e.stopPropagation();
         onVisibilityChange(false);
       }

@@ -3,13 +3,15 @@ import map from 'lodash/map';
 import toUpper from 'lodash/toUpper';
 
 import { Audio, Streaming, Subtitle } from '../api';
-import { AudioSetting, SourceSetting, SubtitleSetting } from '../components/player/settings';
+import { AudioTrack, SourceTrack, SubtitleTrack } from '../components/media';
 
-export function mapAudios(audios: Audio[]): AudioSetting[] {
-  return map(audios, (audio) => ({
-    id: `${audio.index}`,
+const formatIdx = (idx: number) => (idx < 10 ? `0${idx}` : idx);
+
+export function mapAudios(audios: Audio[]): AudioTrack[] {
+  return map(audios, (audio, idx) => ({
     lang: audio.lang,
-    label: filter([
+    name: filter([
+      `${formatIdx(idx + 1)}.`,
       audio.type?.title && audio.author?.title ? `${audio.type?.title}.` : audio.type?.title,
       audio.author?.title,
       audio.type?.title || audio.author?.title ? `(${toUpper(audio.lang)})` : toUpper(audio.lang),
@@ -21,20 +23,17 @@ export function mapAudios(audios: Audio[]): AudioSetting[] {
 export function mapSources(
   files: { url: string | { [key in Streaming]?: string }; quality?: string }[],
   streamingType?: Streaming,
-): SourceSetting[] {
+): SourceTrack[] {
   return map(files, (file) => ({
-    src: typeof file.url === 'string' ? file.url : file.url.http,
-    hls: typeof file.url !== 'string' ? (streamingType !== 'http' ? file.url[streamingType] || file.url.hls4 : null) : null,
-    type: 'video/mp4',
-    quality: file.quality,
+    src: typeof file.url === 'string' ? file.url : file.url[streamingType] || file.url.http,
+    name: file.quality,
   }));
 }
 
-export function mapSubtitles(subtitles: Subtitle[]): SubtitleSetting[] {
+export function mapSubtitles(subtitles: Subtitle[]): SubtitleTrack[] {
   return map(subtitles, (subtitle, idx) => ({
-    id: `${subtitle.lang}_${idx}`,
     src: subtitle.url,
     lang: subtitle.lang,
-    label: toUpper(subtitle.lang),
+    name: `${toUpper(subtitle.lang)} #${formatIdx(idx + 1)}`,
   }));
 }

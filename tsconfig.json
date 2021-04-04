@@ -4,6 +4,7 @@
     "rootDir": "src",
     "jsx": "react-jsx",
     "target": "ES5",
+    "lib": ["DOM", "ES2015"],
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "typeRoots": ["src/typings", "node_modules/@types"]
