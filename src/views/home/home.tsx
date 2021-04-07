@@ -1,49 +1,99 @@
-import ItemsList from '../../components/itemsList';
-import Scrollable from '../../components/scrollable';
-import Text from '../../components/text';
-import useApi from '../../hooks/useApi';
-import MainLayout from '../../layouts/main';
+import { Item } from 'api';
+import ItemsList from 'components/itemsList';
+import Lazy from 'components/lazy';
+import Scrollable from 'components/scrollable';
+import Text from 'components/text';
+import useApi from 'hooks/useApi';
 
-type Props = {};
-
-const HomeView: React.FC<Props> = () => {
-  const { data: popularMovies, isLoading: popularMoviesLoading } = useApi('itemsPopular', 'movie', 0, 10);
-  const { data: newMovies, isLoading: newMoviesLoading } = useApi('items', { type: 'movie', sort: 'created-' }, 0, 10);
-
-  const { data: popularSerials, isLoading: popularSerialsLoading } = useApi('items', { type: 'serial', sort: 'watchers-' }, 0, 10);
-  const { data: newSerials, isLoading: newSerialsLoading } = useApi('items', { type: 'serial', sort: 'created-' }, 0, 10);
-
-  const { data: newConcerts, isLoading: newConcertsLoading } = useApi('items', { type: 'concert', sort: 'created-' }, 0, 10);
-  const { data: newDocuMovies, isLoading: newDocuMoviesLoading } = useApi('items', { type: 'documovie', sort: 'created-' }, 0, 10);
-  const { data: newDocuSerials, isLoading: newDocuSerialsLoading } = useApi('items', { type: 'docuserial', sort: 'created-' }, 0, 10);
-  const { data: newTVShows, isLoading: newTVShowsLoading } = useApi('items', { type: 'tvshow', sort: 'created-' }, 0, 10);
-
+const ItemsSection: React.FC<{ title: string; items?: Item[]; loading?: boolean }> = ({ title, items, loading }) => {
   return (
-    <MainLayout>
+    <>
+      <Text>{title}</Text>
+      <ItemsList items={items} loading={loading} scrollable={false} />
+    </>
+  );
+};
+
+const PopularMovies: React.FC = () => {
+  const { data, isLoading } = useApi('itemsPopular', 'movie', 0, 10);
+
+  return <ItemsSection title="Популярные фильмы" items={data?.items} loading={isLoading} />;
+};
+
+const NewMovies: React.FC = () => {
+  const { data, isLoading } = useApi('items', { type: 'movie', sort: 'created-' }, 0, 10);
+
+  return <ItemsSection title="Новые фильмы" items={data?.items} loading={isLoading} />;
+};
+
+const PopularSerials: React.FC = () => {
+  const { data, isLoading } = useApi('items', { type: 'serial', sort: 'watchers-' }, 0, 10);
+
+  return <ItemsSection title="Популярные сериалы" items={data?.items} loading={isLoading} />;
+};
+
+const NewSerials: React.FC = () => {
+  const { data, isLoading } = useApi('items', { type: 'serial', sort: 'created-' }, 0, 10);
+
+  return <ItemsSection title="Новые сериалы" items={data?.items} loading={isLoading} />;
+};
+
+const NewConcerts: React.FC = () => {
+  const { data, isLoading } = useApi('items', { type: 'concert', sort: 'created-' }, 0, 10);
+
+  return <ItemsSection title="Новые концерты" items={data?.items} loading={isLoading} />;
+};
+
+const NewDocuMovies: React.FC = () => {
+  const { data, isLoading } = useApi('items', { type: 'documovie', sort: 'created-' }, 0, 10);
+
+  return <ItemsSection title="Новые документальные фильмы" items={data?.items} loading={isLoading} />;
+};
+
+const NewDocuSerials: React.FC = () => {
+  const { data, isLoading } = useApi('items', { type: 'docuserial', sort: 'created-' }, 0, 10);
+
+  return <ItemsSection title="Новые документальные сериалы" items={data?.items} loading={isLoading} />;
+};
+
+const NewTVShows: React.FC = () => {
+  const { data, isLoading } = useApi('items', { type: 'tvshow', sort: 'created-' }, 0, 10);
+
+  return <ItemsSection title="Новые ТВ шоу" items={data?.items} loading={isLoading} />;
+};
+
+const HomeView: React.FC = () => {
+  return (
+    <>
       <Scrollable>
-        <Text>Популярные фильмы</Text>
-        <ItemsList items={popularMovies?.items} loading={popularMoviesLoading} scrollable={false} />
-        <Text>Новые фильмы</Text>
-        <ItemsList items={newMovies?.items} loading={newMoviesLoading} scrollable={false} />
+        <Lazy height="50rem">
+          <PopularMovies />
+        </Lazy>
+        <Lazy height="50rem">
+          <NewMovies />
+        </Lazy>
 
-        <Text>Популярные сериалы</Text>
-        <ItemsList items={popularSerials?.items} loading={popularSerialsLoading} scrollable={false} />
-        <Text>Новые сериалы</Text>
-        <ItemsList items={newSerials?.items} loading={newSerialsLoading} scrollable={false} />
+        <Lazy height="50rem">
+          <PopularSerials />
+        </Lazy>
+        <Lazy height="50rem">
+          <NewSerials />
+        </Lazy>
 
-        <Text>Новые концерты</Text>
-        <ItemsList items={newConcerts?.items} loading={newConcertsLoading} scrollable={false} />
-
-        <Text>Новые документальные фильмы</Text>
-        <ItemsList items={newDocuMovies?.items} loading={newDocuMoviesLoading} scrollable={false} />
-
-        <Text>Новые документальные сериалы</Text>
-        <ItemsList items={newDocuSerials?.items} loading={newDocuSerialsLoading} scrollable={false} />
-
-        <Text>Новые ТВ шоу</Text>
-        <ItemsList items={newTVShows?.items} loading={newTVShowsLoading} scrollable={false} />
+        <Lazy height="50rem">
+          <NewConcerts />
+        </Lazy>
+        <Lazy height="50rem">
+          <NewDocuMovies />
+        </Lazy>
+        <Lazy height="50rem">
+          <NewDocuSerials />
+        </Lazy>
+        <Lazy height="50rem">
+          <NewTVShows />
+        </Lazy>
       </Scrollable>
-    </MainLayout>
+    </>
   );
 };
 

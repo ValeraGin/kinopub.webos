@@ -2,10 +2,9 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import map from 'lodash/map';
 import styled from 'styled-components';
 
-import Button from '../../components/button';
-import Text from '../../components/text';
-import useApi from '../../hooks/useApi';
-import MainLayout from '../../layouts/main';
+import Button from 'components/button';
+import Text from 'components/text';
+import useApi from 'hooks/useApi';
 
 const Locations = styled.div`
   display: flex;
@@ -24,8 +23,6 @@ const Actions = styled.div`
   justify-content: center;
 `;
 
-type Props = {};
-
 function updateSpeedReducer(state: { [location: string]: string }, action: { type: string; payload: string }) {
   return {
     ...state,
@@ -33,7 +30,7 @@ function updateSpeedReducer(state: { [location: string]: string }, action: { typ
   };
 }
 
-const SpeedView: React.FC<Props> = () => {
+const SpeedView: React.FC = () => {
   const { data } = useApi('serverLocations');
   const [speed, setSpeed] = useReducer(updateSpeedReducer, {});
   const [started, setStarted] = useState(false);
@@ -54,16 +51,17 @@ const SpeedView: React.FC<Props> = () => {
   const workers = useMemo(
     () =>
       map(servers, (server) => {
+        // @ts-expect-error
         const worker = new window['Speedtest']();
 
         worker._settings.test_order = 'IP_D';
 
         worker.setSelectedServer(server);
 
-        worker.onupdate = ({ testState, dlStatus }) => {
+        worker.onupdate = ({ testState, dlStatus }: { testState: number; dlStatus: string }) => {
           setSpeed({
             type: server.location,
-            payload: dlStatus || ((testState === 1 || testState === 2) && 'Начинаем'),
+            payload: dlStatus || ((testState === 1 || testState === 2) && 'Начинаем') || '',
           });
         };
 
@@ -121,7 +119,7 @@ const SpeedView: React.FC<Props> = () => {
   }, []);
 
   return (
-    <MainLayout>
+    <>
       <Text>Проверка скорости</Text>
 
       <Locations>
@@ -145,7 +143,7 @@ const SpeedView: React.FC<Props> = () => {
           </Button>
         )}
       </Actions>
-    </MainLayout>
+    </>
   );
 };
 

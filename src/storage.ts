@@ -3,7 +3,7 @@ export type Value = string | number | boolean | null;
 export type Key = 'is_logged' | 'access_token' | 'refresh_token' | 'streaming_type';
 
 function getItem(prefix: string, key: string) {
-  const data = JSON.parse(window.localStorage.getItem(prefix)) || {};
+  const data = JSON.parse(window.localStorage.getItem(prefix) || '{}') || {};
 
   const { value, expire } = data[key] || {};
 
@@ -15,7 +15,7 @@ function getItem(prefix: string, key: string) {
 }
 
 function setItem(prefix: string, key: string, value?: Value, expire?: number) {
-  const data = JSON.parse(window.localStorage.getItem(prefix)) || {};
+  const data = JSON.parse(window.localStorage.getItem(prefix) || '{}') || {};
 
   window.localStorage.setItem(
     prefix,

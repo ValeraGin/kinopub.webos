@@ -1,8 +1,14 @@
-import isObject from 'lodash/isObject';
+type Primitive = string | number | boolean;
 
-type Param = string | number | boolean | Param[];
+type Param = Primitive | null | undefined | Param[] | { [key: string]: Param };
 
-export const stringifyParams = (params: { [key: string]: any }) =>
+type Params = Record<string, Param> | null;
+
+function isPrimitive(value: any): value is Primitive {
+  return value !== Object(value);
+}
+
+export const stringifyParams = (params?: Params) =>
   JSON.stringify(params, (_, value) => {
     if (value === null || value === '') {
       return undefined;
@@ -11,10 +17,15 @@ export const stringifyParams = (params: { [key: string]: any }) =>
     return value;
   });
 
-export const normalizeParams = (params: { [key: string]: any }) =>
+export const normalizeParams = (params?: Params) =>
   Object.keys(params || {})
-    .filter((key) => params[key] !== '' && params[key] !== null && params[key] !== undefined)
-    .map((key) => `${key}=${encodeURIComponent(isObject(params[key]) ? stringifyParams(params[key]) : params[key])}`)
+    .filter((key) => params?.[key] !== '' && params?.[key] !== null && params?.[key] !== undefined)
+    .map(
+      (key) =>
+        `${key}=${encodeURIComponent(
+          isPrimitive(params?.[key]) ? (params?.[key] as Primitive) : stringifyParams(params?.[key] as Record<string, Param>),
+        )}`,
+    )
     .join('&');
 
 class BaseApiClient {
@@ -24,10 +35,10 @@ class BaseApiClient {
     this.baseUrl = baseUrl;
   }
 
-  private async request<T>(method: 'GET' | 'POST', url: string, params?: Record<string, Param>, data?: Object) {
+  private async request<T>(method: 'GET' | 'POST', url: string, params?: Params, data?: Params) {
     const accessToken = this.getAccessToken();
 
-    const headers = {
+    const headers: HeadersInit = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     };
@@ -57,11 +68,11 @@ class BaseApiClient {
     }
   }
 
-  protected get<T>(url: string, params?: Record<string, Param>) {
+  protected get<T>(url: string, params?: Params) {
     return this.request<T>('GET', url, params);
   }
 
-  protected post<T>(url: string, data?: Object, params?: Record<string, Param>) {
+  protected post<T>(url: string, data?: Params, params?: Params) {
     return this.request<T>('POST', url, params, data);
   }
 

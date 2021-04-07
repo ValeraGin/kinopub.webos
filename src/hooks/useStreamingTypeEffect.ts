@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from 'react';
 import find from 'lodash/find';
 
-import { Bool } from '../api';
+import { Bool } from 'api';
+
 import useApi from './useApi';
 import useStorageState from './useStorageState';
 

@@ -3,10 +3,11 @@ import { useHistory } from 'react-router-dom';
 import GridListImageItem from '@enact/moonstone/GridListImageItem';
 import styled from 'styled-components';
 
-import { Collection } from '../../api';
-import { PATHS, generatePath } from '../../routes';
+import { Collection } from 'api';
+import Lazy from 'components/lazy';
+import { PATHS, generatePath } from 'routes';
 
-const Wrapper = styled.div`
+const Wrapper = styled(Lazy)`
   display: inline-flex;
   position: relative;
   height: 20rem !important;
@@ -34,7 +35,7 @@ const CollectionItem: React.FC<Props> = ({ collection }) => {
   }, [collection?.id, history]);
 
   return (
-    <Wrapper>
+    <Wrapper height="20rem">
       <GridItem source={collection?.posters.medium} caption={collection?.title} onClick={handleOnClick} />
     </Wrapper>
   );

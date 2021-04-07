@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import MoonstonePopup, { PopupProps } from '@enact/moonstone/Popup';
 
-import { isBackButton } from '../../utils/keyboard';
+import { isBackButton } from 'utils/keyboard';
 
 type Props = {
   visible: boolean;

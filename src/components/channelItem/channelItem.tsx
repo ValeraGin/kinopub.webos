@@ -3,10 +3,11 @@ import { useHistory } from 'react-router-dom';
 import GridListImageItem from '@enact/moonstone/GridListImageItem';
 import styled from 'styled-components';
 
-import { Channel } from '../../api';
-import { PATHS, generatePath } from '../../routes';
+import { Channel } from 'api';
+import Lazy from 'components/lazy';
+import { PATHS, generatePath } from 'routes';
 
-const Wrapper = styled.div`
+const Wrapper = styled(Lazy)`
   display: inline-flex;
   position: relative;
   height: 10rem !important;
@@ -37,7 +38,7 @@ const ChannelItem: React.FC<Props> = ({ channel }) => {
   }, [channel, history]);
 
   return (
-    <Wrapper>
+    <Wrapper height="10rem">
       <GridItem source={channel?.logos.s} caption={channel?.title} onClick={handleOnClick} />
     </Wrapper>
   );

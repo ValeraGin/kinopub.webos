@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Scrollable from '../../components/scrollable';
+import Scrollable from 'components/scrollable';
 
 const Wrapper = styled(Scrollable)``;
 

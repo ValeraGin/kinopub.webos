@@ -2,8 +2,8 @@ import { useLocation } from 'react-router-dom';
 import map from 'lodash/map';
 import styled from 'styled-components';
 
-import Link from '../../components/link';
-import { PATHS, generatePath } from '../../routes';
+import Link from 'components/link';
+import { PATHS, generatePath } from 'routes';
 
 const Nav = styled.nav`
   display: flex;
@@ -30,7 +30,7 @@ const menuItems: {
     {
       name: 'Главная',
       icon: 'home',
-      href: PATHS.Index,
+      href: PATHS.Home,
     },
     {
       name: 'Поиск',

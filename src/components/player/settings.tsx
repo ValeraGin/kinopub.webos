@@ -4,10 +4,10 @@ import { VideoPlayerBase } from '@enact/moonstone/VideoPlayer';
 import map from 'lodash/map';
 import styled from 'styled-components';
 
-import Popup from '../popup';
-import Text from '../text';
+import Popup from 'components/popup';
+import Text from 'components/text';
 
-import { isArrowUpButton, isPlayButton } from '../../utils/keyboard';
+import { isArrowUpButton, isPlayButton } from 'utils/keyboard';
 
 const NONE = 'NONE';
 
@@ -38,23 +38,23 @@ const SectionContentItem = styled.div<{ width?: string | number }>`
 `;
 
 type Props = {
-  player: React.MutableRefObject<VideoPlayerBase>;
+  player: React.MutableRefObject<VideoPlayerBase | undefined>;
 };
 
 const Settings: React.FC<Props> = ({ player }) => {
   const [visible, setVisible] = useState(false);
 
   const [audios, setAudios] = useState<string[]>([]);
-  const [currentAudio, setCurrentAudio] = useState<string>(null);
+  const [currentAudio, setCurrentAudio] = useState<string | null>(null);
   const [sources, setSources] = useState<string[]>([]);
-  const [currentSource, setCurrentSource] = useState<string>(null);
+  const [currentSource, setCurrentSource] = useState<string | null>(null);
   const [subtitles, setSubtitles] = useState<string[]>([]);
-  const [currentSubtitle, setCurrentSubtitle] = useState<string>(null);
+  const [currentSubtitle, setCurrentSubtitle] = useState<string | null>(null);
 
   const handleVideoUpdate = useCallback(
     (name: string, value: string) => {
       if (player.current) {
-        const video = player.current.getVideoNode();
+        const video: any = player.current.getVideoNode();
 
         const currentTime = video['currentTime'];
 

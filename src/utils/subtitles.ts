@@ -11,7 +11,7 @@ class WebVTTConverter {
     return new Promise<ArrayBuffer>((resolve, reject) => {
       const reader = new FileReader();
       reader.addEventListener('loadend', (event) => {
-        const buf = event.target.result;
+        const buf = event.target?.result;
         resolve(new Uint8Array(buf as ArrayBuffer));
       });
       reader.addEventListener('error', () => reject('Error while reading the Blob object'));
@@ -22,7 +22,7 @@ class WebVTTConverter {
   static blobToString(blob: Blob, success: (text: string) => void, fail: () => void) {
     const reader = new FileReader();
     reader.addEventListener('loadend', (event) => {
-      const text = event.target.result;
+      const text = event.target?.result;
       success(text as string);
     });
     reader.addEventListener('error', () => fail());
@@ -43,7 +43,7 @@ class WebVTTConverter {
   }
 
   static toTypedArray(str: string) {
-    const result = [];
+    const result: number[] = [];
     str.split('').forEach((each) => {
       result.push(parseInt(`${each.charCodeAt(0)}`, 16));
     });

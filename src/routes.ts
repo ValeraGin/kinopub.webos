@@ -2,6 +2,7 @@ import { generatePath as baseGeneratePath } from 'react-router-dom';
 
 export const PATHS = {
   Index: '/',
+  Home: '/home',
   Search: '/search',
   Watching: '/watching',
   Category: '/category/:categoryId',

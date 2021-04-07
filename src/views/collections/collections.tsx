@@ -1,18 +1,15 @@
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
-import CollectionsList from '../../components/collectionsList';
-import Input from '../../components/input';
-import useApi from '../../hooks/useApi';
-import MainLayout from '../../layouts/main';
-
-type Props = {};
+import CollectionsList from 'components/collectionsList';
+import Input from 'components/input';
+import useApi from 'hooks/useApi';
 
 const SearchInput = styled(Input)`
   margin-bottom: 1rem;
 `;
 
-const CollectionsView: React.FC<Props> = () => {
+const CollectionsView: React.FC = () => {
   const [query, setQuery] = useState('');
   const { data, isLoading } = useApi('collections', query, 'watchers-');
 
@@ -24,10 +21,10 @@ const CollectionsView: React.FC<Props> = () => {
   );
 
   return (
-    <MainLayout>
+    <>
       <SearchInput placeholder="Название подборки..." value={query} onChange={handleQueryChange} />
       <CollectionsList collections={data?.items} loading={isLoading} />
-    </MainLayout>
+    </>
   );
 };
 

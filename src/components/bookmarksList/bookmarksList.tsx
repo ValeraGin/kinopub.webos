@@ -1,9 +1,9 @@
 import React from 'react';
 import map from 'lodash/map';
 
-import { Bookmark } from '../../api';
-import BookmarkItem from '../bookmarkItem';
-import Scrollable from '../scrollable';
+import { Bookmark } from 'api';
+import BookmarkItem from 'components/bookmarkItem';
+import Scrollable from 'components/scrollable';
 
 type Props = {
   bookmarks?: Bookmark[];

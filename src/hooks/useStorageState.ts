@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import storage, { Key, Value } from '../storage';
+import storage, { Key, Value } from 'storage';
 
 function useStorageState<T extends Value = Value>(key: Key) {
   const [value, _setValue] = useState<T>(storage.getItem<T>(key));

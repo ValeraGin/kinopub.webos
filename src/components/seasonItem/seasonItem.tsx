@@ -5,8 +5,8 @@ import GridListImageItem from '@enact/moonstone/GridListImageItem';
 import map from 'lodash/map';
 import styled, { css } from 'styled-components';
 
-import { Item, Season, Video, WatchingStatus } from '../../api';
-import { PATHS, generatePath } from '../../routes';
+import { Item, Season, Video, WatchingStatus } from 'api';
+import { PATHS, generatePath } from 'routes';
 
 const Wrapper = styled.div`
   display: flex;

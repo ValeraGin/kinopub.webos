@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import Item from '@enact/moonstone/Item';
 import styled from 'styled-components';
 
-import Icon from '../icon';
+import Icon from 'components/icon';
 
 const StyledLink = styled(Item)`
   color: inherit;

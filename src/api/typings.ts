@@ -86,6 +86,7 @@ export type Country = {
 };
 
 export type DeviceSettingBoolean = {
+  type: undefined;
   label: string;
   value: Bool;
 };
@@ -750,7 +751,7 @@ export type ItemsWithPagination = {
   pagination: Pagination;
 };
 
-export type ItemsSearchResponse<Sectioned extends Bool> = (Sectioned extends Bool.True
+export type ItemsSearchResponse<Sectioned extends Bool | undefined> = (Sectioned extends Bool.True
   ? {
       items: {
         [key: string]: ItemsWithPagination;

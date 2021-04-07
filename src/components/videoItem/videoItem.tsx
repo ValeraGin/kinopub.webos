@@ -4,10 +4,10 @@ import GridListImageItem from '@enact/moonstone/GridListImageItem';
 import styled from 'styled-components';
 
 import { Item } from 'api';
+import Lazy from 'components/lazy';
+import { PATHS, generatePath } from 'routes';
 
-import { PATHS, generatePath } from '../../routes';
-
-const Wrapper = styled.div`
+const Wrapper = styled(Lazy)`
   display: inline-flex;
   position: relative;
   height: 20rem !important;
@@ -47,7 +47,7 @@ const VideoItem: React.FC<Props> = ({ item }) => {
   }, [item?.id, history]);
 
   return (
-    <Wrapper>
+    <Wrapper height="20rem">
       <New>{item?.new}</New>
       <GridItem source={item?.posters.medium} caption={item?.title} onClick={handleOnClick} />
     </Wrapper>

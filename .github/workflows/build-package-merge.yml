@@ -31,8 +31,14 @@ jobs:
       - name: Build app
         run: yarn build
 
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+
       - name: Package app
-        run: $(yarn bin)/ares-package ./dist --outdir ./out --no-minify
+        run: $(yarn bin)/ares-package ./build --outdir ./out --no-minify
 
       - name: Archive package
         uses: actions/upload-artifact@v2

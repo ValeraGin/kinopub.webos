@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { useMutation } from 'react-query';
 
-import ApiClient from '../api/client';
+import ApiClient from 'api';
+
 import { Method, Methods } from './useApi';
 
 function useApiMutation<TMethod extends Method, TData = Methods[TMethod], TError = string, TVariables = Parameters<ApiClient[TMethod]>>(

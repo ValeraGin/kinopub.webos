@@ -1,9 +1,9 @@
 import React from 'react';
 import map from 'lodash/map';
 
-import { Item } from '../../api';
-import Scrollable from '../scrollable';
-import VideoItem from '../videoItem';
+import { Item } from 'api';
+import Scrollable from 'components/scrollable';
+import VideoItem from 'components/videoItem';
 
 type Props = {
   items?: Item[];

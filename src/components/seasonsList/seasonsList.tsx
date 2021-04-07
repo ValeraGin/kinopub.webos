@@ -1,16 +1,16 @@
 import map from 'lodash/map';
 import styled from 'styled-components';
 
-import { Item, Season } from '../../api';
-import SeasonItem from '../seasonItem';
-import Text from '../text';
+import { Item, Season } from 'api';
+import SeasonItem from 'components/seasonItem';
+import Text from 'components/text';
 
 const Wrapper = styled.div`
   padding: 2rem;
 `;
 
 type Props = {
-  item?: Item;
+  item: Item;
   seasons?: Season[];
 };
 

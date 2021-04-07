@@ -1,16 +1,13 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { ItemDetails, Season, Streaming, Video } from '../../api';
-import Player, { PlayerProps } from '../../components/player';
-import useApiMutation from '../../hooks/useApiMutation';
-import useStorageState from '../../hooks/useStorageState';
-import FillLayout from '../../layouts/fill';
+import { ItemDetails, Season, Streaming, Video } from 'api';
+import Player, { PlayerProps } from 'components/player';
+import useApiMutation from 'hooks/useApiMutation';
+import useStorageState from 'hooks/useStorageState';
 
-import { getItemTitle } from '../../utils/item';
-import { mapAudios, mapSources, mapSubtitles } from '../../utils/video';
-
-type Props = {};
+import { getItemTitle } from 'utils/item';
+import { mapAudios, mapSources, mapSubtitles } from 'utils/video';
 
 const useNextVideo = (item: ItemDetails, season: Season, video: Video) =>
   useMemo(() => {
@@ -47,7 +44,7 @@ const usePrevNextVideos = (item: ItemDetails, season: Season, video: Video) => {
   return [previousVideo, nextVideo] as const;
 };
 
-const VideoView: React.FC<Props> = () => {
+const VideoView: React.FC = () => {
   const history = useHistory();
   const location = useLocation<{ title: string; item: ItemDetails; video: Video; season: Season }>();
   const { watchingMarkTime } = useApiMutation('watchingMarkTime');
@@ -120,7 +117,7 @@ const VideoView: React.FC<Props> = () => {
   );
 
   return (
-    <FillLayout>
+    <>
       <Player
         key={currentVideo.id}
         {...playerProps}
@@ -129,7 +126,7 @@ const VideoView: React.FC<Props> = () => {
         onJumpBackward={handleJumpBackward}
         onJumpForward={handleJumpForward}
       />
-    </FillLayout>
+    </>
   );
 };
 

@@ -1,9 +1,9 @@
 import React from 'react';
 import map from 'lodash/map';
 
-import { Collection } from '../../api';
-import CollectionItem from '../collectionItem';
-import Scrollable from '../scrollable';
+import { Collection } from 'api';
+import CollectionItem from 'components/collectionItem';
+import Scrollable from 'components/scrollable';
 
 type Props = {
   collections?: Collection[];

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
-import ApiClient from '../api';
+import ApiClient from 'api';
 
 type Unpromise<T> = T extends Promise<infer U> ? U : T;
 

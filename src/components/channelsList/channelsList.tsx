@@ -1,9 +1,9 @@
 import React from 'react';
 import map from 'lodash/map';
 
-import { Channel } from '../../api';
-import ChannelItem from '../channelItem';
-import Scrollable from '../scrollable';
+import { Channel } from 'api';
+import ChannelItem from 'components/channelItem';
+import Scrollable from 'components/scrollable';
 
 type Props = {
   channels?: Channel[];

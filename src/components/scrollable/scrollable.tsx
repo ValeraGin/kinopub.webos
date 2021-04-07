@@ -1,10 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { createContext, useEffect, useMemo, useRef } from 'react';
 import Scroller, { ScrollerProps } from '@enact/moonstone/Scroller';
 import styled from 'styled-components';
+
+import useUniqueId from 'hooks/useUniqueId';
 
 const Footer = styled.div`
   height: 5rem;
 `;
+
+export const ScrollableContext = createContext<{ id?: string }>({});
 
 type Props = {
   onScrollToFooter?: () => void;
@@ -12,6 +16,13 @@ type Props = {
 
 const Scrollable: React.FC<Props> = ({ children, onScrollToFooter, ...props }) => {
   const footerRef = useRef<HTMLDivElement>(null);
+  const id = useUniqueId('scrollable');
+  const value = useMemo(
+    () => ({
+      id,
+    }),
+    [id],
+  );
 
   useEffect(() => {
     let observer: IntersectionObserver;
@@ -41,8 +52,8 @@ const Scrollable: React.FC<Props> = ({ children, onScrollToFooter, ...props }) =
   }, [footerRef, onScrollToFooter]);
 
   return (
-    <Scroller direction="vertical" verticalScrollbar="hidden" horizontalScrollbar="hidden" {...props}>
-      {children}
+    <Scroller id={id} direction="vertical" verticalScrollbar="hidden" horizontalScrollbar="hidden" {...props}>
+      <ScrollableContext.Provider value={value}>{children}</ScrollableContext.Provider>
       <Footer ref={footerRef} />
     </Scroller>
   );

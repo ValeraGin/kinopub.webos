@@ -3,20 +3,19 @@ import { useHistory, useParams } from 'react-router-dom';
 import map from 'lodash/map';
 import styled from 'styled-components';
 
-import { WatchingStatus } from '../../api';
-import Button from '../../components/button';
-import ItemsList from '../../components/itemsList';
-import Popup from '../../components/popup';
-import SeasonsList from '../../components/seasonsList';
-import Text from '../../components/text';
-import Bookmarks from '../../containers/bookmarks';
-import useApi from '../../hooks/useApi';
-import useApiMutation from '../../hooks/useApiMutation';
-import useStreamingTypeEffect from '../../hooks/useStreamingTypeEffect';
-import FillLayout from '../../layouts/fill';
-import { PATHS, RouteParams, generatePath } from '../../routes';
+import { WatchingStatus } from 'api';
+import Button from 'components/button';
+import ItemsList from 'components/itemsList';
+import Popup from 'components/popup';
+import SeasonsList from 'components/seasonsList';
+import Text from 'components/text';
+import Bookmarks from 'containers/bookmarks';
+import useApi from 'hooks/useApi';
+import useApiMutation from 'hooks/useApiMutation';
+import useStreamingTypeEffect from 'hooks/useStreamingTypeEffect';
+import { PATHS, RouteParams, generatePath } from 'routes';
 
-import { getItemTitle } from '../../utils/item';
+import { getItemTitle } from 'utils/item';
 
 const Page = styled.div`
   position: relative;
@@ -50,6 +49,7 @@ const Description = styled.div`
   display: flex;
   flex-direction: column;
   padding: 2rem;
+  white-space: pre-wrap;
 `;
 
 const TrackList = styled.div`
@@ -68,14 +68,12 @@ const SimilarList = styled.div`
   padding: 2rem;
 `;
 
-type Props = {};
-
-const ItemView: React.FC<Props> = () => {
+const ItemView: React.FC = () => {
   const history = useHistory();
   const { itemId } = useParams<RouteParams>();
   const [visible, setVisible] = useState(false);
-  const { data, refetch } = useApi('itemMedia', itemId);
-  const { data: similarData } = useApi('itemSmiliar', itemId);
+  const { data, refetch } = useApi('itemMedia', itemId!);
+  const { data: similarData } = useApi('itemSmiliar', itemId!);
   const { watchingToggleWatchlistAsync } = useApiMutation('watchingToggleWatchlist');
 
   const video = useMemo(
@@ -128,16 +126,16 @@ const ItemView: React.FC<Props> = () => {
   }, []);
 
   const handleOnVisibilityClick = useCallback(async () => {
-    await watchingToggleWatchlistAsync([itemId]);
+    await watchingToggleWatchlistAsync([itemId!]);
     refetch();
   }, [itemId, watchingToggleWatchlistAsync, refetch]);
 
   useStreamingTypeEffect();
 
   return (
-    <FillLayout>
+    <>
       <Page>
-        <Poster src={data?.item.posters.wide || data?.item.posters.big} />
+        <Poster src={(data?.item?.posters.wide || data?.item?.posters.big)!} />
         <Title>{title}</Title>
         <Actions>
           <div>
@@ -150,7 +148,7 @@ const ItemView: React.FC<Props> = () => {
             </Button>
 
             <Popup visible={visible} onVisibilityChange={setVisible}>
-              <Bookmarks key={`${itemId}-${visible}`} itemId={itemId} />
+              <Bookmarks key={`${itemId}-${visible}`} itemId={itemId!} />
             </Popup>
 
             {typeof data?.item.subscribed === 'boolean' && (
@@ -170,7 +168,7 @@ const ItemView: React.FC<Props> = () => {
         </Actions>
       </Page>
       <Page>
-        <SeasonsList item={data?.item} seasons={data?.item.seasons} />
+        <SeasonsList item={data?.item!} seasons={data?.item?.seasons} />
 
         <Description>
           <Text>{data?.item.plot}</Text>
@@ -189,15 +187,15 @@ const ItemView: React.FC<Props> = () => {
           )}
         </Description>
 
-        {similarData?.items?.length > 0 && (
+        {similarData?.items?.length! > 0 && (
           <SimilarList>
             <Text>Похожие</Text>
 
-            <ItemsList items={similarData?.items} />
+            <ItemsList items={similarData?.items} scrollable={false} />
           </SimilarList>
         )}
       </Page>
-    </FillLayout>
+    </>
   );
 };
 

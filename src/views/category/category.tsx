@@ -3,14 +3,11 @@ import { useParams } from 'react-router-dom';
 import flatMap from 'lodash/flatMap';
 import uniqBy from 'lodash/uniqBy';
 
-import ItemsList from '../../components/itemsList';
-import useApiInfinite from '../../hooks/useApiInfinite';
-import MainLayout from '../../layouts/main';
-import { RouteParams } from '../../routes';
+import ItemsList from 'components/itemsList';
+import useApiInfinite from 'hooks/useApiInfinite';
+import { RouteParams } from 'routes';
 
-type Props = {};
-
-const CategoryView: React.FC<Props> = () => {
+const CategoryView: React.FC = () => {
   const { categoryId } = useParams<RouteParams>();
   const [canFetchNextPage, setCanFetchNextPage] = useState(false);
   const { data, isLoading, isFetchingNextPage, fetchNextPage } = useApiInfinite('items', {
@@ -28,6 +25,7 @@ const CategoryView: React.FC<Props> = () => {
   const handleLoadMore = useCallback(() => {
     if (canFetchNextPage) {
       fetchNextPage();
+      setCanFetchNextPage(false);
     }
   }, [canFetchNextPage, fetchNextPage]);
 
@@ -36,9 +34,9 @@ const CategoryView: React.FC<Props> = () => {
   }, [items.length]);
 
   return (
-    <MainLayout>
+    <>
       <ItemsList items={items} loading={isLoading || isFetchingNextPage} onLoadMore={handleLoadMore} />
-    </MainLayout>
+    </>
   );
 };
 

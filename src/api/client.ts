@@ -1,4 +1,5 @@
-import storage from '../storage';
+import storage from 'storage';
+
 import KinopubApiClient from './kinopub';
 
 class ApiClient extends KinopubApiClient {
@@ -23,13 +24,13 @@ class ApiClient extends KinopubApiClient {
   }
 
   protected saveTokens({ access_token, refresh_token, expires_in }: { access_token: string; refresh_token: string; expires_in: number }) {
-    storage.setItem('is_logged', true, expires_in);
+    storage.setItem('is_logged', true, 30 * 24 * 3600);
     storage.setItem('access_token', access_token, expires_in);
     storage.setItem('refresh_token', refresh_token, 30 * 24 * 3600);
   }
 
   protected clearTokens() {
-    ['is_logged', 'access_token', 'refresh_token'].forEach(storage.removeItem);
+    (['is_logged', 'access_token', 'refresh_token'] as const).forEach(storage.removeItem);
   }
 }
 

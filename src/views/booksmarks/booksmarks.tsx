@@ -1,16 +1,13 @@
-import BookmarksList from '../../components/bookmarksList';
-import useApi from '../../hooks/useApi';
-import MainLayout from '../../layouts/main';
+import BookmarksList from 'components/bookmarksList';
+import useApi from 'hooks/useApi';
 
-type Props = {};
-
-const BooksmarksView: React.FC<Props> = () => {
+const BooksmarksView: React.FC = () => {
   const { data, isLoading } = useApi('bookmarks');
 
   return (
-    <MainLayout>
+    <>
       <BookmarksList bookmarks={data?.items} loading={isLoading} />
-    </MainLayout>
+    </>
   );
 };
 

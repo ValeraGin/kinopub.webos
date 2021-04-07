@@ -50,7 +50,7 @@ class KinopubApiClient extends BaseApiClient {
 
   private clientSecret: string;
 
-  private accessTokenCheckIntervaId: NodeJS.Timeout;
+  private accessTokenCheckIntervaId!: NodeJS.Timeout | null;
 
   constructor(
     clientId: string = KINOPUB_API_CLIENT_ID,
@@ -64,7 +64,7 @@ class KinopubApiClient extends BaseApiClient {
   }
 
   clearTimers() {
-    clearInterval(this.accessTokenCheckIntervaId);
+    clearInterval(this.accessTokenCheckIntervaId!);
 
     this.accessTokenCheckIntervaId = null;
   }
@@ -137,19 +137,16 @@ class KinopubApiClient extends BaseApiClient {
    * Авторизация устройства
    */
   async deviceAuthorization(deviceInfo: DeviceInfo, onConfirm?: OnConfirm) {
-    const accessToken = this.getAccessToken();
     const refreshToken = this.getRefreshToken();
 
-    if (accessToken) {
-      this.deviceNotify(deviceInfo);
-    } else if (refreshToken) {
+    if (refreshToken) {
       const response = await this.refreshTokens(refreshToken);
 
       await this.processTokensReponse(response, deviceInfo);
     } else {
       const { interval, code, user_code, verification_uri } = await this.requestDeviceCode();
 
-      onConfirm(user_code, verification_uri);
+      onConfirm?.(user_code, verification_uri);
 
       await new Promise<void>((resolve, reject) => {
         this.clearTimers();

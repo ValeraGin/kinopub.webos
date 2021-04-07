@@ -1,14 +1,14 @@
 import EnactButton, { ButtonProps } from '@enact/moonstone/Button';
 import styled from 'styled-components';
 
-import Icon from '../icon';
+import Icon from 'components/icon';
 
 const StyledButton = styled(EnactButton)`
   color: inherit;
   text-decoration: none;
 `;
 
-const ButtonInner = styled.div<{ iconOnly: boolean }>`
+const ButtonInner = styled.div<{ iconOnly?: boolean }>`
   display: flex;
   align-items: center;
   color: inherit;

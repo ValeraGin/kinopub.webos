@@ -2,8 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import VideoPlayer, { VideoPlayerBase, VideoPlayerBaseProps } from '@enact/moonstone/VideoPlayer';
 import styled from 'styled-components';
 
-import Media, { AudioTrack, SourceTrack, SubtitleTrack } from '../media';
-import Text from '../text';
+import Media, { AudioTrack, SourceTrack, SubtitleTrack } from 'components/media';
+import Text from 'components/text';
+
 import Settings from './settings';
 
 const Wrapper = styled.div`
@@ -36,7 +37,7 @@ export type PlayerProps = {
 } & VideoPlayerBaseProps;
 
 const Player: React.FC<PlayerProps> = ({ title, description, poster, audios, sources, subtitles, onPlay, onPause, onEnded, ...props }) => {
-  const playerRef = useRef<VideoPlayerBase>(null);
+  const playerRef = useRef<VideoPlayerBase>();
   const [titleVisible, setTitleVisible] = useState(true);
 
   const handlePlay = useCallback(() => {

@@ -3,9 +3,9 @@ import CheckboxItem from '@enact/moonstone/CheckboxItem';
 import map from 'lodash/map';
 import styled from 'styled-components';
 
-import { Bookmark } from '../../api';
-import useApi from '../../hooks/useApi';
-import useApiMutation from '../../hooks/useApiMutation';
+import { Bookmark } from 'api';
+import useApi from 'hooks/useApi';
+import useApiMutation from 'hooks/useApiMutation';
 
 const Wrapper = styled.div`
   display: flex;

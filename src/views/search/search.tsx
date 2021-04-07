@@ -6,20 +6,17 @@ import orderBy from 'lodash/orderBy';
 import uniqBy from 'lodash/uniqBy';
 import styled from 'styled-components';
 
-import { Item } from '../../api';
-import Input from '../../components/input';
-import ItemsList from '../../components/itemsList';
-import useApiInfinite from '../../hooks/useApiInfinite';
-import useRouteState from '../../hooks/useRouteState';
-import MainLayout from '../../layouts/main';
-
-type Props = {};
+import { Item } from 'api';
+import Input from 'components/input';
+import ItemsList from 'components/itemsList';
+import useApiInfinite from 'hooks/useApiInfinite';
+import useRouteState from 'hooks/useRouteState';
 
 const SearchInput = styled(Input)`
   margin-bottom: 1rem;
 `;
 
-const SearchView: React.FC<Props> = () => {
+const SearchView: React.FC = () => {
   const location = useLocation<{ type?: string; field?: string }>();
   const [canFetchNextPage, setCanFetchNextPage] = useState(false);
   const [query, setQuery] = useRouteState('q', '');
@@ -48,10 +45,10 @@ const SearchView: React.FC<Props> = () => {
   }, [items.length]);
 
   return (
-    <MainLayout>
+    <>
       <SearchInput placeholder="Название фильма или сериала..." value={query} onChange={handleQueryChange} />
       <ItemsList items={orderedItems} loading={(isLoading || isFetchingNextPage) && query.length >= 3} onLoadMore={handleLoadMore} />
-    </MainLayout>
+    </>
   );
 };
 

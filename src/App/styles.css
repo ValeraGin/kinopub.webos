@@ -1,0 +1,15 @@
+:root {
+  --main-color: #cf0652;
+  --text-color: #ccc;
+  --background-color: #383838;
+  --white: #fff;
+
+  /* --main-color: yellow; */
+  /* --text-color: green; */
+  /* --background-color: blue; */
+  /* --white: #fff; */
+}
+
+.enact_moonstone_Button_Button_minWidth {
+  min-width: auto !important;
+}

@@ -2,15 +2,11 @@ import { useCallback, useMemo } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { ItemDetails, Trailer } from 'api';
+import Player, { PlayerProps } from 'components/player';
 
-import Player, { PlayerProps } from '../../components/player';
-import FillLayout from '../../layouts/fill';
+import { mapSources } from 'utils/video';
 
-import { mapSources } from '../../utils/video';
-
-type Props = {};
-
-const TrailerView: React.FC<Props> = () => {
+const TrailerView: React.FC = () => {
   const history = useHistory();
   const location = useLocation<{ item: ItemDetails; trailer: Trailer }>();
   const { item, trailer } = location.state;
@@ -29,9 +25,9 @@ const TrailerView: React.FC<Props> = () => {
   }, [history]);
 
   return (
-    <FillLayout>
+    <>
       <Player {...playerProps} onEnded={handleOnEnded} />
-    </FillLayout>
+    </>
   );
 };
 

@@ -3,10 +3,11 @@ import { useHistory } from 'react-router-dom';
 import GridListImageItem from '@enact/moonstone/GridListImageItem';
 import styled from 'styled-components';
 
-import { Bookmark } from '../../api';
-import { PATHS, generatePath } from '../../routes';
+import { Bookmark } from 'api';
+import Lazy from 'components/lazy';
+import { PATHS, generatePath } from 'routes';
 
-const Wrapper = styled.div`
+const Wrapper = styled(Lazy)`
   display: inline-flex;
   position: relative;
   height: 10rem !important;
@@ -40,7 +41,7 @@ const BookmarkItem: React.FC<Props> = ({ bookmark }) => {
   }, [bookmark, history]);
 
   return (
-    <Wrapper>
+    <Wrapper height="10rem">
       <GridItem source={source} caption={bookmark?.title} onClick={handleOnClick} />
     </Wrapper>
   );

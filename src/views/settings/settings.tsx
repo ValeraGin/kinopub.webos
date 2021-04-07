@@ -6,12 +6,11 @@ import findIndex from 'lodash/findIndex';
 import map from 'lodash/map';
 import styled from 'styled-components';
 
-import { Bool, DeviceSettingBoolean, DeviceSettingList, DeviceSettingsParams } from '../../api';
-import Button from '../../components/button';
-import Text from '../../components/text';
-import useApi from '../../hooks/useApi';
-import useApiMutation from '../../hooks/useApiMutation';
-import MainLayout from '../../layouts/main';
+import { Bool, DeviceSettingBoolean, DeviceSettingList, DeviceSettingsParams } from 'api';
+import Button from 'components/button';
+import Text from 'components/text';
+import useApi from 'hooks/useApi';
+import useApiMutation from 'hooks/useApiMutation';
 
 const Content = styled.div`
   height: 100%;
@@ -64,9 +63,7 @@ const SettingList: React.FC<{ setting: DeviceSettingList; onSelect?: Function }>
   );
 };
 
-type Props = {};
-
-const SettingsView: React.FC<Props> = () => {
+const SettingsView: React.FC = () => {
   const { data } = useApi('user');
   const { data: deviceInfo } = useApi('deviceInfo');
   const { saveDeviceSettingsAsync } = useApiMutation('saveDeviceSettings');
@@ -77,34 +74,34 @@ const SettingsView: React.FC<Props> = () => {
     () =>
       filter(
         map(deviceInfo?.device?.settings, (setting, key) => ({ ...setting, key })),
-        (setting) => typeof setting['type'] === 'undefined',
-      ) as DeviceSettingBoolean[],
+        (setting: DeviceSettingBoolean) => typeof setting['type'] === 'undefined',
+      ) as (DeviceSettingBoolean & { key: string })[],
     [deviceInfo?.device?.settings],
   );
   const listSettings = useMemo(
     () =>
       filter(
         map(deviceInfo?.device?.settings, (setting, key) => ({ ...setting, key })),
-        (setting: DeviceSettingBoolean) => setting['type'] === 'list',
-      ) as DeviceSettingList[],
+        (setting: DeviceSettingList) => setting['type'] === 'list',
+      ) as (DeviceSettingList & { key: string })[],
     [deviceInfo?.device?.settings],
   );
 
   const handleBoolSettingToggle = useCallback(
-    (setting: DeviceSettingBoolean) => async ({ selected }) => {
+    (setting: typeof boolSettings[0]) => async ({ selected }: { selected: boolean }) => {
       setNewSettings({ ...newSettings, [setting['key']]: selected });
     },
     [newSettings],
   );
   const handleListSettingSelect = useCallback(
-    (setting: DeviceSettingList) => ({ selected }) => {
+    (setting: typeof listSettings[0]) => ({ selected }: { selected: number }) => {
       setNewSettings({ ...newSettings, [setting['key']]: setting.value[selected].id });
     },
     [newSettings],
   );
 
   const handleSaveClick = useCallback(async () => {
-    await saveDeviceSettingsAsync([deviceInfo?.device.id, newSettings]);
+    await saveDeviceSettingsAsync([deviceInfo?.device.id!, newSettings]);
 
     window.location.reload();
   }, [newSettings, deviceInfo?.device, saveDeviceSettingsAsync]);
@@ -113,7 +110,7 @@ const SettingsView: React.FC<Props> = () => {
   }, [deactivate]);
 
   return (
-    <MainLayout>
+    <>
       <Text>Настройки устройства</Text>
 
       <Content>
@@ -160,7 +157,7 @@ const SettingsView: React.FC<Props> = () => {
           </User>
         </div>
       </Content>
-    </MainLayout>
+    </>
   );
 };
 
