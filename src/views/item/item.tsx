@@ -7,6 +7,7 @@ import { WatchingStatus } from 'api';
 import Button from 'components/button';
 import ItemsList from 'components/itemsList';
 import Popup from 'components/popup';
+import Scrollable from 'components/scrollable';
 import SeasonsList from 'components/seasonsList';
 import Text from 'components/text';
 import Bookmarks from 'containers/bookmarks';
@@ -17,16 +18,13 @@ import { PATHS, RouteParams, generatePath } from 'routes';
 
 import { getItemTitle } from 'utils/item';
 
-const Page = styled.div`
+const Cover = styled.div`
   position: relative;
-  width: 100vw;
-  height: 100vh;
 `;
 
 const Poster = styled.div<{ src: string }>`
-  position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  min-height: 100vh;
   background: url(${(props) => props.src});
   background-size: cover;
 `;
@@ -34,6 +32,7 @@ const Poster = styled.div<{ src: string }>`
 const Title = styled(Text)`
   position: absolute;
   padding: 0 1rem;
+  top: 0;
 `;
 
 const Actions = styled.div`
@@ -133,8 +132,8 @@ const ItemView: React.FC = () => {
   useStreamingTypeEffect();
 
   return (
-    <>
-      <Page>
+    <Scrollable>
+      <Cover>
         <Poster src={(data?.item?.posters.wide || data?.item?.posters.big)!} />
         <Title>{title}</Title>
         <Actions>
@@ -166,36 +165,35 @@ const ItemView: React.FC = () => {
             )}
           </div>
         </Actions>
-      </Page>
-      <Page>
-        <SeasonsList item={data?.item!} seasons={data?.item?.seasons} />
+      </Cover>
 
-        <Description>
-          <Text>{data?.item.plot}</Text>
+      <SeasonsList item={data?.item!} seasons={data?.item?.seasons} />
 
-          {!!data?.item.tracklist?.length && (
-            <>
-              <Text>Треклист</Text>
-              <TrackList>
-                {map(data?.item.tracklist, (track, idx) => (
-                  <Text key={idx}>
-                    {idx + 1}. {track.title}
-                  </Text>
-                ))}
-              </TrackList>
-            </>
-          )}
-        </Description>
+      <Description>
+        <Text>{data?.item.plot}</Text>
 
-        {similarData?.items?.length! > 0 && (
-          <SimilarList>
-            <Text>Похожие</Text>
-
-            <ItemsList items={similarData?.items} scrollable={false} />
-          </SimilarList>
+        {!!data?.item.tracklist?.length && (
+          <>
+            <Text>Треклист</Text>
+            <TrackList>
+              {map(data?.item.tracklist, (track, idx) => (
+                <Text key={idx}>
+                  {idx + 1}. {track.title}
+                </Text>
+              ))}
+            </TrackList>
+          </>
         )}
-      </Page>
-    </>
+      </Description>
+
+      {similarData?.items?.length! > 0 && (
+        <SimilarList>
+          <Text>Похожие</Text>
+
+          <ItemsList items={similarData?.items} scrollable={false} />
+        </SimilarList>
+      )}
+    </Scrollable>
   );
 };
 
