@@ -3,17 +3,18 @@ tag-template: 'v$RESOLVED_VERSION'
 categories:
   - title: '🚀 Features'
     labels:
-      - 'feat'
       - 'feature'
+      - 'feat'
       - 'enhancement'
       - 'improvement'
   - title: '🐛 Bug Fixes'
     labels:
-      - 'fix'
       - 'bugfix'
+      - 'fix'
       - 'bug'
   - title: '🧰 Maintenance'
-    label: 'chore'
+    labels:
+      - 'chore'
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 change-title-escapes: '\<*_&'
 version-resolver:
@@ -27,3 +28,8 @@ version-resolver:
     labels:
       - 'patch'
   default: patch
+category-template: '### $TITLE'
+template: |
+  ## What’s Changed
+
+  $CHANGES
