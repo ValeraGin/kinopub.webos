@@ -1,7 +1,8 @@
-import { createContext, useEffect, useMemo, useRef } from 'react';
+import { createContext, useMemo, useRef } from 'react';
 import Scroller, { ScrollerProps } from '@enact/moonstone/Scroller';
 import styled from 'styled-components';
 
+import useInViewport from 'hooks/useInViewport';
 import useUniqueId from 'hooks/useUniqueId';
 
 const Footer = styled.div`
@@ -11,10 +12,10 @@ const Footer = styled.div`
 export const ScrollableContext = createContext<{ id?: string }>({});
 
 type Props = {
-  onScrollToFooter?: () => void;
+  onScrollToEnd?: () => void;
 } & ScrollerProps;
 
-const Scrollable: React.FC<Props> = ({ children, onScrollToFooter, ...props }) => {
+const Scrollable: React.FC<Props> = ({ children, onScrollToEnd, ...props }) => {
   const footerRef = useRef<HTMLDivElement>(null);
   const id = useUniqueId('scrollable');
   const value = useMemo(
@@ -24,32 +25,7 @@ const Scrollable: React.FC<Props> = ({ children, onScrollToFooter, ...props }) =
     [id],
   );
 
-  useEffect(() => {
-    let observer: IntersectionObserver;
-
-    if (footerRef.current) {
-      observer = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].intersectionRatio > 0) {
-            onScrollToFooter?.();
-          }
-        },
-        {
-          root: null,
-          rootMargin: '0px',
-          threshold: 0.5,
-        },
-      );
-
-      observer.observe(footerRef.current);
-    }
-
-    return () => {
-      if (observer) {
-        observer.disconnect();
-      }
-    };
-  }, [footerRef, onScrollToFooter]);
+  useInViewport(footerRef, { onEnterViewport: onScrollToEnd });
 
   return (
     <Scroller id={id} direction="vertical" verticalScrollbar="hidden" horizontalScrollbar="hidden" {...props}>

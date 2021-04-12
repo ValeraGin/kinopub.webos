@@ -445,9 +445,11 @@ class KinopubApiClient extends BaseApiClient {
   /**
    * Список фильмов/сериалов в папке
    * @param id Идентификатор закладки
+   * @param page Текущая страница
+   * @param perpage Количество на страницу
    */
-  bookmarkItems(id: string) {
-    return this.get<BookmarkItemsResponse>(`/v1/bookmarks/${id}`);
+  bookmarkItems(id: string, page?: number, perpage?: number) {
+    return this.get<BookmarkItemsResponse>(`/v1/bookmarks/${id}`, { page, perpage });
   }
 
   /**

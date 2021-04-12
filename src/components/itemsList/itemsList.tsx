@@ -8,11 +8,11 @@ import VideoItem from 'components/videoItem';
 type Props = {
   items?: Item[];
   loading?: boolean;
-  onLoadMore?: () => void;
+  onScrollToEnd?: () => void;
   scrollable?: boolean;
 };
 
-const ItemsList: React.FC<Props> = ({ items, loading, onLoadMore, scrollable = true }) => {
+const ItemsList: React.FC<Props> = ({ items, loading, onScrollToEnd, scrollable = true }) => {
   const content = (
     <>
       {map(items, (item) => (
@@ -22,7 +22,7 @@ const ItemsList: React.FC<Props> = ({ items, loading, onLoadMore, scrollable = t
     </>
   );
 
-  return scrollable ? <Scrollable onScrollToFooter={onLoadMore}>{content}</Scrollable> : content;
+  return scrollable ? <Scrollable onScrollToEnd={onScrollToEnd}>{content}</Scrollable> : content;
 };
 
 export default ItemsList;

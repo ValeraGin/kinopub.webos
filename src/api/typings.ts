@@ -819,7 +819,7 @@ export type BookmarksResponse = {
 export type BookmarkItemsResponse = {
   folder: Bookmark;
   items: Item[];
-} & Response;
+} & PaginationResponse;
 
 export type ItemBookmarksResponse = {
   folders: Bookmark[];

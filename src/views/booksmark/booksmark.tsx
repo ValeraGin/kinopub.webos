@@ -1,19 +1,19 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-import ItemsList from 'components/itemsList';
 import Text from 'components/text';
-import useApi from 'hooks/useApi';
+import ItemsListInfinite from 'containers/itemsListInfinite';
+import useApiInfinite from 'hooks/useApiInfinite';
 import { RouteParams } from 'routes';
 
 const BookmarkView: React.FC = () => {
   const { bookmarkId } = useParams<RouteParams>();
-  const { data, isLoading } = useApi('bookmarkItems', bookmarkId!);
+  const queryResult = useApiInfinite('bookmarkItems', bookmarkId!);
 
   return (
     <>
-      <Text>{data?.folder.title}</Text>
-      <ItemsList items={data?.items} loading={isLoading} />
+      <Text>{queryResult?.data?.pages?.[0]?.folder?.title}</Text>
+      <ItemsListInfinite queryResult={queryResult} />
     </>
   );
 };

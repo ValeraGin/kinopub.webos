@@ -1,41 +1,18 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import flatMap from 'lodash/flatMap';
-import uniqBy from 'lodash/uniqBy';
 
-import ItemsList from 'components/itemsList';
+import ItemsListInfinite from 'containers/itemsListInfinite';
 import useApiInfinite from 'hooks/useApiInfinite';
 import { RouteParams } from 'routes';
 
 const CategoryView: React.FC = () => {
   const { categoryId } = useParams<RouteParams>();
-  const [canFetchNextPage, setCanFetchNextPage] = useState(false);
-  const { data, isLoading, isFetchingNextPage, fetchNextPage } = useApiInfinite('items', {
+  const queryResult = useApiInfinite('items', {
     type: categoryId,
   });
-  const items = useMemo(
-    () =>
-      uniqBy(
-        flatMap(data?.pages, (page) => page.items),
-        'id',
-      ),
-    [data?.pages],
-  );
-
-  const handleLoadMore = useCallback(() => {
-    if (canFetchNextPage) {
-      fetchNextPage();
-      setCanFetchNextPage(false);
-    }
-  }, [canFetchNextPage, fetchNextPage]);
-
-  useEffect(() => {
-    setCanFetchNextPage(true);
-  }, [items.length]);
 
   return (
     <>
-      <ItemsList items={items} loading={isLoading || isFetchingNextPage} onLoadMore={handleLoadMore} />
+      <ItemsListInfinite queryResult={queryResult} />
     </>
   );
 };
