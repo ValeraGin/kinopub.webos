@@ -23,19 +23,20 @@ type Props = {
 
 const Bookmarks: React.FC<Props> = ({ itemId }) => {
   const { data } = useApi('bookmarks');
-  const { data: itemBookmarks } = useApi('itemBookmarks', itemId);
-  const { bookmarkToggleItem } = useApiMutation('bookmarkToggleItem');
+  const { data: itemBookmarks, dataUpdatedAt, refetch } = useApi('itemBookmarks', itemId);
+  const { bookmarkToggleItemAsync } = useApiMutation('bookmarkToggleItem');
   const bookmarksIds = useMemo(() => itemBookmarks?.folders.map((bookmark) => bookmark.id) || [], [itemBookmarks?.folders]);
 
   const handleCheckboxToggle = useCallback(
-    (bookmark: Bookmark) => () => {
-      bookmarkToggleItem([itemId, bookmark.id]);
+    (bookmark: Bookmark) => async () => {
+      await bookmarkToggleItemAsync([itemId, bookmark.id]);
+      refetch();
     },
-    [itemId, bookmarkToggleItem],
+    [itemId, bookmarkToggleItemAsync, refetch],
   );
 
   return (
-    <Wrapper>
+    <Wrapper key={dataUpdatedAt}>
       {map(data?.items, (bookmark) => (
         <BookmarkItem key={bookmark.updated}>
           <CheckboxItem defaultSelected={bookmarksIds.includes(bookmark.id)} onToggle={handleCheckboxToggle(bookmark)}>
