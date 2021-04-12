@@ -15,7 +15,7 @@ function useDeviceAuthorizationEffect() {
 
   const handleOnConfirm = useCallback(
     (userCode: string, verificationUri: string) => {
-      history.push(PATHS.Pair, {
+      history.replace(PATHS.Pair, {
         userCode,
         verificationUri,
       });
@@ -27,7 +27,7 @@ function useDeviceAuthorizationEffect() {
     const timeoutId = setTimeout(async () => {
       await deviceAuthorizationAsync([deviceInfo, handleOnConfirm]);
 
-      history.push(PATHS.Home);
+      history.replace(PATHS.Home);
     }, 500);
 
     return () => {
