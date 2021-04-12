@@ -1,6 +1,5 @@
 {
   "id": "kinopub.webos",
-  "version": "1.0.4",
   "vendor": "LGE-SVL",
   "type": "web",
   "main": "index.html",

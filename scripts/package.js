@@ -33,6 +33,7 @@ async function generatePackage(appIdIndex = 0) {
         {
           ...appInfo,
           id: appId,
+          version: pkg.version,
         },
         null,
         4,
