@@ -38,7 +38,7 @@ jobs:
           publish_dir: ./build
 
       - name: Package app
-        run: $(yarn bin)/ares-package ./build --outdir ./out --no-minify
+        run: yarn package
 
       - name: Archive package
         uses: actions/upload-artifact@v2

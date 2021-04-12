@@ -9,6 +9,7 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
+    "package": "node ./scripts/package.js",
     "test": "craco test",
     "lint": "concurrently \"yarn run eslint\"",
     "lint:fix": "concurrently \"yarn run eslint:fix\"",
