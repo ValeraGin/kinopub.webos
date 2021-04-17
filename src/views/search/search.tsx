@@ -34,7 +34,7 @@ const SearchView: React.FC = () => {
 
   return (
     <>
-      <SearchInput placeholder="Название фильма или сериала..." value={query} onChange={handleQueryChange} />
+      <SearchInput autoFocus placeholder="Название фильма или сериала..." value={query} onChange={handleQueryChange} />
       {query.length >= 3 && <ItemsListInfinite queryResult={queryResult} processItems={orderItems} />}
     </>
   );
