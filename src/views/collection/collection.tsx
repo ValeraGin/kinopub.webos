@@ -8,7 +8,7 @@ import { RouteParams } from 'routes';
 
 const CollectionView: React.FC = () => {
   const { collectionId } = useParams<RouteParams>();
-  const { data, isLoading } = useApi('collectionItems', collectionId!);
+  const { data, isLoading } = useApi('collectionItems', [collectionId!]);
 
   return (
     <>

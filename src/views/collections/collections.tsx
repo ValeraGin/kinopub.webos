@@ -11,7 +11,7 @@ const SearchInput = styled(Input)`
 
 const CollectionsView: React.FC = () => {
   const [query, setQuery] = useState('');
-  const { data, isLoading } = useApi('collections', query, 'watchers-');
+  const { data, isLoading } = useApi('collections', [query, 'watchers-']);
 
   const handleQueryChange = useCallback(
     ({ value }) => {

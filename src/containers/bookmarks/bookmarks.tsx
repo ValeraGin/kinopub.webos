@@ -23,7 +23,7 @@ type Props = {
 
 const Bookmarks: React.FC<Props> = ({ itemId }) => {
   const { data } = useApi('bookmarks');
-  const { data: itemBookmarks, dataUpdatedAt, refetch } = useApi('itemBookmarks', itemId);
+  const { data: itemBookmarks, dataUpdatedAt, refetch } = useApi('itemBookmarks', [itemId]);
   const { bookmarkToggleItemAsync } = useApiMutation('bookmarkToggleItem');
   const bookmarksIds = useMemo(() => itemBookmarks?.folders.map((bookmark) => bookmark.id) || [], [itemBookmarks?.folders]);
 

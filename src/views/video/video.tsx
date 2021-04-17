@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { ItemDetails, Season, Streaming, Video } from 'api';
 import Player, { PlayerProps } from 'components/player';
+import useApi from 'hooks/useApi';
 import useApiMutation from 'hooks/useApiMutation';
 import useStorageState from 'hooks/useStorageState';
 
@@ -54,6 +55,8 @@ const VideoView: React.FC = () => {
   const [currentVideo, setCurrentVideo] = useState(video);
   const [previousVideo, nextVideo] = usePrevNextVideos(item, season, currentVideo);
 
+  const currentVideoLinks = useApi('itemMediaLinks', [currentVideo.id]);
+
   const saveCurrentTime = useCallback(
     ({ number }: Video, currentTime: number) => {
       watchingMarkTime([item.id, currentTime, number, season?.number]);
@@ -61,16 +64,20 @@ const VideoView: React.FC = () => {
     [watchingMarkTime, item, season],
   );
 
-  const playerProps = useMemo<PlayerProps>(
-    () => ({
-      title: getItemTitle(item, currentVideo, season),
-      description: currentVideo.title,
-      poster: item.posters.wide || item.posters.big,
-      audios: mapAudios(currentVideo.audios),
-      sources: mapSources(currentVideo.files, streamingType),
-      subtitles: mapSubtitles(currentVideo.subtitles),
-    }),
-    [item, season, currentVideo, streamingType],
+  const playerProps = useMemo<PlayerProps | null>(
+    () =>
+      currentVideoLinks?.data
+        ? {
+            title: getItemTitle(item, currentVideo, season),
+            description: currentVideo.title,
+            poster: item.posters.wide || item.posters.big,
+            audios: mapAudios(currentVideo.audios),
+            sources: mapSources(currentVideoLinks.data.files, streamingType),
+            subtitles: mapSubtitles(currentVideoLinks.data.subtitles),
+            startTime: currentVideo.watching.time,
+          }
+        : null,
+    [item, season, currentVideo, currentVideoLinks?.data, streamingType],
   );
 
   const handlePause = useCallback(
@@ -116,16 +123,26 @@ const VideoView: React.FC = () => {
     [saveCurrentTime, currentVideo, nextVideo],
   );
 
+  const handleTimeSync = useCallback(
+    (currentTime: number) => {
+      saveCurrentTime(currentVideo, currentTime);
+    },
+    [saveCurrentTime, currentVideo],
+  );
+
   return (
     <>
-      <Player
-        key={currentVideo.id}
-        {...playerProps}
-        onPause={handlePause}
-        onEnded={handleOnEnded}
-        onJumpBackward={handleJumpBackward}
-        onJumpForward={handleJumpForward}
-      />
+      {playerProps && (
+        <Player
+          key={currentVideo.id}
+          {...playerProps}
+          onPause={handlePause}
+          onEnded={handleOnEnded}
+          onJumpBackward={handleJumpBackward}
+          onJumpForward={handleJumpForward}
+          onTimeSync={handleTimeSync}
+        />
+      )}
     </>
   );
 };

@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { WatchingStatus } from 'api';
 import Button from 'components/button';
 import ItemsList from 'components/itemsList';
+import Lazy from 'components/lazy';
 import Popup from 'components/popup';
 import Scrollable from 'components/scrollable';
 import SeasonsList from 'components/seasonsList';
@@ -67,12 +68,28 @@ const SimilarList = styled.div`
   padding: 2rem;
 `;
 
+const SimilarItems: React.FC<{ itemId: string }> = ({ itemId }) => {
+  const { data } = useApi('itemSmiliar', [itemId]);
+
+  if (data && data.items.length > 0) {
+    return (
+      <SimilarList>
+        <Text>Похожие</Text>
+
+        <ItemsList items={data.items} scrollable={false} />
+      </SimilarList>
+    );
+  }
+
+  return null;
+};
+
 const ItemView: React.FC = () => {
   const history = useHistory();
   const { itemId } = useParams<RouteParams>();
   const [visible, setVisible] = useState(false);
-  const { data, refetch } = useApi('itemMedia', itemId!);
-  const { data: similarData } = useApi('itemSmiliar', itemId!);
+  const { data, refetch } = useApi('itemMedia', [itemId!], { staleTime: 0 });
+
   const { watchingToggleWatchlistAsync } = useApiMutation('watchingToggleWatchlist');
 
   const video = useMemo(
@@ -186,13 +203,9 @@ const ItemView: React.FC = () => {
         )}
       </Description>
 
-      {similarData?.items?.length! > 0 && (
-        <SimilarList>
-          <Text>Похожие</Text>
-
-          <ItemsList items={similarData?.items} scrollable={false} />
-        </SimilarList>
-      )}
+      <Lazy height="50rem">
+        <SimilarItems itemId={itemId!} />
+      </Lazy>
     </Scrollable>
   );
 };

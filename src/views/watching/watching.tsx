@@ -5,7 +5,7 @@ import ItemsList from 'components/itemsList';
 import useApi from 'hooks/useApi';
 
 const WatchingView: React.FC = () => {
-  const { data, isLoading } = useApi('watchingSerials', Bool.True);
+  const { data, isLoading } = useApi('watchingSerials', [Bool.True]);
 
   return (
     <>

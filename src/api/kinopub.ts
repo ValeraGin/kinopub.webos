@@ -360,7 +360,7 @@ class KinopubApiClient extends BaseApiClient {
    * У больших сериалов ссылки занимают львиную долю объема ответа причем большинство из этих ссылок не используется в рамках 1 запроса.
    * В следующей версии значение по умолчанию станет 1, а через версию параметр станет недоступным и ссылки нужно будет всегда получать в отдельном запросе.
    */
-  itemMedia(id: string, nolinks?: Bool) {
+  itemMedia(id: string, nolinks: Bool = Bool.True) {
     return this.get<ItemMediaResponse>(`/v1/items/${id}`, { nolinks });
   }
 

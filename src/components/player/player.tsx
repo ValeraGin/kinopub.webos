@@ -31,12 +31,29 @@ export type PlayerProps = {
   audios?: AudioTrack[];
   sources: SourceTrack[];
   subtitles?: SubtitleTrack[];
+  startTime?: number;
+  timeSyncInterval?: number;
   onPlay?: () => void;
   onPause?: (currentTime: number) => void;
   onEnded?: (currentTime: number) => void;
+  onTimeSync?: (currentTime: number) => void;
 } & VideoPlayerBaseProps;
 
-const Player: React.FC<PlayerProps> = ({ title, description, poster, audios, sources, subtitles, onPlay, onPause, onEnded, ...props }) => {
+const Player: React.FC<PlayerProps> = ({
+  title,
+  description,
+  poster,
+  audios,
+  sources,
+  subtitles,
+  startTime,
+  timeSyncInterval = 30,
+  onPlay,
+  onPause,
+  onEnded,
+  onTimeSync,
+  ...props
+}) => {
   const playerRef = useRef<VideoPlayerBase>();
   const [titleVisible, setTitleVisible] = useState(true);
 
@@ -59,12 +76,64 @@ const Player: React.FC<PlayerProps> = ({ title, description, poster, audios, sou
   );
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     if (titleVisible) {
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         setTitleVisible(false);
       }, 5 * 1000);
     }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [titleVisible]);
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (onTimeSync) {
+      intervalId = setInterval(() => {
+        if (playerRef.current) {
+          const video: any = playerRef.current.getVideoNode();
+
+          const currentTime = video['currentTime'];
+
+          onTimeSync(currentTime);
+        }
+      }, timeSyncInterval * 1000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [timeSyncInterval, onTimeSync, playerRef]);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    if (startTime) {
+      timeoutId = setTimeout(() => {
+        if (playerRef.current) {
+          const video: any = playerRef.current.getVideoNode();
+
+          if (1 - startTime / video.duration > 0.01) {
+            video['currentTime'] = startTime;
+          }
+        }
+      }, 500);
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [startTime, playerRef]);
 
   return (
     <Wrapper>
