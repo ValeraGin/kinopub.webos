@@ -8,15 +8,10 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-const StyledMenu = styled(Menu)`
-  width: 12rem;
-  padding: 1rem 0.5rem;
-`;
-
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  width: calc(100% - 12rem);
+  width: 100%;
   padding: 1rem 0;
 `;
 
@@ -27,7 +22,7 @@ type Props = {
 const MainLayout: React.FC<Props> = ({ children, ...rest }) => {
   return (
     <Wrapper {...rest}>
-      <StyledMenu />
+      <Menu />
       <Content>{children}</Content>
     </Wrapper>
   );

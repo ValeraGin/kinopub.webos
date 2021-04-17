@@ -10,21 +10,21 @@ const StyledLink = styled(Item)`
   text-decoration: none;
 `;
 
-const LinkInner = styled.div`
+const LinkInner = styled.div<{ iconOnly?: boolean }>`
   display: flex;
   align-items: center;
   color: inherit;
   text-decoration: none;
 
   ${Icon} {
-    margin-right: 0.5rem;
+    margin-right: ${(props) => !props.iconOnly && '0.5rem'};
   }
 `;
 
 type Props = {
   href: string;
   icon?: string;
-  iconOnly?: string;
+  iconOnly?: boolean;
   onClick?: () => void;
 };
 
@@ -37,7 +37,7 @@ const Link: React.FC<Props> = ({ href, children, icon, iconOnly, onClick, ...pro
 
   return (
     <StyledLink {...props} onClick={handleOnClick}>
-      <LinkInner>
+      <LinkInner iconOnly={iconOnly}>
         {icon && <Icon name={icon} />}
         {!iconOnly && children}
       </LinkInner>

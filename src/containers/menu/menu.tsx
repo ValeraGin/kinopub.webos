@@ -9,6 +9,7 @@ const Nav = styled.nav`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding: 1rem 0.5rem;
 `;
 
 const List = styled.ul`
