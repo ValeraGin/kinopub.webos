@@ -11,10 +11,14 @@ export type Methods = {
 
 export type Method = keyof ApiClient & string;
 
-function useApi<T extends Method>(method: T, params?: Parameters<ApiClient[T]>, options?: UseQueryOptions<Methods[T]>) {
+function useApi<T extends Method>(
+  method: T,
+  params: Parameters<ApiClient[T]> = [] as Parameters<ApiClient[T]>,
+  options?: UseQueryOptions<Methods[T]>,
+) {
   const client = useMemo(() => new ApiClient(), []);
   const query = useQuery<Methods[T]>(
-    [method, ...(params || [])],
+    [method, ...params],
     () =>
       // @ts-expect-error
       client[method](...params) as Methods[T],
