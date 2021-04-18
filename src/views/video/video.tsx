@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { ItemDetails, Season, Streaming, Video } from 'api';
+import { ItemDetails, Season, Streaming, Video, WatchingStatus } from 'api';
 import Player, { PlayerProps } from 'components/player';
 import useApi from 'hooks/useApi';
 import useApiMutation from 'hooks/useApiMutation';
@@ -48,7 +48,7 @@ const usePrevNextVideos = (item: ItemDetails, season: Season, video: Video) => {
 const VideoView: React.FC = () => {
   const history = useHistory();
   const location = useLocation<{ title: string; item: ItemDetails; video: Video; season: Season }>();
-  const { watchingMarkTime } = useApiMutation('watchingMarkTime');
+  const { watchingMarkTimeAsync } = useApiMutation('watchingMarkTime');
   const [streamingType] = useStorageState<Streaming>('streaming_type');
   const { item, video, season } = location.state;
 
@@ -58,10 +58,10 @@ const VideoView: React.FC = () => {
   const currentVideoLinks = useApi('itemMediaLinks', [currentVideo.id]);
 
   const saveCurrentTime = useCallback(
-    ({ number }: Video, currentTime: number) => {
-      watchingMarkTime([item.id, currentTime, number, season?.number]);
+    async ({ number }: Video, currentTime: number) => {
+      await watchingMarkTimeAsync([item.id, currentTime, number, season?.number]);
     },
-    [watchingMarkTime, item, season],
+    [watchingMarkTimeAsync, item, season],
   );
 
   const playerProps = useMemo<PlayerProps | null>(
@@ -74,7 +74,7 @@ const VideoView: React.FC = () => {
             audios: mapAudios(currentVideo.audios),
             sources: mapSources(currentVideoLinks.data.files, streamingType),
             subtitles: mapSubtitles(currentVideoLinks.data.subtitles),
-            startTime: currentVideo.watching.time,
+            startTime: currentVideo.watching.status === WatchingStatus.Watching ? currentVideo.watching.time : 0,
           }
         : null,
     [item, season, currentVideo, currentVideoLinks?.data, streamingType],
@@ -124,8 +124,8 @@ const VideoView: React.FC = () => {
   );
 
   const handleTimeSync = useCallback(
-    (currentTime: number) => {
-      saveCurrentTime(currentVideo, currentTime);
+    async (currentTime: number) => {
+      await saveCurrentTime(currentVideo, currentTime);
     },
     [saveCurrentTime, currentVideo],
   );

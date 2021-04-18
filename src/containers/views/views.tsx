@@ -1,11 +1,9 @@
-import { useEffect } from 'react';
 import { Switch, useHistory } from 'react-router-dom';
 import { Panels, PanelsProps } from '@enact/moonstone/Panels';
 import styled from 'styled-components';
 
+import useBackButtonEffect from 'hooks/useBackButtonEffect';
 import useDeviceAuthorizationEffect from 'hooks/useDeviceAuthorizationEffect';
-
-import { isBackButton } from 'utils/keyboard';
 
 const StyledPanels = styled(Panels)`
   article {
@@ -13,28 +11,12 @@ const StyledPanels = styled(Panels)`
   }
 `;
 
-const useBackButtonEffect = () => {
-  const history = useHistory();
-
-  useEffect(() => {
-    const listiner = (e: KeyboardEvent) => {
-      if (isBackButton(e)) {
-        history.goBack();
-      }
-    };
-
-    window.addEventListener('keydown', listiner);
-
-    return () => {
-      window.removeEventListener('keydown', listiner);
-    };
-  }, [history]);
-};
-
 type Props = {} & PanelsProps;
 
 const Views: React.FC<Props> = ({ children, ...props }) => {
-  useBackButtonEffect();
+  const history = useHistory();
+
+  useBackButtonEffect(history.goBack);
   useDeviceAuthorizationEffect();
 
   return (

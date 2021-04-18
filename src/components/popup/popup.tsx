@@ -1,7 +1,7 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import MoonstonePopup, { PopupProps } from '@enact/moonstone/Popup';
 
-import { isBackButton } from 'utils/keyboard';
+import useBackButtonEffect from 'hooks/useBackButtonEffect';
 
 type Props = {
   visible: boolean;
@@ -16,20 +16,15 @@ const Popup: React.FC<Props> = ({ visible, onVisibilityChange, ...props }) => {
     onVisibilityChange(false);
   }, [onVisibilityChange]);
 
-  useEffect(() => {
-    const listiner = (e: KeyboardEvent) => {
-      if (isBackButton(e) && visible) {
-        e.stopPropagation();
-        onVisibilityChange(false);
-      }
-    };
+  const handleCloseOnBackButton = useCallback(() => {
+    if (visible) {
+      onVisibilityChange(false);
 
-    window.addEventListener('keydown', listiner, true);
-
-    return () => {
-      window.removeEventListener('keydown', listiner, true);
-    };
+      return false;
+    }
   }, [visible, onVisibilityChange]);
+
+  useBackButtonEffect(handleCloseOnBackButton);
 
   return <MoonstonePopup {...props} open={visible} onShow={handleShow} onClose={handleClose} />;
 };

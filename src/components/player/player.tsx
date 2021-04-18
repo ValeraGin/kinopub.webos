@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import Media, { AudioTrack, SourceTrack, SubtitleTrack } from 'components/media';
 import Text from 'components/text';
+import useBackButtonEffect from 'hooks/useBackButtonEffect';
 
 import Settings from './settings';
 
@@ -36,7 +37,7 @@ export type PlayerProps = {
   onPlay?: () => void;
   onPause?: (currentTime: number) => void;
   onEnded?: (currentTime: number) => void;
-  onTimeSync?: (currentTime: number) => void;
+  onTimeSync?: (currentTime: number) => void | Promise<void>;
 } & VideoPlayerBaseProps;
 
 const Player: React.FC<PlayerProps> = ({
@@ -74,6 +75,15 @@ const Player: React.FC<PlayerProps> = ({
     },
     [onEnded],
   );
+  const handleTimeSync = useCallback(async () => {
+    if (playerRef.current && onTimeSync) {
+      const video: any = playerRef.current.getVideoNode();
+
+      const currentTime = video['currentTime'];
+
+      await onTimeSync(currentTime);
+    }
+  }, [onTimeSync, playerRef]);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
@@ -95,15 +105,7 @@ const Player: React.FC<PlayerProps> = ({
     let intervalId: NodeJS.Timeout;
 
     if (onTimeSync) {
-      intervalId = setInterval(() => {
-        if (playerRef.current) {
-          const video: any = playerRef.current.getVideoNode();
-
-          const currentTime = video['currentTime'];
-
-          onTimeSync(currentTime);
-        }
-      }, timeSyncInterval * 1000);
+      intervalId = setInterval(handleTimeSync, timeSyncInterval * 1000);
     }
 
     return () => {
@@ -111,7 +113,7 @@ const Player: React.FC<PlayerProps> = ({
         clearInterval(intervalId);
       }
     };
-  }, [timeSyncInterval, onTimeSync, playerRef]);
+  }, [timeSyncInterval, onTimeSync, handleTimeSync]);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
@@ -134,6 +136,8 @@ const Player: React.FC<PlayerProps> = ({
       }
     };
   }, [startTime, playerRef]);
+
+  useBackButtonEffect(handleTimeSync);
 
   return (
     <Wrapper>
