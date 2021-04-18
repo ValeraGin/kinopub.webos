@@ -11,10 +11,12 @@ const CategoryView: React.FC = () => {
   const location = useLocation<{ params?: ItemsParams; title?: string }>();
   const { params, title } = location.state || {};
 
-  const queryResult = useApiInfinite('items', {
-    ...params,
-    type: categoryId,
-  });
+  const queryResult = useApiInfinite('items', [
+    {
+      ...params,
+      type: categoryId,
+    },
+  ]);
 
   return (
     <>

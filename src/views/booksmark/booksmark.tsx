@@ -8,7 +8,7 @@ import { RouteParams } from 'routes';
 
 const BookmarkView: React.FC = () => {
   const { bookmarkId } = useParams<RouteParams>();
-  const queryResult = useApiInfinite('bookmarkItems', bookmarkId!);
+  const queryResult = useApiInfinite('bookmarkItems', [bookmarkId!]);
 
   return (
     <>

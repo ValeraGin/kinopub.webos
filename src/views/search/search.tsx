@@ -20,11 +20,13 @@ function orderItems(items: Item[]) {
 const SearchView: React.FC = () => {
   const location = useLocation<{ type?: string; field?: string }>();
   const [query, setQuery] = useRouteState('q', '');
-  const queryResult = useApiInfinite('itemsSearch', {
-    q: query,
-    type: location.state?.type,
-    field: location.state?.field,
-  });
+  const queryResult = useApiInfinite('itemsSearch', [
+    {
+      q: query,
+      type: location.state?.type,
+      field: location.state?.field,
+    },
+  ]);
   const handleQueryChange = useCallback(
     ({ value }) => {
       setQuery(value);

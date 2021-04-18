@@ -8,11 +8,12 @@ import Scrollable from 'components/scrollable';
 type Props = {
   collections?: Collection[];
   loading?: boolean;
+  onScrollToEnd?: () => void;
 };
 
-const CollectionsList: React.FC<Props> = ({ collections, loading }) => {
+const CollectionsList: React.FC<Props> = ({ collections, loading, onScrollToEnd }) => {
   return (
-    <Scrollable>
+    <Scrollable onScrollToEnd={onScrollToEnd}>
       {map(collections, (collection) => (
         <CollectionItem key={collection.id} collection={collection} />
       ))}

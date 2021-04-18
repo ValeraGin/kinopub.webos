@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
-import CollectionsList from 'components/collectionsList';
 import Input from 'components/input';
-import useApi from 'hooks/useApi';
+import CollectionsListInfinite from 'containers/collectionsListInfinite';
+import useApiInfinite from 'hooks/useApiInfinite';
 
 const SearchInput = styled(Input)`
   margin-bottom: 1rem;
@@ -11,7 +11,7 @@ const SearchInput = styled(Input)`
 
 const CollectionsView: React.FC = () => {
   const [query, setQuery] = useState('');
-  const { data, isLoading } = useApi('collections', [query, 'watchers-']);
+  const queryResult = useApiInfinite('collections', [query, 'watchers-']);
 
   const handleQueryChange = useCallback(
     ({ value }) => {
@@ -23,7 +23,7 @@ const CollectionsView: React.FC = () => {
   return (
     <>
       <SearchInput placeholder="Название подборки..." value={query} onChange={handleQueryChange} />
-      <CollectionsList collections={data?.items} loading={isLoading} />
+      <CollectionsListInfinite queryResult={queryResult} />
     </>
   );
 };
