@@ -56,13 +56,7 @@ const Settings: React.FC<Props> = ({ player }) => {
       if (player.current) {
         const video: any = player.current.getVideoNode();
 
-        const currentTime = video['currentTime'];
-
         video[name] = value;
-
-        setTimeout(() => {
-          video['currentTime'] = currentTime - 1;
-        }, 500);
       }
     },
     [player],

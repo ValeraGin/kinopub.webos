@@ -33,17 +33,32 @@ class Media extends UIMedia {
   };
 
   props!: MediaProps & {
+    startTime?: number;
     audioTracks?: AudioTrack[];
     sourceTracks: SourceTrack[];
     subtitleTracks?: SubtitleTrack[];
   };
 
   load(src: string) {
+    let startTime = this.props.startTime;
+
+    if (this.state?.src && this.state.src !== src) {
+      startTime = this.media.currentTime;
+    }
+
     this.destroy();
 
     const media = this.media;
 
     this.setState({ src });
+
+    const handleLoaded = () => {
+      if (startTime) {
+        media.currentTime = startTime;
+      }
+
+      media.play();
+    };
 
     if (src.includes('.m3u8') && HLS.isSupported()) {
       const hls = (this.hls = new HLS());
@@ -51,20 +66,14 @@ class Media extends UIMedia {
       hls.attachMedia(media);
       hls.on(HLS.Events.MEDIA_ATTACHED, () => {
         hls.loadSource(src);
-        hls.on(HLS.Events.MANIFEST_PARSED, () => {
-          // @ts-expect-error
-          this['play']();
-        });
+        hls.on(HLS.Events.MANIFEST_PARSED, handleLoaded);
       });
 
       return;
     }
 
     media.src = src;
-    media.addEventListener('loadedmetadata', () => {
-      // @ts-expect-error
-      this['play']();
-    });
+    media.addEventListener('loadedmetadata', handleLoaded);
   }
 
   get audioTracks() {

@@ -115,28 +115,6 @@ const Player: React.FC<PlayerProps> = ({
     };
   }, [timeSyncInterval, onTimeSync, handleTimeSync]);
 
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-
-    if (startTime) {
-      timeoutId = setTimeout(() => {
-        if (playerRef.current) {
-          const video: any = playerRef.current.getVideoNode();
-
-          if (1 - startTime / video.duration > 0.01) {
-            video['currentTime'] = startTime;
-          }
-        }
-      }, 500);
-    }
-
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [startTime, playerRef]);
-
   useBackButtonEffect(handleTimeSync);
 
   return (
@@ -155,6 +133,7 @@ const Player: React.FC<PlayerProps> = ({
           onPlay={handlePlay}
           onPause={handlePause}
           onEnded={handleEnded}
+          startTime={startTime}
           audioTracks={audios}
           sourceTracks={sources}
           subtitleTracks={subtitles}
