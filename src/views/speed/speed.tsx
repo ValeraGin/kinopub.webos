@@ -55,6 +55,7 @@ const SpeedView: React.FC = () => {
         const worker = new window['Speedtest']();
 
         worker._settings.test_order = 'IP_D';
+        worker._settings.xhr_dlMultistream = 1;
 
         worker.setSelectedServer(server);
 
