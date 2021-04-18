@@ -1,3 +1,5 @@
+import isArray from 'lodash/isArray';
+
 type Primitive = string | number | boolean;
 
 type Param = Primitive | null | undefined | Param[] | { [key: string]: Param };
@@ -17,15 +19,16 @@ export const stringifyParams = (params?: Params) =>
     return value;
   });
 
+export const encodeParam = (param: Param) =>
+  encodeURIComponent(isPrimitive(param) ? (param as Primitive) : stringifyParams(param as Record<string, Param>));
+
+export const normalizeArrayParams = (key: string, params: Param[]) =>
+  params.map((param, idx) => `${encodeParam(`${key}[${idx}]`)}=${encodeParam(param)}`).join('&');
+
 export const normalizeParams = (params?: Params) =>
   Object.keys(params || {})
     .filter((key) => params?.[key] !== '' && params?.[key] !== null && params?.[key] !== undefined)
-    .map(
-      (key) =>
-        `${key}=${encodeURIComponent(
-          isPrimitive(params?.[key]) ? (params?.[key] as Primitive) : stringifyParams(params?.[key] as Record<string, Param>),
-        )}`,
-    )
+    .map((key) => (isArray(params?.[key]) ? normalizeArrayParams(key, params?.[key]! as Param[]) : `${key}=${encodeParam(params?.[key])}`))
     .join('&');
 
 class BaseApiClient {

@@ -1,65 +1,65 @@
-import { Item } from 'api';
+import { useMemo } from 'react';
+import styled from 'styled-components';
+
+import { ItemsParams } from 'api';
 import ItemsList from 'components/itemsList';
 import Lazy from 'components/lazy';
+import Link from 'components/link';
 import Scrollable from 'components/scrollable';
-import Text from 'components/text';
 import useApi from 'hooks/useApi';
+import { PATHS, generatePath } from 'routes';
 
-const ItemsSection: React.FC<{ title: string; items?: Item[]; loading?: boolean }> = ({ title, items, loading }) => {
+const ItemsSectionWrapper = styled.div`
+  padding-bottom: 1rem;
+`;
+
+const ItemsSection: React.FC<{ title: string; params: ItemsParams }> = ({ title, params }) => {
+  const { data, isLoading } = useApi('items', [params, 0, 10]);
+  const href = useMemo(() => generatePath(PATHS.Category, { categoryId: params.type }), [params]);
+
   return (
-    <>
-      <Text>{title}</Text>
-      <ItemsList items={items} loading={loading} scrollable={false} />
-    </>
+    <ItemsSectionWrapper>
+      <Link href={href} state={{ params, title }}>
+        {title}
+      </Link>
+      <ItemsList items={data?.items} loading={isLoading} scrollable={false} />
+    </ItemsSectionWrapper>
   );
 };
 
-const PopularMovies: React.FC = () => {
-  const { data, isLoading } = useApi('itemsPopular', ['movie', 0, 10]);
+const now = new Date();
+const lastMonth = now.setMonth(now.getMonth() - 1) / 1000;
 
-  return <ItemsSection title="Популярные фильмы" items={data?.items} loading={isLoading} />;
+const PopularMovies: React.FC = () => {
+  return <ItemsSection title="Популярные фильмы" params={{ type: 'movie', sort: 'views-', conditions: [`created>${lastMonth}`] }} />;
 };
 
 const NewMovies: React.FC = () => {
-  const { data, isLoading } = useApi('items', [{ type: 'movie', sort: 'created-' }, 0, 10]);
-
-  return <ItemsSection title="Новые фильмы" items={data?.items} loading={isLoading} />;
+  return <ItemsSection title="Новые фильмы" params={{ type: 'movie', sort: 'created-' }} />;
 };
 
 const PopularSerials: React.FC = () => {
-  const { data, isLoading } = useApi('items', [{ type: 'serial', sort: 'watchers-' }, 0, 10]);
-
-  return <ItemsSection title="Популярные сериалы" items={data?.items} loading={isLoading} />;
+  return <ItemsSection title="Популярные сериалы" params={{ type: 'serial', sort: 'watchers-' }} />;
 };
 
 const NewSerials: React.FC = () => {
-  const { data, isLoading } = useApi('items', [{ type: 'serial', sort: 'created-' }, 0, 10]);
-
-  return <ItemsSection title="Новые сериалы" items={data?.items} loading={isLoading} />;
+  return <ItemsSection title="Новые сериалы" params={{ type: 'serial', sort: 'created-' }} />;
 };
 
 const NewConcerts: React.FC = () => {
-  const { data, isLoading } = useApi('items', [{ type: 'concert', sort: 'created-' }, 0, 10]);
-
-  return <ItemsSection title="Новые концерты" items={data?.items} loading={isLoading} />;
+  return <ItemsSection title="Новые концерты" params={{ type: 'concert', sort: 'created-' }} />;
 };
 
 const NewDocuMovies: React.FC = () => {
-  const { data, isLoading } = useApi('items', [{ type: 'documovie', sort: 'created-' }, 0, 10]);
-
-  return <ItemsSection title="Новые документальные фильмы" items={data?.items} loading={isLoading} />;
+  return <ItemsSection title="Новые документальные фильмы" params={{ type: 'documovie', sort: 'created-' }} />;
 };
 
 const NewDocuSerials: React.FC = () => {
-  const { data, isLoading } = useApi('items', [{ type: 'docuserial', sort: 'created-' }, 0, 10]);
-
-  return <ItemsSection title="Новые документальные сериалы" items={data?.items} loading={isLoading} />;
+  return <ItemsSection title="Новые документальные сериалы" params={{ type: 'docuserial', sort: 'created-' }} />;
 };
 
 const NewTVShows: React.FC = () => {
-  const { data, isLoading } = useApi('items', [{ type: 'tvshow', sort: 'created-' }, 0, 10]);
-
-  return <ItemsSection title="Новые ТВ шоу" items={data?.items} loading={isLoading} />;
+  return <ItemsSection title="Новые ТВ шоу" params={{ type: 'tvshow', sort: 'created-' }} />;
 };
 
 const HomeView: React.FC = () => {

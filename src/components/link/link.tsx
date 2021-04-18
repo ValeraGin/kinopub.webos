@@ -25,15 +25,16 @@ type Props = {
   href: string;
   icon?: string;
   iconOnly?: boolean;
+  state?: any;
   onClick?: () => void;
 };
 
-const Link: React.FC<Props> = ({ href, children, icon, iconOnly, onClick, ...props }) => {
+const Link: React.FC<Props> = ({ href, state, children, icon, iconOnly, onClick, ...props }) => {
   const history = useHistory();
   const handleOnClick = useCallback(() => {
-    history.push(href);
+    history.push(href, state);
     onClick?.();
-  }, [href, onClick, history]);
+  }, [href, state, onClick, history]);
 
   return (
     <StyledLink {...props} onClick={handleOnClick}>
