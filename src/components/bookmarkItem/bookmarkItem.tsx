@@ -24,9 +24,10 @@ type Props = {
 
 const BookmarkItem: React.FC<Props> = ({ bookmark }) => {
   const history = useHistory();
-  const source = useMemo(() => (bookmark ? `https://dummyimage.com/250x200/222/fff.png&text=${`Фильмов ${bookmark.count}`}` : ''), [
-    bookmark,
-  ]);
+  const source = useMemo(
+    () => (bookmark ? `https://dummyimage.com/250x200/222/fff.png&text=${`Фильмов ${bookmark.count}`}` : ''),
+    [bookmark],
+  );
   const handleOnClick = useCallback(() => {
     if (bookmark?.id) {
       history.push(

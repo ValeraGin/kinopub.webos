@@ -88,15 +88,17 @@ const SettingsView: React.FC = () => {
   );
 
   const handleBoolSettingToggle = useCallback(
-    (setting: typeof boolSettings[0]) => async ({ selected }: { selected: boolean }) => {
-      setNewSettings({ ...newSettings, [setting['key']]: selected });
-    },
+    (setting: typeof boolSettings[0]) =>
+      async ({ selected }: { selected: boolean }) => {
+        setNewSettings({ ...newSettings, [setting['key']]: selected });
+      },
     [newSettings],
   );
   const handleListSettingSelect = useCallback(
-    (setting: typeof listSettings[0]) => ({ selected }: { selected: number }) => {
-      setNewSettings({ ...newSettings, [setting['key']]: setting.value[selected].id });
-    },
+    (setting: typeof listSettings[0]) =>
+      ({ selected }: { selected: number }) => {
+        setNewSettings({ ...newSettings, [setting['key']]: setting.value[selected].id });
+      },
     [newSettings],
   );
 

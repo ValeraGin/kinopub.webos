@@ -65,9 +65,9 @@ class BaseApiClient {
 
       return json as T;
     } catch (ex) {
-      return ({
+      return {
         error: ex.toString() as string,
-      } as unknown) as T;
+      } as unknown as T;
     }
   }
 

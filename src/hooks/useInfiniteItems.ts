@@ -16,7 +16,7 @@ function useInfiniteItems<T>(queryResult: QueryResult, processItems?: (items: T[
   const [canFetchNextPage, setCanFetchNextPage] = useState(false);
 
   const items = useMemo(
-    () => uniqBy(filter(flatMap<PageWithItems<T>, T>((data?.pages as unknown) as PageWithItems<T>[], (page) => page.items)), 'id'),
+    () => uniqBy(filter(flatMap<PageWithItems<T>, T>(data?.pages as unknown as PageWithItems<T>[], (page) => page.items)), 'id'),
     [data?.pages],
   );
   const processedItems = useMemo(() => (processItems ? processItems(items) : items), [items, processItems]);

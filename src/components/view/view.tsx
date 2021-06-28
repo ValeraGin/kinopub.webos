@@ -20,13 +20,14 @@ const View: React.FC<ViewProps> = ({ component, layout, ...props }) => {
     return MainLayout;
   }, [layout]);
   const render = useMemo<React.FC<RouteComponentProps>>(
-    () => (routeProps) => (
-      <Panel>
-        <Layout>
-          <Suspense fallback={<Spinner />}>{createElement(component!, routeProps)}</Suspense>
-        </Layout>
-      </Panel>
-    ),
+    () => (routeProps) =>
+      (
+        <Panel>
+          <Layout>
+            <Suspense fallback={<Spinner />}>{createElement(component!, routeProps)}</Suspense>
+          </Layout>
+        </Panel>
+      ),
     [component, Layout],
   );
 

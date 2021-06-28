@@ -15,10 +15,10 @@ function useStreamingTypeEffect() {
     () => find(deviceInfo?.device.settings.streamingType.value, ({ selected }) => selected === Bool.True),
     [deviceInfo?.device],
   );
-  const streamingType = useMemo(() => find(streamingTypes?.items, (streamingType) => streamingType?.id === selectedStreamingType?.id), [
-    streamingTypes?.items,
-    selectedStreamingType,
-  ]);
+  const streamingType = useMemo(
+    () => find(streamingTypes?.items, (streamingType) => streamingType?.id === selectedStreamingType?.id),
+    [streamingTypes?.items, selectedStreamingType],
+  );
 
   useEffect(() => {
     if (streamingType?.code) {
