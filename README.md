@@ -2,6 +2,8 @@
 
 A Kinopub client for LG Smart TVs with WebOS - using EnactJS, Moonstone
 
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/adascal/kinopub.webos)
+
 ## Requirements
 
 - LG Smart TV with WebOS v4+
