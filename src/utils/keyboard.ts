@@ -15,9 +15,9 @@ export function isArrowUpButton(e: KeyboardEvent): boolean {
   return e.code === 'ArrowUp';
 }
 
-export type BackButtonHandler = () => void | boolean | Promise<void> | Promise<boolean>;
+export type ButtonClickHandler = () => void | boolean | Promise<void> | Promise<boolean>;
 
-let BACK_BUTTON_HANDLERS: BackButtonHandler[];
+let BACK_BUTTON_HANDLERS: ButtonClickHandler[];
 
 function listenBackButton() {
   window.addEventListener('keydown', async (e: KeyboardEvent) => {
@@ -33,7 +33,7 @@ function listenBackButton() {
   });
 }
 
-export function registerBackButtonHandler(handler: BackButtonHandler) {
+export function registerBackButtonHandler(handler: ButtonClickHandler) {
   if (!BACK_BUTTON_HANDLERS) {
     BACK_BUTTON_HANDLERS = [];
 

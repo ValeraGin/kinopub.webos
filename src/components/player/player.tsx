@@ -7,6 +7,7 @@ import Text from 'components/text';
 import useBackButtonEffect from 'hooks/useBackButtonEffect';
 
 import Settings from './settings';
+import StartFrom from './startFrom';
 
 const Wrapper = styled.div`
   video {
@@ -121,25 +122,23 @@ const Player: React.FC<PlayerProps> = ({
     <Wrapper>
       <Title visible={titleVisible}>{title}</Title>
       <Settings player={playerRef} />
+      {startTime! > 0 && <StartFrom startTime={startTime} player={playerRef} />}
 
-      {
-        <VideoPlayer
-          {...props}
-          //@ts-expect-error
-          ref={playerRef}
-          title={description}
-          poster={poster}
-          jumpBy={10}
-          onPlay={handlePlay}
-          onPause={handlePause}
-          onEnded={handleEnded}
-          startTime={startTime}
-          audioTracks={audios}
-          sourceTracks={sources}
-          subtitleTracks={subtitles}
-          videoComponent={Media}
-        />
-      }
+      <VideoPlayer
+        {...props}
+        //@ts-expect-error
+        ref={playerRef}
+        title={description}
+        poster={poster}
+        jumpBy={10}
+        onPlay={handlePlay}
+        onPause={handlePause}
+        onEnded={handleEnded}
+        audioTracks={audios}
+        sourceTracks={sources}
+        subtitleTracks={subtitles}
+        videoComponent={Media}
+      />
     </Wrapper>
   );
 };

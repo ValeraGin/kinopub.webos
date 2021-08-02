@@ -14,6 +14,7 @@ import Text from 'components/text';
 import Bookmarks from 'containers/bookmarks';
 import useApi from 'hooks/useApi';
 import useApiMutation from 'hooks/useApiMutation';
+import usePlayButtonEffect from 'hooks/usePlayButtonEffect';
 import useStreamingTypeEffect from 'hooks/useStreamingTypeEffect';
 import { PATHS, RouteParams, generatePath } from 'routes';
 
@@ -147,6 +148,7 @@ const ItemView: React.FC = () => {
   }, [itemId, watchingToggleWatchlistAsync, refetch]);
 
   useStreamingTypeEffect();
+  usePlayButtonEffect(handleOnPlayClick);
 
   return (
     <Scrollable>

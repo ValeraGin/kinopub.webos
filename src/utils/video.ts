@@ -1,5 +1,6 @@
 import filter from 'lodash/filter';
 import map from 'lodash/map';
+import orderBy from 'lodash/orderBy';
 import toUpper from 'lodash/toUpper';
 
 import { Audio, Streaming, Subtitle } from 'api';
@@ -24,10 +25,13 @@ export function mapSources(
   files: { url: string | { [key in Streaming]?: string }; quality?: string }[],
   streamingType?: Streaming,
 ): SourceTrack[] {
-  return map(files, (file) => ({
-    src: (typeof file.url === 'string' ? file.url : file.url[streamingType!] || file.url.http) as string,
-    name: file.quality!,
-  }));
+  return orderBy(
+    map(files, (file) => ({
+      src: (typeof file.url === 'string' ? file.url : file.url[streamingType!] || file.url.http) as string,
+      name: file.quality!,
+    })),
+    ({ name }) => +name,
+  );
 }
 
 export function mapSubtitles(subtitles: Subtitle[]): SubtitleTrack[] {

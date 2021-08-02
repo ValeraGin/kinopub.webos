@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-import { BackButtonHandler, registerBackButtonHandler } from 'utils/keyboard';
+import { ButtonClickHandler, registerBackButtonHandler } from 'utils/keyboard';
 
-function useBackButtonEffect(handler: BackButtonHandler) {
+function useBackButtonEffect(handler: ButtonClickHandler) {
   useEffect(() => {
     const unregister = registerBackButtonHandler(handler);
 
