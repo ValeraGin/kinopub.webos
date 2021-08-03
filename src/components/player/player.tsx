@@ -86,7 +86,7 @@ const Player: React.FC<PlayerProps> = ({
       await onTimeSync(currentTime);
     }
   }, [onTimeSync, playerRef]);
-  const handleLoadedData = useCallback(() => {
+  const handleLoadedMetadata = useCallback(() => {
     setIsLoaded(true);
   }, []);
 
@@ -138,7 +138,7 @@ const Player: React.FC<PlayerProps> = ({
         onPlay={handlePlay}
         onPause={handlePause}
         onEnded={handleEnded}
-        onLoadedData={handleLoadedData}
+        onLoadedMetadata={handleLoadedMetadata}
         audioTracks={audios}
         sourceTracks={sources}
         subtitleTracks={subtitles}
