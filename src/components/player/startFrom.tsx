@@ -22,7 +22,7 @@ type Props = {
 const StartFrom: React.FC<Props> = ({ startTime, startInDelay = 5, player }) => {
   const [visible, setVisible] = useState(true);
   const [startIn, setStartIn] = useState(startInDelay);
-  const startFrom = useMemo(() => new Date((startTime || 0) * 1000).toISOString().substr(11, 8), [startTime]);
+  const startFrom = useMemo(() => new Date((startTime || 0) * 1000).toISOString().substr(11, 8).replace(/^00:/, ''), [startTime]);
 
   const handleStartFromClick = useCallback(() => {
     if (player.current) {

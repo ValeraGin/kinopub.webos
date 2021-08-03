@@ -30,7 +30,8 @@ export function mapSources(
       src: (typeof file.url === 'string' ? file.url : file.url[streamingType!] || file.url.http) as string,
       name: file.quality!,
     })),
-    ({ name }) => +name,
+    ({ name }) => parseInt(name),
+    'desc',
   );
 }
 
