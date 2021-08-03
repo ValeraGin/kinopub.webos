@@ -57,6 +57,7 @@ const Player: React.FC<PlayerProps> = ({
   ...props
 }) => {
   const playerRef = useRef<VideoPlayerBase>();
+  const [isLoaded, setIsLoaded] = useState(false);
   const [titleVisible, setTitleVisible] = useState(true);
 
   const handlePlay = useCallback(() => {
@@ -85,6 +86,9 @@ const Player: React.FC<PlayerProps> = ({
       await onTimeSync(currentTime);
     }
   }, [onTimeSync, playerRef]);
+  const handleLoadedData = useCallback(() => {
+    setIsLoaded(true);
+  }, []);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
@@ -122,7 +126,7 @@ const Player: React.FC<PlayerProps> = ({
     <Wrapper>
       <Title visible={titleVisible}>{title}</Title>
       <Settings player={playerRef} />
-      {startTime! > 0 && <StartFrom startTime={startTime} player={playerRef} />}
+      {isLoaded && startTime! > 0 && <StartFrom startTime={startTime} player={playerRef} />}
 
       <VideoPlayer
         {...props}
@@ -134,6 +138,7 @@ const Player: React.FC<PlayerProps> = ({
         onPlay={handlePlay}
         onPause={handlePause}
         onEnded={handleEnded}
+        onLoadedData={handleLoadedData}
         audioTracks={audios}
         sourceTracks={sources}
         subtitleTracks={subtitles}
