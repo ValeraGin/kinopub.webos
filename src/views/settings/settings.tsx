@@ -11,6 +11,7 @@ import Button from 'components/button';
 import Text from 'components/text';
 import useApi from 'hooks/useApi';
 import useApiMutation from 'hooks/useApiMutation';
+import useDeviceInfo from 'hooks/useDeviceInfo';
 
 const Content = styled.div`
   height: 100%;
@@ -31,6 +32,11 @@ const Setting = styled.div`
   padding-right: 1rem;
 `;
 
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
 const User = styled.div`
   display: flex;
   align-items: center;
@@ -38,6 +44,13 @@ const User = styled.div`
   ${Text} {
     padding-right: 2rem;
   }
+`;
+
+const Device = styled.div`
+  display: flex;
+  flex-basis: 50%;
+  padding-left: 1rem;
+  align-items: flex-end;
 `;
 
 const SettingBool: React.FC<{ setting: DeviceSettingBoolean; onToggle?: Function }> = ({ setting, onToggle }) => {
@@ -69,6 +82,7 @@ const SettingsView: React.FC = () => {
   const { saveDeviceSettingsAsync } = useApiMutation('saveDeviceSettings');
   const { deactivate } = useApiMutation('deactivate');
   const [newSettings, setNewSettings] = useState<DeviceSettingsParams>({});
+  const { software, hardware } = useDeviceInfo();
 
   const boolSettings = useMemo(
     () =>
@@ -143,21 +157,29 @@ const SettingsView: React.FC = () => {
           </>
         )}
 
-        <div>
-          <Text>Пользователь</Text>
+        <Footer>
+          <div>
+            <Text>Пользователь</Text>
+            <User>
+              {data?.user && (
+                <Text>
+                  {data.user.profile.name || data.user.username} ({Math.floor(data.user.subscription.days)} дн.)
+                </Text>
+              )}
 
-          <User>
-            {data?.user && (
-              <Text>
-                {data.user.profile.name || data.user.username} ({Math.floor(data.user.subscription.days)} дн.)
-              </Text>
-            )}
+              <Button icon="logout" onClick={handleLogoutClick}>
+                Выход
+              </Button>
+            </User>
+          </div>
 
-            <Button icon="logout" onClick={handleLogoutClick}>
-              Выход
-            </Button>
-          </User>
-        </div>
+          <Device>
+            <Text>
+              <div>{hardware}</div>
+              <div>{software}</div>
+            </Text>
+          </Device>
+        </Footer>
       </Content>
     </>
   );
