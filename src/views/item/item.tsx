@@ -112,8 +112,8 @@ const ItemView: React.FC = () => {
 
         <Text className="p-4 absolute top-0">{title}</Text>
 
-        <div className="absolute flex justify-between bottom-8 left-4 right-4">
-          <div className="flex">
+        <div className="absolute flex bottom-8 left-4 right-4">
+          <div>
             <Button icon="play_circle_outline" onClick={handleOnPlayClick} className="mr-2">
               Смотреть
             </Button>
@@ -125,18 +125,18 @@ const ItemView: React.FC = () => {
             <Popup visible={bookmarksPopupVisible} onClose={handleBookmarksPopupClose}>
               <Bookmarks key={`${itemId}-${bookmarksPopupVisible}`} itemId={itemId!} />
             </Popup>
-
-            {typeof data?.item.subscribed === 'boolean' && (
-              <Button icon={data?.item.subscribed ? 'visibility_off' : 'visibility'} onClick={handleOnVisibilityClick}>
-                {data?.item.subscribed ? 'Не буду смотреть' : 'Буду смотреть'}
-              </Button>
-            )}
           </div>
 
           <div>
             {trailer && (
               <Button icon="videocam" onClick={handleOnTrailerClick}>
                 Трейлер
+              </Button>
+            )}
+
+            {typeof data?.item?.subscribed === 'boolean' && (
+              <Button icon={data?.item?.subscribed ? 'visibility_off' : 'visibility'} onClick={handleOnVisibilityClick}>
+                {data?.item.subscribed ? 'Не буду смотреть' : 'Буду смотреть'}
               </Button>
             )}
           </div>

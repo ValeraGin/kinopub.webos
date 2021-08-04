@@ -9,8 +9,7 @@ type Props = {
   iconOnly?: boolean;
   autoFocus?: boolean;
   className?: string;
-  onClick?: React.MouseEventHandler;
-};
+} & React.HTMLAttributes<HTMLDivElement>;
 
 const Button: React.FC<Props> = ({ icon, iconOnly, children, autoFocus, className, ...props }) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);

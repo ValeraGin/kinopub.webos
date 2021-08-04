@@ -36,7 +36,7 @@ const Accordion: React.FC<Props> = ({ open, onToggle, title, subtitle, className
 
             <Icon name={visible ? 'expand_less' : 'expand_more'} />
           </div>
-          {!visible && <Text className="mt-2">{subtitle}</Text>}
+          {!visible && subtitle && <Text className="mt-2">{subtitle}</Text>}
         </div>
       </Spottable>
       {visible && children}
