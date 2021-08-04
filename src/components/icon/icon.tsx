@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import styled from 'styled-components';
 
 import './styles.css';
 
@@ -11,16 +10,22 @@ const ICONS_MAP = {
   play_arrow: <>&#xe037;</>,
   play_circle_outline: <>&#xe039;</>,
   sports_soccer: <>&#xea2f;</>,
-};
+  expand_more: <>&#xe5cf;</>,
+  expand_less: <>&#xe5ce;</>,
+} as const;
+
+export type IconName = keyof typeof ICONS_MAP;
 
 type Props = {
-  name: string;
-};
+  name: IconName | string;
+} & React.HTMLAttributes<HTMLSpanElement>;
 
-const Icon = styled.i.attrs<Props>(({ name, className, ...props }) => ({
-  ...props,
-  className: cx(`material-icons`, className),
-  children: ICONS_MAP[name as keyof typeof ICONS_MAP] || name,
-}))<Props>``;
+const Icon: React.FC<Props> = ({ name, className, ...props }) => {
+  return (
+    <i {...props} className={cx(`material-icons`, className)}>
+      {ICONS_MAP[name as IconName] || name}
+    </i>
+  );
+};
 
 export default Icon;

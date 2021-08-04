@@ -9,17 +9,20 @@ type Props = {
   collections?: Collection[];
   loading?: boolean;
   onScrollToEnd?: () => void;
+  scrollable?: boolean;
 };
 
-const CollectionsList: React.FC<Props> = ({ collections, loading, onScrollToEnd }) => {
-  return (
-    <Scrollable onScrollToEnd={onScrollToEnd}>
+const CollectionsList: React.FC<Props> = ({ collections, loading, onScrollToEnd, scrollable = true }) => {
+  const content = (
+    <div className="flex flex-wrap pr-2">
       {map(collections, (collection) => (
         <CollectionItem key={collection.id} collection={collection} />
       ))}
       {loading && map([...new Array(15)], (_, idx) => <CollectionItem key={idx} />)}
-    </Scrollable>
+    </div>
   );
+
+  return scrollable ? <Scrollable onScrollToEnd={onScrollToEnd}>{content}</Scrollable> : content;
 };
 
 export default CollectionsList;

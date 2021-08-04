@@ -1,32 +1,43 @@
 import { useCallback } from 'react';
-import MoonstonePopup, { PopupProps } from '@enact/moonstone/Popup';
+import onClickOutside from 'react-onclickoutside';
+import cx from 'classnames';
 
 import useBackButtonEffect from 'hooks/useBackButtonEffect';
 
 type Props = {
   visible: boolean;
-  onVisibilityChange: (visible: boolean) => void;
-} & Omit<PopupProps, 'open' | 'onShow' | 'onClose'>;
+  onClose: (visible: boolean) => void;
+} & React.HTMLAttributes<HTMLDivElement>;
 
-const Popup: React.FC<Props> = ({ visible, onVisibilityChange, ...props }) => {
-  const handleShow = useCallback(() => {
-    onVisibilityChange(true);
-  }, [onVisibilityChange]);
+const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
   const handleClose = useCallback(() => {
-    onVisibilityChange(false);
-  }, [onVisibilityChange]);
+    onClose(false);
+  }, [onClose]);
 
   const handleCloseOnBackButton = useCallback(() => {
     if (visible) {
-      onVisibilityChange(false);
+      handleClose();
 
       return false;
     }
-  }, [visible, onVisibilityChange]);
+  }, [visible, handleClose]);
 
   useBackButtonEffect(handleCloseOnBackButton);
 
-  return <MoonstonePopup {...props} open={visible} onShow={handleShow} onClose={handleClose} />;
+  // @ts-expect-error
+  Popup.handleClickOutside = handleClose;
+
+  if (!visible) {
+    return null;
+  }
+
+  return <div {...props} className={cx('fixed z-999 bottom-0 left-0 right-0 p-4 bg-primary ring', className)} />;
 };
 
-export default Popup;
+const clickOutsideConfig = {
+  handleClickOutside: () =>
+    // @ts-expect-error
+    Popup.handleClickOutside,
+};
+
+export default onClickOutside(Popup, clickOutsideConfig);

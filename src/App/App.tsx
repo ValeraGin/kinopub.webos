@@ -1,3 +1,5 @@
+import 'styles/global.css';
+
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router-dom';
@@ -6,8 +8,6 @@ import MoonstoneDecorator from '@enact/moonstone/MoonstoneDecorator';
 import View from 'components/view';
 import Views from 'containers/views';
 import { PATHS } from 'routes';
-
-import './styles.css';
 
 const BookmarkView = React.lazy(() => import('views/booksmark'));
 const BookmarksView = React.lazy(() => import('views/booksmarks'));

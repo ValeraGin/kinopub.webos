@@ -7,11 +7,7 @@ import useApi from 'hooks/useApi';
 const WatchingView: React.FC = () => {
   const { data, isLoading } = useApi('watchingSerials', [Bool.True]);
 
-  return (
-    <>
-      <ItemsList items={data?.items} loading={isLoading} />
-    </>
-  );
+  return <ItemsList items={data?.items} loading={isLoading} />;
 };
 
 export default WatchingView;

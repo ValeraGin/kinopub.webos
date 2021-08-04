@@ -1,21 +1,17 @@
 import { createContext, useMemo, useRef } from 'react';
-import Scroller, { ScrollerProps } from '@enact/moonstone/Scroller';
-import styled from 'styled-components';
+import cx from 'classnames';
 
 import useInViewport from 'hooks/useInViewport';
 import useUniqueId from 'hooks/useUniqueId';
-
-const Footer = styled.div`
-  height: 5rem;
-`;
 
 export const ScrollableContext = createContext<{ id?: string }>({});
 
 type Props = {
   onScrollToEnd?: () => void;
-} & ScrollerProps;
+  className?: string;
+} & React.HTMLAttributes<HTMLDivElement>;
 
-const Scrollable: React.FC<Props> = ({ children, onScrollToEnd, ...props }) => {
+const Scrollable: React.FC<Props> = ({ children, className, onScrollToEnd, ...props }) => {
   const footerRef = useRef<HTMLDivElement>(null);
   const id = useUniqueId('scrollable');
   const value = useMemo(
@@ -28,10 +24,14 @@ const Scrollable: React.FC<Props> = ({ children, onScrollToEnd, ...props }) => {
   useInViewport(footerRef, { onEnterViewport: onScrollToEnd });
 
   return (
-    <Scroller id={id} direction="vertical" verticalScrollbar="hidden" horizontalScrollbar="hidden" {...props}>
-      <ScrollableContext.Provider value={value}>{children}</ScrollableContext.Provider>
-      <Footer ref={footerRef} />
-    </Scroller>
+    <div id={id} className="overflow-hidden h-screen" {...props}>
+      <ScrollableContext.Provider value={value}>
+        <div className={cx('overflow-y-auto h-full', className)}>
+          {children}
+          <div className="h-40" ref={footerRef} />
+        </div>
+      </ScrollableContext.Provider>
+    </div>
   );
 };
 

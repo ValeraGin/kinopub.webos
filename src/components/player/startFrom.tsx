@@ -1,17 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { VideoPlayerBase } from '@enact/moonstone/VideoPlayer';
-import styled from 'styled-components';
 
 import Button from 'components/button';
-
-const Wrapper = styled.div`
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  bottom: 7rem;
-  z-index: 200;
-`;
 
 type Props = {
   player: React.MutableRefObject<VideoPlayerBase | undefined>;
@@ -63,14 +53,14 @@ const StartFrom: React.FC<Props> = ({ startTime, startInDelay = 5, player }) => 
   }
 
   return (
-    <Wrapper>
+    <div className="flex justify-center absolute w-full z-50 bottom-32">
       <Button onClick={handleStartFromClick}>
         Смотреть с {startFrom} через {startIn}
       </Button>
       <Button autoFocus onClick={handleStartFromBeginingClick}>
         Смотреть с начала
       </Button>
-    </Wrapper>
+    </div>
   );
 };
 

@@ -1,27 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import map from 'lodash/map';
-import styled from 'styled-components';
 
 import Button from 'components/button';
 import Text from 'components/text';
 import useApi from 'hooks/useApi';
-
-const Locations = styled.div`
-  display: flex;
-  justify-content: space-around;
-`;
-
-const Location = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Actions = styled.div`
-  padding-top: 3rem;
-  display: flex;
-  justify-content: center;
-`;
 
 function updateSpeedReducer(state: { [location: string]: string }, action: { type: string; payload: string }) {
   return {
@@ -121,19 +103,19 @@ const SpeedView: React.FC = () => {
 
   return (
     <>
-      <Text>Проверка скорости</Text>
+      <Text className="m-1 mb-3">Проверка скорости</Text>
 
-      <Locations>
+      <div className="flex justify-around">
         {map(data?.items, (location) => (
-          <Location key={location.id}>
+          <div className="flex flex-col items-center" key={location.id}>
             <Text>{location.name}</Text>
             {speed[location.location] || '0.00'}
             <Text>Mbit/s</Text>
-          </Location>
+          </div>
         ))}
-      </Locations>
+      </div>
 
-      <Actions>
+      <div className="flex justify-center pt-12">
         {started ? (
           <Button icon="stop" onClick={handleStop}>
             Стоп
@@ -143,7 +125,7 @@ const SpeedView: React.FC = () => {
             Начать
           </Button>
         )}
-      </Actions>
+      </div>
     </>
   );
 };

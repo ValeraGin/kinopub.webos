@@ -1,14 +1,4 @@
 import { useLocation } from 'react-router-dom';
-import styled from 'styled-components';
-
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  width: 100vw;
-  height: 100vh;
-`;
 
 type LocationState = {
   userCode: string;
@@ -21,7 +11,7 @@ const PairView: React.FC = () => {
 
   return (
     <>
-      <Wrapper>
+      <div className="w-screen h-screen flex justify-center items-center text-primary text-center">
         Подтвердите устройство перейдя по ссылке:
         <br />
         {verificationUri}
@@ -29,7 +19,7 @@ const PairView: React.FC = () => {
         и введите код:
         <br />
         {userCode}
-      </Wrapper>
+      </div>
     </>
   );
 };

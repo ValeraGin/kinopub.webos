@@ -1,40 +1,19 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-import GridListImageItem from '@enact/moonstone/GridListImageItem';
-import styled from 'styled-components';
+import cx from 'classnames';
 
 import { Item } from 'api';
-import Lazy from 'components/lazy';
+import ImageItem from 'components/imageItem';
 import { PATHS, generatePath } from 'routes';
-
-const Wrapper = styled(Lazy)`
-  display: inline-flex;
-  position: relative;
-  height: 20rem !important;
-  width: 20%;
-`;
-
-const GridItem = styled(GridListImageItem)`
-  width: 100%;
-`;
-
-const New = styled.div`
-  position: absolute;
-  background: var(--main-color);
-  right: 0;
-  z-index: 1;
-  padding: 0 0.5em;
-  font-size: 0.75rem;
-  margin-top: 0.25rem;
-  margin-right: 0.25rem;
-`;
 
 type Props = {
   item?: Item;
+  className?: string;
 };
 
-const VideoItem: React.FC<Props> = ({ item }) => {
+const VideoItem: React.FC<Props> = ({ item, className }) => {
   const history = useHistory();
+  const title = useMemo(() => item?.title?.split('/')[0], [item?.title]);
 
   const handleOnClick = useCallback(() => {
     if (item?.id) {
@@ -47,10 +26,9 @@ const VideoItem: React.FC<Props> = ({ item }) => {
   }, [item?.id, history]);
 
   return (
-    <Wrapper height="20rem">
-      <New>{item?.new}</New>
-      <GridItem source={item?.posters.medium} caption={item?.title} onClick={handleOnClick} />
-    </Wrapper>
+    <ImageItem onClick={handleOnClick} source={item?.posters.medium} caption={title} className={cx('h-72', className)}>
+      {item?.new && <div className="absolute bg-red-600 text-primary px-2 py-1 rounded-bl rounded-tr-xl right-0">{item?.new}</div>}
+    </ImageItem>
   );
 };
 

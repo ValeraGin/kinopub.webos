@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import VideoPlayer, { VideoPlayerBase, VideoPlayerBaseProps } from '@enact/moonstone/VideoPlayer';
-import styled from 'styled-components';
 
 import Media, { AudioTrack, SourceTrack, SubtitleTrack } from 'components/media';
 import Text from 'components/text';
@@ -8,23 +7,6 @@ import useBackButtonEffect from 'hooks/useBackButtonEffect';
 
 import Settings from './settings';
 import StartFrom from './startFrom';
-
-const Wrapper = styled.div`
-  video {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-`;
-
-const Title = styled(Text)<{ visible?: boolean }>`
-  position: absolute;
-  padding: 0 1rem;
-  z-index: 1;
-  visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
-`;
 
 export type PlayerProps = {
   title: string;
@@ -123,8 +105,8 @@ const Player: React.FC<PlayerProps> = ({
   useBackButtonEffect(handleTimeSync);
 
   return (
-    <Wrapper>
-      <Title visible={titleVisible}>{title}</Title>
+    <>
+      {titleVisible && <Text className="p-4 absolute top-0 z-10">{title}</Text>}
       <Settings player={playerRef} />
       {isLoaded && startTime! > 0 && <StartFrom startTime={startTime} player={playerRef} />}
 
@@ -144,7 +126,7 @@ const Player: React.FC<PlayerProps> = ({
         subtitleTracks={subtitles}
         videoComponent={Media}
       />
-    </Wrapper>
+    </>
   );
 };
 

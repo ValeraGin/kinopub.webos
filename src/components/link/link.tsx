@@ -1,35 +1,21 @@
 import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import Item from '@enact/moonstone/Item';
-import styled from 'styled-components';
+import cx from 'classnames';
 
 import Icon from 'components/icon';
-
-const StyledLink = styled(Item)`
-  color: inherit;
-  text-decoration: none;
-`;
-
-const LinkInner = styled.div<{ iconOnly?: boolean }>`
-  display: flex;
-  align-items: center;
-  color: inherit;
-  text-decoration: none;
-
-  ${Icon} {
-    margin-right: ${(props) => !props.iconOnly && '0.5rem'};
-  }
-`;
+import Spottable from 'components/spottable';
 
 type Props = {
   href: string;
   icon?: string;
   iconOnly?: boolean;
+  active?: boolean;
   state?: any;
+  className?: string;
   onClick?: () => void;
 };
 
-const Link: React.FC<Props> = ({ href, state, children, icon, iconOnly, onClick, ...props }) => {
+const Link: React.FC<Props> = ({ href, state, children, icon, iconOnly, active, className, onClick, ...props }) => {
   const history = useHistory();
   const handleOnClick = useCallback(() => {
     history.push(href, state);
@@ -37,12 +23,24 @@ const Link: React.FC<Props> = ({ href, state, children, icon, iconOnly, onClick,
   }, [href, state, onClick, history]);
 
   return (
-    <StyledLink {...props} onClick={handleOnClick}>
-      <LinkInner iconOnly={iconOnly}>
+    <Spottable
+      {...props}
+      className={cx(
+        'whitespace-nowrap cursor-pointer p-1',
+        {
+          'text-primary': !active,
+          'text-red-600': active,
+        },
+        className,
+      )}
+      onClick={handleOnClick}
+      role="button"
+    >
+      <div className="flex items-center ">
         {icon && <Icon name={icon} />}
         {!iconOnly && children}
-      </LinkInner>
-    </StyledLink>
+      </div>
+    </Spottable>
   );
 };
 

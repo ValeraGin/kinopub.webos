@@ -1,41 +1,11 @@
 import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import ExpandableItem from '@enact/moonstone/ExpandableItem';
-import GridListImageItem from '@enact/moonstone/GridListImageItem';
 import map from 'lodash/map';
-import styled, { css } from 'styled-components';
 
 import { Item, Season, Video, WatchingStatus } from 'api';
+import Accordion from 'components/accordion';
+import ImageItem from 'components/imageItem';
 import { PATHS, generatePath } from 'routes';
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const EpisodeItem = styled(GridListImageItem)<{ watched?: boolean }>`
-  width: 9rem;
-  height: 15rem !important;
-
-  [role='img'] {
-    position: relative;
-    ${(props) =>
-      props.watched &&
-      css`
-        :before {
-          content: 'Просмотрено';
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding-left: 1rem;
-          padding-top: 5rem;
-          background: rgba(0, 0, 0, 0.5);
-        }
-      `}
-  }
-`;
 
 type Props = {
   item: Item;
@@ -63,19 +33,26 @@ const SeasonItem: React.FC<Props> = ({ item, season }) => {
   );
 
   return (
-    <Wrapper>
-      <ExpandableItem title={`Сезон ${season.number}`}>
-        {map(season.episodes, (episode) => (
-          <EpisodeItem
-            key={episode.id}
-            source={episode.thumbnail}
-            caption={`Эпизод ${episode.number}`}
-            onClick={handleEpisodeClick(episode)}
-            watched={episode.watched === WatchingStatus.Watched}
-          />
-        ))}
-      </ExpandableItem>
-    </Wrapper>
+    <div className="flex flex-col">
+      <Accordion title={`Сезон ${season.number}`}>
+        <div className="flex flex-wrap">
+          {map(season.episodes, (episode) => (
+            <ImageItem
+              key={episode.id}
+              source={episode.thumbnail}
+              caption={`Эпизод ${episode.number}`}
+              onClick={handleEpisodeClick(episode)}
+            >
+              {episode.watched === WatchingStatus.Watched && (
+                <div className="absolute flex justify-center items-center rounded-xl bg-black bg-opacity-60 top-0 bottom-0 left-0 right-0">
+                  Просмотрено
+                </div>
+              )}
+            </ImageItem>
+          ))}
+        </div>
+      </Accordion>
+    </div>
   );
 };
 

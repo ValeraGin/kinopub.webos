@@ -1,41 +1,18 @@
 import { useEffect, useRef } from 'react';
-import EnactButton, { ButtonProps } from '@enact/moonstone/Button';
-import styled from 'styled-components';
+import cx from 'classnames';
 
 import Icon from 'components/icon';
-
-const Wrapper = styled.div`
-  display: inline-flex;
-
-  > div {
-    width: 100%;
-  }
-`;
-
-const StyledButton = styled(EnactButton)`
-  color: inherit;
-  text-decoration: none;
-`;
-
-const ButtonInner = styled.div<{ iconOnly?: boolean }>`
-  display: flex;
-  align-items: center;
-  color: inherit;
-  text-decoration: none;
-
-  ${Icon} {
-    margin-right: ${(props) => !props.iconOnly && '0.5rem'};
-  }
-`;
+import Spottable from 'components/spottable';
 
 type Props = {
   icon?: string;
   iconOnly?: boolean;
   autoFocus?: boolean;
+  className?: string;
   onClick?: React.MouseEventHandler;
-} & ButtonProps;
+};
 
-const Button: React.FC<Props> = ({ icon, iconOnly, children, autoFocus, ...props }) => {
+const Button: React.FC<Props> = ({ icon, iconOnly, children, autoFocus, className, ...props }) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -43,7 +20,8 @@ const Button: React.FC<Props> = ({ icon, iconOnly, children, autoFocus, ...props
 
     if (autoFocus) {
       frameId = requestAnimationFrame(() => {
-        wrapperRef.current?.querySelector<HTMLDivElement>('[role="button"]')?.focus();
+        // @ts-expect-error
+        wrapperRef.current?.node?.focus();
       });
     }
 
@@ -55,14 +33,23 @@ const Button: React.FC<Props> = ({ icon, iconOnly, children, autoFocus, ...props
   }, [wrapperRef, autoFocus]);
 
   return (
-    <Wrapper ref={wrapperRef}>
-      <StyledButton {...props}>
-        <ButtonInner iconOnly={iconOnly}>
-          {icon && <Icon name={icon} />}
-          {!iconOnly && children}
-        </ButtonInner>
-      </StyledButton>
-    </Wrapper>
+    <Spottable
+      {...props}
+      ref={wrapperRef}
+      className={cx(
+        'text-primary whitespace-nowrap cursor-pointer rounded px-2 py-1',
+        {
+          'pr-3': !!icon,
+        },
+        className,
+      )}
+      role="button"
+    >
+      <div className="flex items-center">
+        {icon && <Icon name={icon} />}
+        {!iconOnly && children}
+      </div>
+    </Spottable>
   );
 };
 

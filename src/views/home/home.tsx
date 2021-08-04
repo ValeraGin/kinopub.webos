@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import styled from 'styled-components';
 
 import { ItemsParams } from 'api';
 import ItemsList from 'components/itemsList';
@@ -9,21 +8,18 @@ import Scrollable from 'components/scrollable';
 import useApi from 'hooks/useApi';
 import { PATHS, generatePath } from 'routes';
 
-const ItemsSectionWrapper = styled.div`
-  padding-bottom: 1rem;
-`;
-
 const ItemsSection: React.FC<{ title: string; params: ItemsParams }> = ({ title, params }) => {
-  const { data, isLoading } = useApi('items', [params, 0, 10]);
+  const { data, isLoading } = useApi('items', [params, 0, 12]);
   const href = useMemo(() => generatePath(PATHS.Category, { categoryId: params.type }), [params]);
 
   return (
-    <ItemsSectionWrapper>
-      <Link href={href} state={{ params, title }}>
+    <div className="pb-2">
+      <Link href={href} state={{ params, title }} className="mb-2">
         {title}
       </Link>
+
       <ItemsList items={data?.items} loading={isLoading} scrollable={false} />
-    </ItemsSectionWrapper>
+    </div>
   );
 };
 

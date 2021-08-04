@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import map from 'lodash/map';
-import styled from 'styled-components';
 
 import { WatchingStatus } from 'api';
 import Button from 'components/button';
@@ -20,65 +19,14 @@ import { PATHS, RouteParams, generatePath } from 'routes';
 
 import { getItemTitle } from 'utils/item';
 
-const Cover = styled.div`
-  position: relative;
-`;
-
-const Poster = styled.div<{ src: string }>`
-  width: 100vw;
-  min-height: 100vh;
-  background: url(${(props) => props.src});
-  background-size: cover;
-`;
-
-const Title = styled(Text)`
-  position: absolute;
-  padding: 0 1rem;
-  top: 0;
-`;
-
-const Actions = styled.div`
-  display: flex;
-  justify-content: space-between;
-  position: absolute;
-  left: 1rem;
-  right: 1rem;
-  bottom: 5rem;
-`;
-
-const Description = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 2rem;
-  white-space: pre-wrap;
-`;
-
-const TrackList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  height: 35rem;
-
-  p {
-    margin: 0.1rem;
-    font-size: 0.8rem;
-  }
-`;
-
-const SimilarList = styled.div`
-  padding: 2rem;
-`;
-
 const SimilarItems: React.FC<{ itemId: string }> = ({ itemId }) => {
   const { data } = useApi('itemSmiliar', [itemId]);
 
   if (data && data.items.length > 0) {
     return (
-      <SimilarList>
-        <Text>Похожие</Text>
-
-        <ItemsList items={data.items} scrollable={false} />
-      </SimilarList>
+      <div className="p-8">
+        <ItemsList title="Похожие" items={data.items} scrollable={false} />
+      </div>
     );
   }
 
@@ -88,7 +36,7 @@ const SimilarItems: React.FC<{ itemId: string }> = ({ itemId }) => {
 const ItemView: React.FC = () => {
   const history = useHistory();
   const { itemId } = useParams<RouteParams>();
-  const [visible, setVisible] = useState(false);
+  const [bookmarksPopupVisible, setBookmarksPopupVisible] = useState(false);
   const { data, refetch } = useApi('itemMedia', [itemId!], { staleTime: 0 });
 
   const { watchingToggleWatchlistAsync } = useApiMutation('watchingToggleWatchlist');
@@ -139,7 +87,10 @@ const ItemView: React.FC = () => {
   }, [history, data?.item, trailer]);
 
   const handleOnBookmarksClick = useCallback(() => {
-    setVisible(true);
+    setBookmarksPopupVisible(true);
+  }, []);
+  const handleBookmarksPopupClose = useCallback(() => {
+    setBookmarksPopupVisible(false);
   }, []);
 
   const handleOnVisibilityClick = useCallback(async () => {
@@ -152,21 +103,27 @@ const ItemView: React.FC = () => {
 
   return (
     <Scrollable>
-      <Cover>
-        <Poster src={(data?.item?.posters.wide || data?.item?.posters.big)!} />
-        <Title>{title}</Title>
-        <Actions>
-          <div>
-            <Button icon="play_circle_outline" onClick={handleOnPlayClick}>
+      <div className="relative w-screen h-screen">
+        <img
+          className="absolute w-screen h-screen object-cover -z-1"
+          src={(data?.item?.posters.wide || data?.item?.posters.big)!}
+          alt={title}
+        />
+
+        <Text className="p-4 absolute top-0">{title}</Text>
+
+        <div className="absolute flex justify-between bottom-8 left-4 right-4">
+          <div className="flex">
+            <Button icon="play_circle_outline" onClick={handleOnPlayClick} className="mr-2">
               Смотреть
             </Button>
 
-            <Button icon="bookmark" onClick={handleOnBookmarksClick}>
+            <Button icon="bookmark" onClick={handleOnBookmarksClick} className="mr-2">
               В закладки
             </Button>
 
-            <Popup visible={visible} onVisibilityChange={setVisible}>
-              <Bookmarks key={`${itemId}-${visible}`} itemId={itemId!} />
+            <Popup visible={bookmarksPopupVisible} onClose={handleBookmarksPopupClose}>
+              <Bookmarks key={`${itemId}-${bookmarksPopupVisible}`} itemId={itemId!} />
             </Popup>
 
             {typeof data?.item.subscribed === 'boolean' && (
@@ -183,27 +140,27 @@ const ItemView: React.FC = () => {
               </Button>
             )}
           </div>
-        </Actions>
-      </Cover>
+        </div>
+      </div>
 
       <SeasonsList item={data?.item!} seasons={data?.item?.seasons} />
 
-      <Description>
+      <div className="flex flex-col p-8 whitespace-pre-wrap">
         <Text>{data?.item.plot}</Text>
 
         {!!data?.item.tracklist?.length && (
           <>
-            <Text>Треклист</Text>
-            <TrackList>
+            <Text className="my-4">Треклист</Text>
+            <div className="flex flex-wrap flex-col h-96">
               {map(data?.item.tracklist, (track, idx) => (
                 <Text key={idx}>
                   {idx + 1}. {track.title}
                 </Text>
               ))}
-            </TrackList>
+            </div>
           </>
         )}
-      </Description>
+      </div>
 
       <Lazy height="50rem">
         <SimilarItems itemId={itemId!} />

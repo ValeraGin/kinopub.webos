@@ -1,28 +1,17 @@
 import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import GridListImageItem from '@enact/moonstone/GridListImageItem';
-import styled from 'styled-components';
+import cx from 'classnames';
 
 import { Collection } from 'api';
-import Lazy from 'components/lazy';
+import ImageItem from 'components/imageItem';
 import { PATHS, generatePath } from 'routes';
-
-const Wrapper = styled(Lazy)`
-  display: inline-flex;
-  position: relative;
-  height: 20rem !important;
-  width: 20%;
-`;
-
-const GridItem = styled(GridListImageItem)`
-  width: 100%;
-`;
 
 type Props = {
   collection?: Collection;
+  className?: string;
 };
 
-const CollectionItem: React.FC<Props> = ({ collection }) => {
+const CollectionItem: React.FC<Props> = ({ collection, className }) => {
   const history = useHistory();
   const handleOnClick = useCallback(() => {
     if (collection?.id) {
@@ -35,9 +24,7 @@ const CollectionItem: React.FC<Props> = ({ collection }) => {
   }, [collection?.id, history]);
 
   return (
-    <Wrapper height="20rem">
-      <GridItem source={collection?.posters.medium} caption={collection?.title} onClick={handleOnClick} />
-    </Wrapper>
+    <ImageItem onClick={handleOnClick} source={collection?.posters.medium} caption={collection?.title} className={cx('h-72', className)} />
   );
 };
 

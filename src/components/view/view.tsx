@@ -1,6 +1,5 @@
 import React, { Suspense, createElement, useMemo } from 'react';
 import { Route, RouteComponentProps, RouteProps } from 'react-router-dom';
-import { Panel } from '@enact/moonstone/Panels';
 
 import Spinner from 'components/spinner';
 import FillLayout from 'layouts/fill';
@@ -22,11 +21,11 @@ const View: React.FC<ViewProps> = ({ component, layout, ...props }) => {
   const render = useMemo<React.FC<RouteComponentProps>>(
     () => (routeProps) =>
       (
-        <Panel>
+        <div>
           <Layout>
             <Suspense fallback={<Spinner />}>{createElement(component!, routeProps)}</Suspense>
           </Layout>
-        </Panel>
+        </div>
       ),
     [component, Layout],
   );

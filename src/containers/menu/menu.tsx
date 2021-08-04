@@ -1,26 +1,8 @@
 import { useLocation } from 'react-router-dom';
 import map from 'lodash/map';
-import styled from 'styled-components';
 
 import Link from 'components/link';
 import { PATHS, generatePath } from 'routes';
-
-const Nav = styled.nav`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 1rem 0.5rem;
-`;
-
-const List = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-`;
-
-const ListItem = styled.li<{ active: boolean }>`
-  color: ${(props) => props.active && 'var(--main-color)'};
-`;
 
 const menuItems: {
   name: string;
@@ -111,19 +93,19 @@ const Menu: React.FC<Props> = (props) => {
   const location = useLocation();
 
   return (
-    <Nav {...props}>
+    <nav className="group h-screen flex flex-col justify-between" {...props}>
       {map(menuItems, (list, idx) => (
-        <List key={idx}>
+        <ul key={idx}>
           {map(list, (item) => (
-            <ListItem key={item.href} active={location.pathname === item.href}>
-              <Link href={item.href} icon={item.icon}>
+            <li key={item.href}>
+              <Link href={item.href} icon={item.icon} active={location.pathname === item.href} className="px-2 py-1 rounded-r">
                 {item.name}
               </Link>
-            </ListItem>
+            </li>
           ))}
-        </List>
+        </ul>
       ))}
-    </Nav>
+    </nav>
   );
 };
 

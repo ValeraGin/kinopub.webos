@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+body {
+  @apply bg-black;
+}
+
+video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.enact-fit {
+  padding: 0 !important;
+}
+
+[class*='Spinner_bg'] {
+  background: transparent !important;
+}
+
+.text-primary {
+  @apply text-gray-200;
+}
+
+.bg-primary {
+  @apply bg-black;
+}
+
+.spottable:focus {
+  @apply bg-red-600 !important;
+  @apply text-gray-200 !important;
+}

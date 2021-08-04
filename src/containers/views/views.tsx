@@ -1,28 +1,18 @@
 import { Switch, useHistory } from 'react-router-dom';
-import { Panels, PanelsProps } from '@enact/moonstone/Panels';
-import styled from 'styled-components';
 
 import useBackButtonEffect from 'hooks/useBackButtonEffect';
 import useDeviceAuthorizationEffect from 'hooks/useDeviceAuthorizationEffect';
 
-const StyledPanels = styled(Panels)`
-  article {
-    padding: 0;
-  }
-`;
-
-type Props = {} & PanelsProps;
-
-const Views: React.FC<Props> = ({ children, ...props }) => {
+const Views: React.FC = ({ children, ...props }) => {
   const history = useHistory();
 
   useBackButtonEffect(history.goBack);
   useDeviceAuthorizationEffect();
 
   return (
-    <StyledPanels noCloseButton {...props}>
+    <div {...props}>
       <Switch>{children}</Switch>
-    </StyledPanels>
+    </div>
   );
 };
 

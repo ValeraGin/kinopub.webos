@@ -1,7 +1,6 @@
 import { useLocation, useParams } from 'react-router-dom';
 
 import { ItemsParams } from 'api';
-import Text from 'components/text';
 import ItemsListInfinite from 'containers/itemsListInfinite';
 import useApiInfinite from 'hooks/useApiInfinite';
 import { RouteParams } from 'routes';
@@ -18,12 +17,7 @@ const CategoryView: React.FC = () => {
     },
   ]);
 
-  return (
-    <>
-      {title && <Text>{title}</Text>}
-      <ItemsListInfinite queryResult={queryResult} />
-    </>
-  );
+  return <ItemsListInfinite title={title} queryResult={queryResult} />;
 };
 
 export default CategoryView;

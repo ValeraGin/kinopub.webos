@@ -1,0 +1,65 @@
+import { useCallback, useMemo, useState } from 'react';
+import map from 'lodash/map';
+
+import Accordion from 'components/accordion';
+import Radio from 'components/radio';
+import useChangebleState from 'hooks/useChangebleState';
+
+type Option<T = any> = {
+  title: string;
+  value: T;
+};
+
+type Props<T = any> = {
+  label: string;
+  options: Option<T>[] | string[];
+  value?: T;
+  defaultValue?: T;
+  onChange?: (value: T) => void;
+  closeOnChange?: boolean;
+};
+
+const Select: React.FC<Props> = ({ label, options, defaultValue, value, onChange, closeOnChange }) => {
+  const [open, setOpen] = useState(false);
+  const [val, setVal] = useChangebleState(value || defaultValue);
+  const opts = useMemo(
+    () =>
+      Array.isArray(options) ? options.map((option, idx) => (typeof option === 'string' ? { title: option, value: idx } : option)) : [],
+    [options],
+  );
+  const selectedOption = useMemo(() => opts.find((o) => o.value === val), [opts, val]);
+
+  const handleChanged = useCallback(
+    (value) => {
+      setVal(value);
+      onChange?.(value);
+
+      if (closeOnChange) {
+        setOpen(false);
+      }
+    },
+    [setVal, onChange, closeOnChange],
+  );
+  const handleChecked = useCallback(
+    (option: Option) => (checked: boolean) => {
+      if (checked) {
+        handleChanged(option.value);
+      }
+    },
+    [handleChanged],
+  );
+
+  return (
+    <Accordion open={open} onToggle={setOpen} title={label} subtitle={selectedOption?.title}>
+      <div className="flex flex-col">
+        {map(opts, (opt) => (
+          <Radio key={opt.value} checked={opt.value === val} onChange={handleChecked(opt)}>
+            {opt.title}
+          </Radio>
+        ))}
+      </div>
+    </Accordion>
+  );
+};
+
+export default Select;

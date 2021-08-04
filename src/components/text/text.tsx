@@ -1,6 +1,11 @@
-import BodyText from '@enact/moonstone/BodyText';
-import styled from 'styled-components';
+import cx from 'classnames';
 
-const Text = styled(BodyText)``;
+type Props = {
+  className?: string;
+};
+
+const Text: React.FC<Props> = ({ className, ...props }) => {
+  return <p {...props} className={cx('text-primary', className)} />;
+};
 
 export default Text;

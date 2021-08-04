@@ -1,48 +1,21 @@
 import { useCallback, useEffect, useState } from 'react';
-import CheckboxItem from '@enact/moonstone/CheckboxItem';
 import { VideoPlayerBase } from '@enact/moonstone/VideoPlayer';
 import map from 'lodash/map';
-import styled from 'styled-components';
 
 import Popup from 'components/popup';
+import Radio from 'components/radio';
 import Text from 'components/text';
 
 import { isArrowUpButton, isPlayButton } from 'utils/keyboard';
 
 const NONE = 'NONE';
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Section = styled.div`
-  padding: 0 1rem;
-  display: flex;
-  flex-direction: column;
-`;
-
-const SectionTitle = styled(Text)`
-  width: 5rem;
-`;
-
-const SectionContent = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-`;
-
-const SectionContentItem = styled.div<{ width?: string | number }>`
-  width: ${(props) => props.width};
-  padding-right: 1rem;
-  box-sizing: border-box;
-`;
-
 type Props = {
   player: React.MutableRefObject<VideoPlayerBase | undefined>;
 };
 
 const Settings: React.FC<Props> = ({ player }) => {
-  const [visible, setVisible] = useState(false);
+  const [popupVisible, setPopupVisible] = useState(false);
 
   const [audios, setAudios] = useState<string[]>([]);
   const [currentAudio, setCurrentAudio] = useState<string | null>(null);
@@ -84,16 +57,13 @@ const Settings: React.FC<Props> = ({ player }) => {
     [handleVideoUpdate],
   );
 
-  const handleVisibilityChange = useCallback(
-    (newVisible: boolean) => {
-      setVisible(newVisible);
+  const handlePopupClose = useCallback(() => {
+    setPopupVisible(false);
 
-      if (player.current && !newVisible) {
-        player.current.play();
-      }
-    },
-    [player],
-  );
+    if (player.current) {
+      player.current.play();
+    }
+  }, [player]);
 
   useEffect(() => {
     const listiner = (e: KeyboardEvent) => {
@@ -114,11 +84,11 @@ const Settings: React.FC<Props> = ({ player }) => {
 
             player.current.pause();
 
-            setVisible(true);
+            setPopupVisible(true);
           }
         }
       } else if (isPlayButton(e)) {
-        setVisible(false);
+        setPopupVisible(false);
       }
     };
 
@@ -127,63 +97,63 @@ const Settings: React.FC<Props> = ({ player }) => {
     return () => {
       window.removeEventListener('keydown', listiner);
     };
-  }, [visible, player]);
+  }, [popupVisible, player]);
 
   return (
-    <Popup visible={visible} onVisibilityChange={handleVisibilityChange}>
-      <Wrapper>
+    <Popup visible={popupVisible} onClose={handlePopupClose}>
+      <div className="flex flex-col">
         {audios?.length > 1 && (
-          <Section>
-            <SectionTitle>Звук</SectionTitle>
+          <div className="flex flex-col py-4">
+            <Text>Звук</Text>
 
-            <SectionContent>
+            <div className="flex flex-wrap mt-2">
               {map(audios, (audio) => (
-                <SectionContentItem key={audio} width="50%">
-                  <CheckboxItem selected={audio === currentAudio} onToggle={handleAudioChange(audio)}>
+                <div key={audio} className="w-1/2">
+                  <Radio checked={audio === currentAudio} onChange={handleAudioChange(audio)}>
                     {audio}
-                  </CheckboxItem>
-                </SectionContentItem>
+                  </Radio>
+                </div>
               ))}
-            </SectionContent>
-          </Section>
+            </div>
+          </div>
         )}
         {sources?.length > 1 && (
-          <Section>
-            <SectionTitle>Качество</SectionTitle>
+          <div className="flex flex-col py-4">
+            <Text>Качество</Text>
 
-            <SectionContent>
+            <div className="flex flex-wrap mt-2">
               {map(sources, (source) => (
-                <SectionContentItem key={source} width="15%">
-                  <CheckboxItem selected={source === currentSource} onToggle={handleSourceChange(source)}>
+                <div key={source} className="w-1/6">
+                  <Radio checked={source === currentSource} onChange={handleSourceChange(source)}>
                     {source}
-                  </CheckboxItem>
-                </SectionContentItem>
+                  </Radio>
+                </div>
               ))}
-            </SectionContent>
-          </Section>
+            </div>
+          </div>
         )}
         {subtitles?.length > 0 && (
-          <Section>
-            <SectionTitle>Субтитры</SectionTitle>
+          <div className="flex flex-col py-4">
+            <Text>Субтитры</Text>
 
-            <SectionContent>
-              <SectionContentItem width="15%">
-                <CheckboxItem selected={!currentSubtitle || currentSubtitle === NONE} onToggle={handleSubtitleChange(NONE)}>
+            <div className="flex flex-wrap mt-2">
+              <div className="w-1/6">
+                <Radio checked={!currentSubtitle || currentSubtitle === NONE} onChange={handleSubtitleChange(NONE)}>
                   Нет
-                </CheckboxItem>
-              </SectionContentItem>
+                </Radio>
+              </div>
 
               {map(subtitles, (subtitle) => (
-                <SectionContentItem key={subtitle} width="15%">
-                  <CheckboxItem selected={subtitle === currentSubtitle} onToggle={handleSubtitleChange(subtitle)}>
+                <div key={subtitle} className="w-1/6">
+                  <Radio checked={subtitle === currentSubtitle} onChange={handleSubtitleChange(subtitle)}>
                     {subtitle}
-                  </CheckboxItem>
-                </SectionContentItem>
+                  </Radio>
+                </div>
               ))}
-            </SectionContent>
-          </Section>
+            </div>
+          </div>
         )}
-      </Wrapper>
+      </div>
     </Popup>
   );
 };

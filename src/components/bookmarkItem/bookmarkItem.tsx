@@ -1,28 +1,16 @@
 import { useCallback, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-import GridListImageItem from '@enact/moonstone/GridListImageItem';
-import styled from 'styled-components';
 
 import { Bookmark } from 'api';
-import Lazy from 'components/lazy';
+import ImageItem from 'components/imageItem';
 import { PATHS, generatePath } from 'routes';
-
-const Wrapper = styled(Lazy)`
-  display: inline-flex;
-  position: relative;
-  height: 10rem !important;
-  width: 20%;
-`;
-
-const GridItem = styled(GridListImageItem)`
-  width: 100%;
-`;
 
 type Props = {
   bookmark?: Bookmark;
+  className?: string;
 };
 
-const BookmarkItem: React.FC<Props> = ({ bookmark }) => {
+const BookmarkItem: React.FC<Props> = ({ bookmark, className }) => {
   const history = useHistory();
   const source = useMemo(
     () => (bookmark ? `https://dummyimage.com/250x200/222/fff.png&text=${`Фильмов ${bookmark.count}`}` : ''),
@@ -41,11 +29,7 @@ const BookmarkItem: React.FC<Props> = ({ bookmark }) => {
     }
   }, [bookmark, history]);
 
-  return (
-    <Wrapper height="10rem">
-      <GridItem source={source} caption={bookmark?.title} onClick={handleOnClick} />
-    </Wrapper>
-  );
+  return <ImageItem onClick={handleOnClick} source={source} caption={bookmark?.title} />;
 };
 
 export default BookmarkItem;

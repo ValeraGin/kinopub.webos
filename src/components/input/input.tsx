@@ -1,42 +1,24 @@
-import { useEffect, useRef } from 'react';
-import BaseInput, { InputProps } from '@enact/moonstone/Input';
-import styled from 'styled-components';
+import { useCallback } from 'react';
+import cx from 'classnames';
 
-const Wrapper = styled.div`
-  display: inline-flex;
-
-  > div {
-    width: 100%;
-  }
-`;
+import Spottable from 'components/spottable';
 
 type Props = {
-  autoFocus?: boolean;
-} & InputProps;
+  onChange?: (value: string, e: React.ChangeEvent<HTMLInputElement>) => void;
+} & React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 
-const Input: React.FC<Props> = ({ autoFocus, ...props }) => {
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    let frameId: number;
-
-    if (autoFocus) {
-      frameId = requestAnimationFrame(() => {
-        wrapperRef.current?.querySelector('input')?.focus();
-      });
-    }
-
-    return () => {
-      if (frameId) {
-        cancelAnimationFrame(frameId);
-      }
-    };
-  }, [wrapperRef, autoFocus]);
+const Input: React.FC<Props> = ({ className, onChange, ...props }) => {
+  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
+    (e) => {
+      onChange?.(e.target.value, e);
+    },
+    [onChange],
+  );
 
   return (
-    <Wrapper ref={wrapperRef}>
-      <BaseInput {...props} />
-    </Wrapper>
+    <Spottable className={cx('w-full rounded', className)}>
+      <input {...props} onChange={handleChange} className={'w-full h-auto px-2 py-1 rounded text-gray-500'} />
+    </Spottable>
   );
 };
 

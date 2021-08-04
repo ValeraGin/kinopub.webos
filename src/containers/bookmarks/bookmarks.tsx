@@ -1,21 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
-import CheckboxItem from '@enact/moonstone/CheckboxItem';
 import map from 'lodash/map';
-import styled from 'styled-components';
 
 import { Bookmark } from 'api';
+import Checkbox from 'components/checkbox';
 import useApi from 'hooks/useApi';
 import useApiMutation from 'hooks/useApiMutation';
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-`;
-
-const BookmarkItem = styled.div`
-  flex-basis: 20%;
-  padding: 1rem;
-`;
 
 type Props = {
   itemId: string;
@@ -36,15 +25,15 @@ const Bookmarks: React.FC<Props> = ({ itemId }) => {
   );
 
   return (
-    <Wrapper key={dataUpdatedAt}>
+    <div className="flex flex-wrap" key={dataUpdatedAt}>
       {map(data?.items, (bookmark) => (
-        <BookmarkItem key={bookmark.updated}>
-          <CheckboxItem defaultSelected={bookmarksIds.includes(bookmark.id)} onToggle={handleCheckboxToggle(bookmark)}>
+        <div className="w-1/5 p-1" key={bookmark.updated}>
+          <Checkbox defaultChecked={bookmarksIds.includes(bookmark.id)} onChange={handleCheckboxToggle(bookmark)}>
             {bookmark.title}
-          </CheckboxItem>
-        </BookmarkItem>
+          </Checkbox>
+        </div>
       ))}
-    </Wrapper>
+    </div>
   );
 };
 
