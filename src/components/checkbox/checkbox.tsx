@@ -1,9 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
+import React from 'react';
 import cx from 'classnames';
 
 import Spottable from 'components/spottable';
 
-type Props = {
+import { isEnter } from 'utils/keyboard';
+
+export type CheckboxProps = {
   defaultChecked?: boolean;
   checked?: boolean;
   onChange?: (checked: boolean, e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -11,20 +14,35 @@ type Props = {
   type?: string;
 } & Omit<React.HTMLAttributes<HTMLInputElement>, 'onChange'>;
 
-const Checkbox: React.FC<Props> = ({ defaultChecked, checked, onChange, onClick, className, children, ...props }) => {
+const Checkbox: React.FC<CheckboxProps> = ({ defaultChecked, checked, onChange, className, children, ...props }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
     (e) => {
       onChange?.(e.target.checked, e);
     },
     [onChange],
   );
+  const handleKeyPress = useCallback(
+    (e: KeyboardEvent) => {
+      if (isEnter(e) && inputRef.current) {
+        inputRef.current.click();
+      }
+    },
+    [inputRef],
+  );
 
   return (
-    <Spottable component="label" className={cx('text-primary p-2', className)} onClick={onClick}>
+    <Spottable
+      component="label"
+      className={cx('text-primary p-2', className)}
+      // @ts-expect-error
+      onKeyPress={handleKeyPress}
+    >
       <div className="inline-flex items-center cursor-pointer">
         <input
-          {...props}
           type="checkbox"
+          {...props}
+          ref={inputRef}
           className="inline-block w-4 h-4"
           defaultChecked={defaultChecked}
           checked={checked}

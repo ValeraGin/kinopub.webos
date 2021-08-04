@@ -1,6 +1,11 @@
 export enum KeyboardCodes {
+  Enter = 13,
   Play = 415,
   Back = 461,
+}
+
+export function isEnter(e: KeyboardEvent): boolean {
+  return e.keyCode === KeyboardCodes.Enter || e.key === 'Enter';
 }
 
 export function isBackButton(e: KeyboardEvent): boolean {
