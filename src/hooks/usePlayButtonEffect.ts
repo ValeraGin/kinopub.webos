@@ -6,7 +6,7 @@ function usePlayButtonEffect(handler: ButtonClickHandler) {
   useEffect(() => {
     const listiner = (e: KeyboardEvent) => {
       if (isPlayButton(e)) {
-        handler();
+        handler(e);
       }
     };
 
