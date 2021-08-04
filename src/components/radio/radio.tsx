@@ -11,7 +11,7 @@ type Props = {
   type?: string;
 } & Omit<React.HTMLAttributes<HTMLInputElement>, 'onChange'>;
 
-const Radio: React.FC<Props> = ({ defaultChecked, checked, onChange, className, children, ...props }) => {
+const Radio: React.FC<Props> = ({ defaultChecked, checked, onChange, onClick, className, children, ...props }) => {
   const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
     (e) => {
       onChange?.(e.target.checked, e);
@@ -20,7 +20,7 @@ const Radio: React.FC<Props> = ({ defaultChecked, checked, onChange, className, 
   );
 
   return (
-    <Spottable component="label" className={cx('text-primary p-2', className)}>
+    <Spottable component="label" className={cx('text-primary p-2', className)} onClick={onClick}>
       <div className="inline-flex items-center cursor-pointer">
         <input
           {...props}
