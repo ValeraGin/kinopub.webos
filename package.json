@@ -26,8 +26,11 @@
     "@enact/ui": "4.0.5",
     "@enact/webos": "4.0.5",
     "classnames": "2.3.1",
+    "core-js": "3.16.0",
+    "element-closest-polyfill": "1.0.4",
     "hls.js": "1.0.7",
     "ilib": "14.9.1",
+    "intersection-observer": "0.12.0",
     "lodash": "4.17.21",
     "react": "17.0.2",
     "react-dom": "17.0.2",
@@ -35,7 +38,8 @@
     "react-onclickoutside": "6.11.2",
     "react-query": "3.19.1",
     "react-router-dom": "5.2.0",
-    "use-debounce": "7.0.0"
+    "use-debounce": "7.0.0",
+    "whatwg-fetch": "3.6.2"
   },
   "devDependencies": {
     "@babel/core": "7.14.8",

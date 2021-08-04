@@ -1,3 +1,4 @@
+import './polyfills';
 import './attachErrorHandler';
 
 import { render } from 'react-dom';
