@@ -68,7 +68,7 @@ const Settings: React.FC<Props> = ({ player }) => {
   useEffect(() => {
     const listiner = (e: KeyboardEvent) => {
       if (isArrowUpButton(e)) {
-        if (player.current) {
+        if (player.current && !popupVisible) {
           const video: any = player.current.getVideoNode();
           const { audioTracks, audioTrack, sourceTracks, sourceTrack, subtitleTracks, subtitleTrack } = video;
 
