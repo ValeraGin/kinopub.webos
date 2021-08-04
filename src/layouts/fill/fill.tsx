@@ -5,7 +5,7 @@ type Props = {
 };
 
 const FillLayout: React.FC<Props> = ({ children }) => {
-  return <div className="w-full h-full">{children}</div>;
+  return <div className="w-screen h-screen">{children}</div>;
 };
 
 export default FillLayout;

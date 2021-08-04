@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { ItemsParams } from 'api';
 import ItemsList from 'components/itemsList';
-import Lazy from 'components/lazy';
 import Link from 'components/link';
 import Scrollable from 'components/scrollable';
 import useApi from 'hooks/useApi';
@@ -60,36 +59,23 @@ const NewTVShows: React.FC = () => {
 
 const HomeView: React.FC = () => {
   return (
-    <>
-      <Scrollable>
-        <Lazy height="50rem">
-          <PopularMovies />
-        </Lazy>
-        <Lazy height="50rem">
-          <NewMovies />
-        </Lazy>
+    <Scrollable>
+      <PopularMovies />
 
-        <Lazy height="50rem">
-          <PopularSerials />
-        </Lazy>
-        <Lazy height="50rem">
-          <NewSerials />
-        </Lazy>
+      <NewMovies />
 
-        <Lazy height="50rem">
-          <NewConcerts />
-        </Lazy>
-        <Lazy height="50rem">
-          <NewDocuMovies />
-        </Lazy>
-        <Lazy height="50rem">
-          <NewDocuSerials />
-        </Lazy>
-        <Lazy height="50rem">
-          <NewTVShows />
-        </Lazy>
-      </Scrollable>
-    </>
+      <PopularSerials />
+
+      <NewSerials />
+
+      <NewConcerts />
+
+      <NewDocuMovies />
+
+      <NewDocuSerials />
+
+      <NewTVShows />
+    </Scrollable>
   );
 };
 

@@ -5,7 +5,6 @@ import map from 'lodash/map';
 import { WatchingStatus } from 'api';
 import Button from 'components/button';
 import ItemsList from 'components/itemsList';
-import Lazy from 'components/lazy';
 import Popup from 'components/popup';
 import Scrollable from 'components/scrollable';
 import SeasonsList from 'components/seasonsList';
@@ -162,9 +161,7 @@ const ItemView: React.FC = () => {
         )}
       </div>
 
-      <Lazy height="50rem">
-        <SimilarItems itemId={itemId!} />
-      </Lazy>
+      <SimilarItems itemId={itemId!} />
     </Scrollable>
   );
 };
