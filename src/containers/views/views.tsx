@@ -12,7 +12,7 @@ const Views: React.FC = ({ children, ...props }) => {
 
   const handleBackButtonClick = useCallback(
     (e: KeyboardEvent) => {
-      e.stopPropagation();
+      e.preventDefault();
 
       if (history.location.pathname !== PATHS.Home) {
         history.goBack();
