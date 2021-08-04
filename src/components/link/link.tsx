@@ -37,7 +37,7 @@ const Link: React.FC<Props> = ({ href, state, children, icon, iconOnly, active, 
       role="button"
     >
       <div className="flex items-center ">
-        {icon && <Icon name={icon} />}
+        {icon && <Icon className={cx({ 'mr-2': !iconOnly })} name={icon} />}
         {!iconOnly && children}
       </div>
     </Spottable>

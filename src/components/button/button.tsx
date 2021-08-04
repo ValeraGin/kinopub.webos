@@ -35,17 +35,11 @@ const Button: React.FC<Props> = ({ icon, iconOnly, children, autoFocus, classNam
     <Spottable
       {...props}
       ref={wrapperRef}
-      className={cx(
-        'text-primary whitespace-nowrap cursor-pointer rounded px-2 py-1',
-        {
-          'pr-3': !!icon,
-        },
-        className,
-      )}
+      className={cx('text-primary whitespace-nowrap cursor-pointer rounded px-2 py-1', className)}
       role="button"
     >
       <div className="flex items-center">
-        {icon && <Icon name={icon} />}
+        {icon && <Icon className={cx({ 'mr-2': !iconOnly })} name={icon} />}
         {!iconOnly && children}
       </div>
     </Spottable>

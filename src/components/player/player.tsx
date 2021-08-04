@@ -107,7 +107,7 @@ const Player: React.FC<PlayerProps> = ({
   return (
     <>
       {titleVisible && <Text className="p-4 absolute top-0 z-10">{title}</Text>}
-      <Settings player={playerRef} />
+      <Settings showButton={titleVisible} player={playerRef} />
       {isLoaded && startTime! > 0 && <StartFrom startTime={startTime} player={playerRef} />}
 
       <VideoPlayer

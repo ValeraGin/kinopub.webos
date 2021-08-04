@@ -11,9 +11,14 @@ type Props = {
 
 const ImageItem: React.FC<Props> = ({ className, wrapperClassName, source, caption, children, ...props }) => {
   return (
-    <Spottable {...props} className={cx('rounded-xl w-1/6', wrapperClassName)}>
+    <Spottable {...props} className={cx('rounded-xl w-1/5', wrapperClassName)}>
       <div className={cx('h-40 m-1 flex flex-col relative overflow-hidden cursor-pointer', className)}>
-        <img loading="lazy" className="w-full h-full object-cover rounded-xl bg-gray-300" src={source} alt={caption} />
+        <img
+          loading="lazy"
+          className="w-full h-full object-cover rounded-xl border-2 border-gray-300 bg-gray-300"
+          src={source}
+          alt={caption}
+        />
         <div className="px-2">
           <p className="text-primary text-sm text-center overflow-hidden whitespace-nowrap">{caption}</p>
         </div>

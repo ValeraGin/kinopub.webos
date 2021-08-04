@@ -24,7 +24,7 @@ const ItemsList: React.FC<Props> = ({ title, items, loading, onScrollToEnd, scro
         {map(items, (item) => (
           <VideoItem key={item.id} item={item} />
         ))}
-        {loading && map([...new Array(18)], (_, idx) => <VideoItem key={idx} />)}
+        {loading && map([...new Array(15)], (_, idx) => <VideoItem key={idx} />)}
       </div>
     </div>
   );

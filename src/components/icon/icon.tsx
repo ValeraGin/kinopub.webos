@@ -12,6 +12,7 @@ const ICONS_MAP = {
   sports_soccer: <>&#xea2f;</>,
   expand_more: <>&#xe5cf;</>,
   expand_less: <>&#xe5ce;</>,
+  settings: <>&#xe8b8;</>,
 } as const;
 
 export type IconName = keyof typeof ICONS_MAP;
@@ -22,7 +23,7 @@ type Props = {
 
 const Icon: React.FC<Props> = ({ name, className, ...props }) => {
   return (
-    <i {...props} className={cx(`material-icons`, className)}>
+    <i {...props} className={cx(`material-icons text-center`, className)}>
       {ICONS_MAP[name as IconName] || name}
     </i>
   );
