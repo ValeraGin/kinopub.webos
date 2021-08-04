@@ -1,15 +1,10 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import onClickOutside from 'react-onclickoutside';
 import Spotlight from '@enact/spotlight';
-import SpotlightContainerDecorator from '@enact/spotlight/SpotlightContainerDecorator';
 import cx from 'classnames';
 
+import SpotlightContainer from 'components/spotlightContainer';
 import useBackButtonEffect from 'hooks/useBackButtonEffect';
-
-const Container = SpotlightContainerDecorator(
-  { enterTo: 'default-element', preserveId: true },
-  (props: React.HTMLAttributes<HTMLDivElement>) => <div {...props} />,
-);
 
 type Props = {
   visible: boolean;
@@ -62,7 +57,7 @@ const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
 
   return (
     <div className="fixed z-999 top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50" onClick={handleClose}>
-      <Container
+      <SpotlightContainer
         {...props}
         spotlightId={containerId}
         spotlightRestrict="self-only"
