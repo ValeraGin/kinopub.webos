@@ -4,7 +4,7 @@ import cx from 'classnames';
 
 import Spottable from 'components/spottable';
 
-import { isEnter } from 'utils/keyboard';
+import { isKey } from 'utils/keyboard';
 
 export type CheckboxProps = {
   defaultChecked?: boolean;
@@ -24,7 +24,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ defaultChecked, checked, onChange, 
   );
   const handleKeyPress = useCallback(
     (e: KeyboardEvent) => {
-      if (isEnter(e) && inputRef.current) {
+      if (isKey(e, 'Enter') && inputRef.current) {
         inputRef.current.click();
       }
     },

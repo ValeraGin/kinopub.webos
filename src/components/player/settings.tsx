@@ -7,7 +7,7 @@ import Popup from 'components/popup';
 import Radio from 'components/radio';
 import Text from 'components/text';
 
-import { isArrowUpButton, isPlayButton } from 'utils/keyboard';
+import { isKey, isPlayButton } from 'utils/keyboard';
 
 const NONE = 'NONE';
 
@@ -91,7 +91,7 @@ const Settings: React.FC<Props> = ({ player, showButton }) => {
 
   useEffect(() => {
     const listiner = (e: KeyboardEvent) => {
-      if (isArrowUpButton(e)) {
+      if (isKey(e, 'ArrowUp') || isKey(e, 'Blue')) {
         handlePopupOpen();
       } else if (isPlayButton(e)) {
         setPopupVisible(false);
