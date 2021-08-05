@@ -51,7 +51,10 @@ class BaseApiClient {
     };
 
     if (accessToken) {
-      headers['Authorization'] = `Bearer ${accessToken}`;
+      params = {
+        ...params,
+        access_token: accessToken,
+      };
     }
 
     try {
