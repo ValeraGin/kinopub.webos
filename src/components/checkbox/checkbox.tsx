@@ -37,6 +37,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ defaultChecked, checked, onChange, 
       className={cx('text-primary p-2', className)}
       // @ts-expect-error
       onKeyPress={handleKeyPress}
+      role="button"
     >
       <div className="inline-flex items-center cursor-pointer">
         <input

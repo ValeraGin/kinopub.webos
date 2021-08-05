@@ -36,7 +36,12 @@ const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
         // @ts-expect-error
         current.blur();
       }
+
       Spotlight.setActiveContainer(containerId);
+      setTimeout(() => {
+        Spotlight.setPointerMode(false);
+        Spotlight.focus(containerId);
+      }, 500);
     }
   }, [containerId]);
 
@@ -51,16 +56,18 @@ const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
   // @ts-expect-error
   Popup.handleClickOutside = handleClose;
 
-  if (!visible) {
-    return null;
-  }
-
   return (
-    <div className="fixed z-999 top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50" onClick={handleClose}>
+    <div
+      className={cx('fixed z-999 top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50', {
+        hidden: !visible,
+      })}
+      onClick={handleClose}
+    >
       <SpotlightContainer
         {...props}
         spotlightId={containerId}
         spotlightRestrict="self-only"
+        spotlightDisabled={!visible}
         className={cx('fixed z-999 bottom-0 left-0 right-0 p-4 bg-primary ring', className)}
       />
     </div>

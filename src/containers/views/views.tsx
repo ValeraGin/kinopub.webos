@@ -10,24 +10,19 @@ const Views: React.FC = ({ children, ...props }) => {
   const history = useHistory();
   const [showNotice, setShowNotice] = useState(false);
 
-  const handleBackButtonClick = useCallback(
-    (e: KeyboardEvent) => {
-      e.preventDefault();
+  const handleBackButtonClick = useCallback(() => {
+    if (history.location.pathname !== PATHS.Home) {
+      history.goBack();
+    } else if (showNotice) {
+      window.close();
+    } else {
+      setShowNotice(true);
 
-      if (history.location.pathname !== PATHS.Home) {
-        history.goBack();
-      } else if (showNotice) {
-        window.close();
-      } else {
-        setShowNotice(true);
-
-        setTimeout(() => {
-          setShowNotice(false);
-        }, 5 * 1000);
-      }
-    },
-    [history, showNotice],
-  );
+      setTimeout(() => {
+        setShowNotice(false);
+      }, 5 * 1000);
+    }
+  }, [history, showNotice]);
 
   useBackButtonEffect(handleBackButtonClick);
   useDeviceAuthorizationEffect();
