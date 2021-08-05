@@ -45,11 +45,6 @@ class BaseApiClient {
   private async request<T>(method: 'GET' | 'POST', url: string, params?: Params, data?: Params) {
     const accessToken = this.getAccessToken();
 
-    const headers: HeadersInit = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    };
-
     if (accessToken) {
       params = {
         ...params,
@@ -60,7 +55,6 @@ class BaseApiClient {
     try {
       const response = await fetch(`${this.baseUrl}${url}?${normalizeParams(params)}`, {
         method,
-        headers,
         body: stringifyParams(data),
       });
 
