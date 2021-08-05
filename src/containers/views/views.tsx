@@ -11,7 +11,7 @@ const Views: React.FC = ({ children, ...props }) => {
   const [showNotice, setShowNotice] = useState(false);
 
   const handleBackButtonClick = useCallback(() => {
-    if (history.location.pathname !== PATHS.Home) {
+    if (history.location.pathname !== PATHS.Index) {
       history.goBack();
     } else if (showNotice) {
       window.close();

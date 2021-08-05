@@ -25,9 +25,12 @@ function useDeviceAuthorizationEffect() {
 
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
+      const path = history.location.pathname;
       await deviceAuthorizationAsync([deviceInfo, handleOnConfirm]);
 
-      history.replace(PATHS.Home);
+      if (path === PATHS.Pair || path === PATHS.Index) {
+        history.replace(PATHS.Home);
+      }
     }, 500);
 
     return () => {
