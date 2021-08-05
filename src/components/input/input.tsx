@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import cx from 'classnames';
 
 import Spottable from 'components/spottable';
@@ -14,9 +14,13 @@ const Input: React.FC<Props> = ({ className, onChange, ...props }) => {
     },
     [onChange],
   );
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleClick = useCallback(() => {
+    inputRef.current?.click();
+  }, []);
 
   return (
-    <Spottable className={cx('w-full rounded', className)}>
+    <Spottable className={cx('w-full rounded', className)} onClick={handleClick}>
       <input {...props} onChange={handleChange} className={'w-full h-auto px-2 py-1 rounded text-gray-500'} />
     </Spottable>
   );

@@ -4,8 +4,6 @@ import cx from 'classnames';
 
 import Spottable from 'components/spottable';
 
-import { isKey } from 'utils/keyboard';
-
 export type CheckboxProps = {
   defaultChecked?: boolean;
   checked?: boolean;
@@ -22,23 +20,12 @@ const Checkbox: React.FC<CheckboxProps> = ({ defaultChecked, checked, onChange, 
     },
     [onChange],
   );
-  const handleKeyPress = useCallback(
-    (e: KeyboardEvent) => {
-      if (isKey(e, 'Enter') && inputRef.current) {
-        inputRef.current.click();
-      }
-    },
-    [inputRef],
-  );
+  const handleClick = useCallback(() => {
+    inputRef.current?.click();
+  }, []);
 
   return (
-    <Spottable
-      component="label"
-      className={cx('text-primary p-2', className)}
-      // @ts-expect-error
-      onKeyPress={handleKeyPress}
-      role="button"
-    >
+    <Spottable component="label" className={cx('text-primary p-2', className)} onClick={handleClick} role="button">
       <div className="inline-flex items-center cursor-pointer">
         <input
           type="checkbox"
