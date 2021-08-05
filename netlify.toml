@@ -15,6 +15,9 @@ publish = "build/"
 # Default build command.
 command = "yarn build"
 
+[context.production.environment]
+PUBLIC_URL = "/"
+
 # The following redirect is intended for use with most SPAs that handle
 # routing internally.
 [[redirects]]
