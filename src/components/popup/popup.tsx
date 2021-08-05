@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import onClickOutside from 'react-onclickoutside';
 import Spotlight from '@enact/spotlight';
 import cx from 'classnames';
 
@@ -53,9 +52,6 @@ const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
     }
   }, [visible, spotPopupContent]);
 
-  // @ts-expect-error
-  Popup.handleClickOutside = handleClose;
-
   return (
     <div
       className={cx('fixed z-999 top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50', {
@@ -74,10 +70,4 @@ const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
   );
 };
 
-const clickOutsideConfig = {
-  handleClickOutside: () =>
-    // @ts-expect-error
-    Popup.handleClickOutside,
-};
-
-export default onClickOutside(Popup, clickOutsideConfig);
+export default Popup;
