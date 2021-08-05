@@ -3,8 +3,7 @@ import castArray from 'lodash/castArray';
 export const KeyboardCodes = {
   Enter: 13,
   Play: 415,
-  Pause: 413,
-  PlayPause: 179,
+  Pause: [413, 179],
   Back: [461, 10009],
   Backspace: 8,
   Escape: 27,
@@ -19,33 +18,37 @@ export const KeyboardCodes = {
   Settings: 10133,
 } as const;
 
-type KeyboardCodesKeys = keyof typeof KeyboardCodes;
+export type KeyboardCodesKeys = keyof typeof KeyboardCodes;
 
-export function isKey(e: KeyboardEvent, key: KeyboardCodesKeys) {
+export function isKey(e: KeyboardEvent, key: KeyboardCodesKeys | KeyboardCodesKeys[]) {
+  const keys = castArray(key);
   const keyCode = e.keyCode || e.which;
 
-  return e.key === key || castArray(KeyboardCodes[key]).some((code) => keyCode === code);
+  return keys.some((key) => e.key === key || castArray(KeyboardCodes[key]).some((code) => keyCode === code));
 }
 
 export function isBackButton(e: KeyboardEvent): boolean {
-  return isKey(e, 'Back') || isKey(e, 'Escape') || isKey(e, 'Backspace');
-}
-
-export function isPlayButton(e: KeyboardEvent): boolean {
-  return isKey(e, 'Play') || isKey(e, 'PlayPause');
+  return isKey(e, ['Back', 'Backspace', 'Escape']);
 }
 
 export type ButtonClickHandler = (e: KeyboardEvent) => void | boolean | Promise<void> | Promise<boolean>;
 
-let BACK_BUTTON_HANDLERS: ButtonClickHandler[];
+let BUTTON_HANDLERS: {
+  key: KeyboardCodesKeys | KeyboardCodesKeys[];
+  handler: ButtonClickHandler;
+}[];
 
-function listenBackButton() {
+function listenButton() {
   window.addEventListener('keydown', async (e: KeyboardEvent) => {
+    let isBack = false;
     if (isBackButton(e)) {
+      isBack = true;
       e.preventDefault();
       e.stopPropagation();
+    }
 
-      for (let handler of BACK_BUTTON_HANDLERS) {
+    for (let { key, handler } of BUTTON_HANDLERS) {
+      if ((key === 'Back' && isBack) || isKey(e, key)) {
         const result = await handler(e);
 
         if (result === false) {
@@ -56,16 +59,16 @@ function listenBackButton() {
   });
 }
 
-export function registerBackButtonHandler(handler: ButtonClickHandler) {
-  if (!BACK_BUTTON_HANDLERS) {
-    BACK_BUTTON_HANDLERS = [];
+export function registerButtonHandler(key: KeyboardCodesKeys | KeyboardCodesKeys[], handler: ButtonClickHandler) {
+  if (!BUTTON_HANDLERS) {
+    BUTTON_HANDLERS = [];
 
-    listenBackButton();
+    listenButton();
   }
 
-  BACK_BUTTON_HANDLERS = [handler, ...BACK_BUTTON_HANDLERS];
+  BUTTON_HANDLERS = [{ key, handler }, ...BUTTON_HANDLERS];
 
   return () => {
-    BACK_BUTTON_HANDLERS = BACK_BUTTON_HANDLERS.filter((h) => h !== handler);
+    BUTTON_HANDLERS = BUTTON_HANDLERS.filter((h) => h.handler !== handler);
   };
 }

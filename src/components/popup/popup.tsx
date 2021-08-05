@@ -4,7 +4,7 @@ import Spotlight from '@enact/spotlight';
 import cx from 'classnames';
 
 import SpotlightContainer from 'components/spotlightContainer';
-import useBackButtonEffect from 'hooks/useBackButtonEffect';
+import useButtonEffect from 'hooks/useButtonEffect';
 
 type Props = {
   visible: boolean;
@@ -45,7 +45,7 @@ const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
     }
   }, [containerId]);
 
-  useBackButtonEffect(handleCloseOnBackButton);
+  useButtonEffect('Back', handleCloseOnBackButton);
 
   useEffect(() => {
     if (visible) {

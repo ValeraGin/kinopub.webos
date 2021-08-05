@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { VideoPlayerBase } from '@enact/moonstone/VideoPlayer';
 import map from 'lodash/map';
 
@@ -6,8 +6,7 @@ import Button from 'components/button';
 import Popup from 'components/popup';
 import Radio from 'components/radio';
 import Text from 'components/text';
-
-import { isKey, isPlayButton } from 'utils/keyboard';
+import useButtonEffect from 'hooks/useButtonEffect';
 
 const NONE = 'NONE';
 
@@ -89,21 +88,13 @@ const Settings: React.FC<Props> = ({ player, showButton }) => {
     }
   }, [player]);
 
-  useEffect(() => {
-    const listiner = (e: KeyboardEvent) => {
-      if (isKey(e, 'ArrowUp') || isKey(e, 'Blue')) {
-        handlePopupOpen();
-      } else if (isPlayButton(e)) {
-        setPopupVisible(false);
-      }
-    };
+  const handleBlueButton = useCallback(() => {
+    (popupVisible ? handlePopupClose : handlePopupOpen)();
+  }, [popupVisible, handlePopupOpen, handlePopupClose]);
 
-    window.addEventListener('keydown', listiner);
-
-    return () => {
-      window.removeEventListener('keydown', listiner);
-    };
-  }, [handlePopupOpen]);
+  useButtonEffect('Blue', handleBlueButton);
+  useButtonEffect('Play', handlePopupClose);
+  useButtonEffect('ArrowUp', handlePopupOpen);
 
   return (
     <>

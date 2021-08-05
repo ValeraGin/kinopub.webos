@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Switch, useHistory } from 'react-router-dom';
 
 import Text from 'components/text';
-import useBackButtonEffect from 'hooks/useBackButtonEffect';
+import useButtonEffect from 'hooks/useButtonEffect';
 import useDeviceAuthorizationEffect from 'hooks/useDeviceAuthorizationEffect';
 import { PATHS } from 'routes';
 
@@ -24,7 +24,7 @@ const Views: React.FC = ({ children, ...props }) => {
     }
   }, [history, showNotice]);
 
-  useBackButtonEffect(handleBackButtonClick);
+  useButtonEffect('Back', handleBackButtonClick);
   useDeviceAuthorizationEffect();
 
   return (

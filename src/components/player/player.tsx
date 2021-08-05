@@ -3,7 +3,7 @@ import VideoPlayer, { VideoPlayerBase, VideoPlayerBaseProps } from '@enact/moons
 
 import Media, { AudioTrack, SourceTrack, SubtitleTrack } from 'components/media';
 import Text from 'components/text';
-import useBackButtonEffect from 'hooks/useBackButtonEffect';
+import useButtonEffect from 'hooks/useButtonEffect';
 
 import Settings from './settings';
 import StartFrom from './startFrom';
@@ -102,7 +102,7 @@ const Player: React.FC<PlayerProps> = ({
     };
   }, [timeSyncInterval, onTimeSync, handleTimeSync]);
 
-  useBackButtonEffect(handleTimeSync);
+  useButtonEffect('Back', handleTimeSync);
 
   return (
     <>
