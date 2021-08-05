@@ -9,6 +9,7 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
+    "postbuild": "node ./scripts/msx.js",
     "package": "node ./scripts/package.js",
     "test": "craco test",
     "lint": "concurrently \"yarn run eslint\"",

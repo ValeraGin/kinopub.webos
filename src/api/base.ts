@@ -35,7 +35,11 @@ class BaseApiClient {
   protected baseUrl: string;
 
   constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
+    this.baseUrl = baseUrl.startsWith('http')
+      ? baseUrl
+      : window.location.protocol.startsWith('http')
+      ? `${window.location.protocol}//${baseUrl}`
+      : `http://${baseUrl}`;
   }
 
   private async request<T>(method: 'GET' | 'POST', url: string, params?: Params, data?: Params) {
