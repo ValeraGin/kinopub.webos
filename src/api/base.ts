@@ -1,4 +1,5 @@
 import isArray from 'lodash/isArray';
+import { serialize } from 'object-to-formdata';
 
 type Primitive = string | number | boolean;
 
@@ -55,7 +56,7 @@ class BaseApiClient {
     try {
       const response = await fetch(`${this.baseUrl}${url}?${normalizeParams(params)}`, {
         method,
-        body: stringifyParams(data),
+        body: data && serialize(data),
       });
 
       if (response.status === 401) {

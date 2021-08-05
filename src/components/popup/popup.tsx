@@ -53,20 +53,27 @@ const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
   }, [visible, spotPopupContent]);
 
   return (
-    <div
-      className={cx('fixed z-999 top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50', {
-        hidden: !visible,
-      })}
-      onClick={handleClose}
-    >
+    <>
+      <div
+        className={cx('fixed z-999 top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50', {
+          hidden: !visible,
+        })}
+        onClick={handleClose}
+      />
       <SpotlightContainer
         {...props}
         spotlightId={containerId}
         spotlightRestrict="self-only"
         spotlightDisabled={!visible}
-        className={cx('fixed z-999 bottom-0 left-0 right-0 p-4 bg-primary ring', className)}
+        className={cx(
+          'fixed z-999 bottom-0 left-0 right-0 p-4 bg-primary ring',
+          {
+            hidden: !visible,
+          },
+          className,
+        )}
       />
-    </div>
+    </>
   );
 };
 

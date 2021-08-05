@@ -33,6 +33,7 @@
     "ilib": "14.9.1",
     "intersection-observer": "0.12.0",
     "lodash": "4.17.21",
+    "object-to-formdata": "4.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-query": "3.19.2",
