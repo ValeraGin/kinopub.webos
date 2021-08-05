@@ -2,9 +2,9 @@ import 'styles/global.css';
 
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { BrowserRouter } from 'react-router-dom';
 import MoonstoneDecorator from '@enact/moonstone/MoonstoneDecorator';
 
+import Router from 'components/router';
 import View from 'components/view';
 import Views from 'containers/views';
 import { PATHS } from 'routes';
@@ -41,7 +41,7 @@ type Props = {};
 
 const App: React.FC<Props> = (props) => {
   return (
-    <BrowserRouter>
+    <Router>
       <QueryClientProvider client={queryClient}>
         <Views {...props}>
           <View path={PATHS.Index} component={IndexView} layout="fill" exact />
@@ -65,7 +65,7 @@ const App: React.FC<Props> = (props) => {
           <View component={NotFoundView} />
         </Views>
       </QueryClientProvider>
-    </BrowserRouter>
+    </Router>
   );
 };
 
