@@ -4,11 +4,13 @@ import map from 'lodash/map';
 import Link from 'components/link';
 import { PATHS, generatePath } from 'routes';
 
-const menuItems: {
+type MenuItem = {
   name: string;
   icon: string;
   href: string;
-}[][] = [
+};
+
+const menuItems: (MenuItem | null)[][] = [
   [
     {
       name: 'Главная',
@@ -35,7 +37,7 @@ const menuItems: {
       icon: 'list',
       href: PATHS.Collections,
     },
-  ],
+  ].filter(Boolean),
   [
     {
       name: 'Фильмы',
@@ -82,8 +84,15 @@ const menuItems: {
       icon: 'sports_soccer',
       href: generatePath(PATHS.Channels),
     },
-  ],
+  ].filter(Boolean),
   [
+    process.env.REACT_APP_HIDE_DONATE_MENU === 'true'
+      ? null
+      : {
+          name: 'Донат',
+          icon: 'favorite',
+          href: PATHS.Donate,
+        },
     {
       name: 'Спидтест',
       icon: 'speed',
@@ -94,7 +103,7 @@ const menuItems: {
       icon: 'settings',
       href: PATHS.Settings,
     },
-  ],
+  ].filter(Boolean),
 ];
 
 type Props = {};
@@ -106,7 +115,7 @@ const Menu: React.FC<Props> = (props) => {
     <nav className="group h-screen flex flex-col justify-between" {...props}>
       {map(menuItems, (list, idx) => (
         <ul key={idx}>
-          {map(list, (item) => (
+          {map(list, (item: MenuItem) => (
             <li key={item.href}>
               <Link href={item.href} icon={item.icon} active={location.pathname === item.href} className="px-2 py-1 rounded-r">
                 {item.name}

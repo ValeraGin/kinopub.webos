@@ -4,7 +4,7 @@ import map from 'lodash/map';
 import { Bookmark } from 'api';
 import BookmarkItem from 'components/bookmarkItem';
 import Scrollable from 'components/scrollable';
-import Text from 'components/text';
+import Title from 'components/title';
 
 type Props = {
   title?: string;
@@ -17,7 +17,7 @@ type Props = {
 const BookmarksList: React.FC<Props> = ({ title, bookmarks, loading, onScrollToEnd, scrollable = true }) => {
   const content = (
     <div>
-      {title && <Text className="m-1 mb-3">{title}</Text>}
+      <Title title={title} />
       <div className="flex flex-wrap pr-2">
         {map(bookmarks, (bookmark) => (
           <BookmarkItem key={bookmark.id} bookmark={bookmark} />

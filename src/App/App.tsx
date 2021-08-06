@@ -25,6 +25,7 @@ const NotFoundView = React.lazy(() => import('views/notFound'));
 const PairView = React.lazy(() => import('views/pair'));
 const SearchView = React.lazy(() => import('views/search'));
 const SettingsView = React.lazy(() => import('views/settings'));
+const DonateView = React.lazy(() => import('views/donate'));
 const SpeedView = React.lazy(() => import('views/speed'));
 const TrailerView = React.lazy(() => import('views/trailer'));
 const VideoView = React.lazy(() => import('views/video'));
@@ -62,6 +63,7 @@ const App: React.FC<Props> = (props) => {
           <View path={PATHS.Video} component={VideoView} layout="fill" />
           <View path={PATHS.Trailer} component={TrailerView} layout="fill" />
           <View path={PATHS.Pair} component={PairView} layout="fill" />
+          <View path={PATHS.Donate} component={DonateView} />
           <View path={PATHS.Speed} component={SpeedView} />
           <View path={PATHS.Settings} component={SettingsView} />
           <View component={NotFoundView} />

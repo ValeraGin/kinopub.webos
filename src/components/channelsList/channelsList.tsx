@@ -4,7 +4,7 @@ import map from 'lodash/map';
 import { Channel } from 'api';
 import ChannelItem from 'components/channelItem';
 import Scrollable from 'components/scrollable';
-import Text from 'components/text';
+import Title from 'components/title';
 
 type Props = {
   title?: string;
@@ -17,7 +17,7 @@ type Props = {
 const ChannelsList: React.FC<Props> = ({ title, channels, loading, onScrollToEnd, scrollable = true }) => {
   const content = (
     <div>
-      {title && <Text className="m-1 mb-3">{title}</Text>}
+      <Title title={title} />
       <div className="flex flex-wrap pr-2">
         {map(channels, (channel) => (
           <ChannelItem key={channel.id} channel={channel} />

@@ -18,6 +18,7 @@ export const PATHS = {
   Video: '/video/:videoId',
   Trailer: '/trailer/:trailerId',
   Pair: '/pair',
+  Donate: '/donate',
   Speed: '/speed',
   Settings: '/settings',
 };

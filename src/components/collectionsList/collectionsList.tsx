@@ -4,7 +4,7 @@ import map from 'lodash/map';
 import { Collection } from 'api';
 import CollectionItem from 'components/collectionItem';
 import Scrollable from 'components/scrollable';
-import Text from 'components/text';
+import Title from 'components/title';
 
 type Props = {
   title?: string;
@@ -17,7 +17,7 @@ type Props = {
 const CollectionsList: React.FC<Props> = ({ title, collections, loading, onScrollToEnd, scrollable = true }) => {
   const content = (
     <div>
-      {title && <Text className="m-1 mb-3">{title}</Text>}
+      <Title title={title} />
       <div className="flex flex-wrap pr-2">
         {map(collections, (collection) => (
           <CollectionItem key={collection.id} collection={collection} />

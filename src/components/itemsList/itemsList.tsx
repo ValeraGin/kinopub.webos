@@ -4,7 +4,7 @@ import map from 'lodash/map';
 
 import { Item } from 'api';
 import Scrollable from 'components/scrollable';
-import Text from 'components/text';
+import Title from 'components/title';
 import VideoItem from 'components/videoItem';
 
 type Props = {
@@ -19,7 +19,7 @@ type Props = {
 const ItemsList: React.FC<Props> = ({ title, items, loading, onScrollToEnd, scrollable = true, className }) => {
   const content = (
     <div>
-      {title && <Text className="m-1 mb-3">{title}</Text>}
+      <Title title={title} />
       <div className={cx('flex flex-wrap', className)}>
         {map(items, (item) => (
           <VideoItem key={item.id} item={item} />
