@@ -9,7 +9,7 @@ type LocationState = {
 
 const PairView: React.FC = () => {
   const location = useLocation<LocationState>();
-  const { userCode, verificationUri } = location.state;
+  const { userCode, verificationUri } = location.state || {};
 
   return (
     <>
