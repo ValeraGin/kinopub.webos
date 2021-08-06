@@ -112,10 +112,17 @@ const SpeedView: React.FC = () => {
     <>
       <Text className="m-1 mb-10">Проверка скорости</Text>
 
-      {error && (
+      {error ? (
         <div className="m-1 mb-10">
           <Text className="text-red-600">{error}</Text>
         </div>
+      ) : (
+        servers.length > 0 &&
+        !workers.length && (
+          <div className="m-1 mb-10">
+            <Text className="text-red-600">Не удалось создать ни одного воркера для замера скорости</Text>
+          </div>
+        )
       )}
 
       <div className="flex justify-around">
