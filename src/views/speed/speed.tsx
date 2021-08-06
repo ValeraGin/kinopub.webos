@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import map from 'lodash/map';
 
 import Button from 'components/button';
+import Seo from 'components/seo';
 import Text from 'components/text';
 import useApi from 'hooks/useApi';
 
@@ -110,6 +111,7 @@ const SpeedView: React.FC = () => {
 
   return (
     <>
+      <Seo title="Проверка скорости" />
       <Text className="m-1 mb-10">Проверка скорости</Text>
 
       {error ? (

@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { Channel } from 'api';
 import Player, { PlayerProps } from 'components/player';
+import Seo from 'components/seo';
 
 import { mapSources } from 'utils/video';
 
@@ -32,6 +33,7 @@ const ChannelView: React.FC = () => {
 
   return (
     <>
+      <Seo title={`Канал ${channel.title}`} />
       <Player {...playerProps} onEnded={handleOnEnded} />
     </>
   );

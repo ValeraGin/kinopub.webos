@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { ItemDetails, Trailer } from 'api';
 import Player, { PlayerProps } from 'components/player';
+import Seo from 'components/seo';
 
 import { mapSources } from 'utils/video';
 
@@ -26,6 +27,7 @@ const TrailerView: React.FC = () => {
 
   return (
     <>
+      <Seo title={`Просмотр ${item.title} - Трейлер`} />
       <Player {...playerProps} onEnded={handleOnEnded} />
     </>
   );

@@ -4,6 +4,7 @@ import orderBy from 'lodash/orderBy';
 
 import { Item } from 'api';
 import Input from 'components/input';
+import Seo from 'components/seo';
 import ItemsListInfinite from 'containers/itemsListInfinite';
 import useApiInfinite from 'hooks/useApiInfinite';
 import useRouteState from 'hooks/useRouteState';
@@ -31,6 +32,7 @@ const SearchView: React.FC = () => {
 
   return (
     <>
+      <Seo title="Поиск" />
       <div className="m-1 mb-3 mr-2">
         <Input autoFocus placeholder="Название фильма или сериала..." value={query} onChange={handleQueryChange} />
       </div>

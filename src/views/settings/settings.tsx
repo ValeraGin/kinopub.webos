@@ -7,6 +7,7 @@ import { Bool, DeviceSettingBoolean, DeviceSettingList, DeviceSettingsParams } f
 import Button from 'components/button';
 import Checkbox from 'components/checkbox';
 import Select from 'components/select';
+import Seo from 'components/seo';
 import Text from 'components/text';
 import useApi from 'hooks/useApi';
 import useApiMutation from 'hooks/useApiMutation';
@@ -85,60 +86,63 @@ const SettingsView: React.FC = () => {
   }, [deactivate]);
 
   return (
-    <div className="h-screen relative">
-      <Text className="m-1 mb-3">Настройки устройства</Text>
+    <>
+      <Seo title="Настройки устройства" />
+      <div className="h-screen relative">
+        <Text className="m-1 mb-3">Настройки устройства</Text>
 
-      <div className="flex flex-col">
-        {deviceInfo?.device && (
-          <>
-            <div>
-              <div className="flex flex-wrap pb-4" key={`bool-${deviceInfo?.device.updated}`}>
-                {map(boolSettings, (setting) => (
-                  <div className="flex w-1/2 pr-4" key={setting['key']}>
-                    <SettingBool setting={setting} onChange={handleBoolSettingToggle(setting)} />
-                  </div>
-                ))}
+        <div className="flex flex-col">
+          {deviceInfo?.device && (
+            <>
+              <div>
+                <div className="flex flex-wrap pb-4" key={`bool-${deviceInfo?.device.updated}`}>
+                  {map(boolSettings, (setting) => (
+                    <div className="flex w-1/2 pr-4" key={setting['key']}>
+                      <SettingBool setting={setting} onChange={handleBoolSettingToggle(setting)} />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-wrap pb-4" key={`list-${deviceInfo?.device.updated}`}>
+                  {map(listSettings, (setting) => (
+                    <div className="flex w-1/2 pr-4" key={setting['key']}>
+                      <SettingList setting={setting} onChange={handleListSettingSelect(setting)} />
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-wrap pb-4" key={`list-${deviceInfo?.device.updated}`}>
-                {map(listSettings, (setting) => (
-                  <div className="flex w-1/2 pr-4" key={setting['key']}>
-                    <SettingList setting={setting} onChange={handleListSettingSelect(setting)} />
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            <div className="flex my-8">
-              <Button icon="done" onClick={handleSaveClick}>
-                Сохранить
+              <div className="flex my-8">
+                <Button icon="done" onClick={handleSaveClick}>
+                  Сохранить
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="flex justify-between absolute bottom-0 left-0 right-0 py-2">
+          <div>
+            <Text>Пользователь</Text>
+            <div className="flex items-center">
+              {data?.user && (
+                <Text className="mr-4">
+                  {data.user.profile.name || data.user.username} ({Math.floor(data.user.subscription.days)} дн.)
+                </Text>
+              )}
+
+              <Button icon="logout" onClick={handleLogoutClick}>
+                Выход
               </Button>
             </div>
-          </>
-        )}
-      </div>
+          </div>
 
-      <div className="flex justify-between absolute bottom-0 left-0 right-0 py-2">
-        <div>
-          <Text>Пользователь</Text>
-          <div className="flex items-center">
-            {data?.user && (
-              <Text className="mr-4">
-                {data.user.profile.name || data.user.username} ({Math.floor(data.user.subscription.days)} дн.)
-              </Text>
-            )}
-
-            <Button icon="logout" onClick={handleLogoutClick}>
-              Выход
-            </Button>
+          <div className="flex flex-col items-end pr-4">
+            <Text>{hardware}</Text>
+            <Text>{software}</Text>
           </div>
         </div>
-
-        <div className="flex flex-col items-end pr-4">
-          <Text>{hardware}</Text>
-          <Text>{software}</Text>
-        </div>
       </div>
-    </div>
+    </>
   );
 };
 

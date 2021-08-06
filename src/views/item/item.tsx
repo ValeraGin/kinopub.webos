@@ -8,6 +8,7 @@ import ItemsList from 'components/itemsList';
 import Popup from 'components/popup';
 import Scrollable from 'components/scrollable';
 import SeasonsList from 'components/seasonsList';
+import Seo from 'components/seo';
 import Text from 'components/text';
 import Bookmarks from 'containers/bookmarks';
 import useApi from 'hooks/useApi';
@@ -107,68 +108,71 @@ const ItemView: React.FC = () => {
   useButtonEffect('Blue', handleBlueButton);
 
   return (
-    <Scrollable>
-      <div className="relative w-screen h-screen">
-        <img
-          className="absolute w-screen h-screen object-cover -z-1"
-          src={(data?.item?.posters.wide || data?.item?.posters.big)!}
-          alt={title}
-        />
+    <>
+      <Seo title={`Просмотр ${title}`} />
+      <Scrollable>
+        <div className="relative w-screen h-screen">
+          <img
+            className="absolute w-screen h-screen object-cover -z-1"
+            src={(data?.item?.posters.wide || data?.item?.posters.big)!}
+            alt={title}
+          />
 
-        <Text className="p-4 absolute top-0">{title}</Text>
+          <Text className="p-4 absolute top-0">{title}</Text>
 
-        <div className="absolute flex bottom-8 left-4 right-4">
-          <div>
-            <Button icon="play_circle_outline" onClick={handleOnPlayClick} className="mr-2">
-              Смотреть
-            </Button>
-
-            <Button icon="bookmark" onClick={handleOnBookmarksClick} className="mr-2">
-              В закладки
-            </Button>
-
-            <Popup visible={bookmarksPopupVisible} onClose={handleBookmarksPopupClose}>
-              <Bookmarks key={`${itemId}-${bookmarksPopupVisible}`} itemId={itemId!} />
-            </Popup>
-          </div>
-
-          <div>
-            {trailer && (
-              <Button icon="videocam" onClick={handleOnTrailerClick}>
-                Трейлер
+          <div className="absolute flex bottom-8 left-4 right-4">
+            <div>
+              <Button icon="play_circle_outline" onClick={handleOnPlayClick} className="mr-2">
+                Смотреть
               </Button>
-            )}
 
-            {typeof data?.item?.subscribed === 'boolean' && (
-              <Button icon={data?.item?.subscribed ? 'visibility_off' : 'visibility'} onClick={handleOnVisibilityClick}>
-                {data?.item.subscribed ? 'Не буду смотреть' : 'Буду смотреть'}
+              <Button icon="bookmark" onClick={handleOnBookmarksClick} className="mr-2">
+                В закладки
               </Button>
-            )}
+
+              <Popup visible={bookmarksPopupVisible} onClose={handleBookmarksPopupClose}>
+                <Bookmarks key={`${itemId}-${bookmarksPopupVisible}`} itemId={itemId!} />
+              </Popup>
+            </div>
+
+            <div>
+              {trailer && (
+                <Button icon="videocam" onClick={handleOnTrailerClick}>
+                  Трейлер
+                </Button>
+              )}
+
+              {typeof data?.item?.subscribed === 'boolean' && (
+                <Button icon={data?.item?.subscribed ? 'visibility_off' : 'visibility'} onClick={handleOnVisibilityClick}>
+                  {data?.item.subscribed ? 'Не буду смотреть' : 'Буду смотреть'}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      <SeasonsList item={data?.item!} seasons={data?.item?.seasons} />
+        <SeasonsList item={data?.item!} seasons={data?.item?.seasons} />
 
-      <div className="flex flex-col p-8 whitespace-pre-wrap">
-        <Text>{data?.item.plot}</Text>
+        <div className="flex flex-col p-8 whitespace-pre-wrap">
+          <Text>{data?.item.plot}</Text>
 
-        {!!data?.item.tracklist?.length && (
-          <>
-            <Text className="my-4">Треклист</Text>
-            <div className="flex flex-wrap flex-col h-96">
-              {map(data?.item.tracklist, (track, idx) => (
-                <Text key={idx}>
-                  {idx + 1}. {track.title}
-                </Text>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+          {!!data?.item.tracklist?.length && (
+            <>
+              <Text className="my-4">Треклист</Text>
+              <div className="flex flex-wrap flex-col h-96">
+                {map(data?.item.tracklist, (track, idx) => (
+                  <Text key={idx}>
+                    {idx + 1}. {track.title}
+                  </Text>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
 
-      <SimilarItems itemId={itemId!} />
-    </Scrollable>
+        <SimilarItems itemId={itemId!} />
+      </Scrollable>
+    </>
   );
 };
 

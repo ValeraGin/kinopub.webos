@@ -1,8 +1,8 @@
 import { BrowserRouter, BrowserRouterProps, MemoryRouter, MemoryRouterProps } from 'react-router-dom';
 
-export type RouterProps = BrowserRouterProps | MemoryRouterProps;
+import { IS_WEB } from 'utils/enviroment';
 
-const IS_WEB = window.location.origin.startsWith('http');
+export type RouterProps = BrowserRouterProps | MemoryRouterProps;
 
 const Router: React.FC<RouterProps> = (props) => {
   if (IS_WEB) {

@@ -1,5 +1,7 @@
 import { useLocation } from 'react-router-dom';
 
+import Seo from 'components/seo';
+
 type LocationState = {
   userCode: string;
   verificationUri: string;
@@ -11,6 +13,7 @@ const PairView: React.FC = () => {
 
   return (
     <>
+      <Seo title="Авторизация" />
       <div className="w-screen h-screen flex justify-center items-center text-gray-200 text-center">
         Подтвердите устройство перейдя по ссылке:
         <br />

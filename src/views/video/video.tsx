@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { ItemDetails, Season, Streaming, Video, WatchingStatus } from 'api';
 import Player, { PlayerProps } from 'components/player';
+import Seo from 'components/seo';
 import useApi from 'hooks/useApi';
 import useApiMutation from 'hooks/useApiMutation';
 import useStorageState from 'hooks/useStorageState';
@@ -132,6 +133,7 @@ const VideoView: React.FC = () => {
 
   return (
     <>
+      <Seo title={`Просмотр ${item.title} - Видео`} />
       {playerProps && (
         <Player
           key={currentVideo.id}

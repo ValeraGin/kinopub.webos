@@ -4,6 +4,7 @@ import { ItemsParams } from 'api';
 import ItemsList from 'components/itemsList';
 import Link from 'components/link';
 import Scrollable from 'components/scrollable';
+import Seo from 'components/seo';
 import useApi from 'hooks/useApi';
 import { PATHS, generatePath } from 'routes';
 
@@ -59,23 +60,26 @@ const NewTVShows: React.FC = () => {
 
 const HomeView: React.FC = () => {
   return (
-    <Scrollable>
-      <PopularMovies />
+    <>
+      <Seo title="Главная" />
+      <Scrollable>
+        <PopularMovies />
 
-      <NewMovies />
+        <NewMovies />
 
-      <PopularSerials />
+        <PopularSerials />
 
-      <NewSerials />
+        <NewSerials />
 
-      <NewConcerts />
+        <NewConcerts />
 
-      <NewDocuMovies />
+        <NewDocuMovies />
 
-      <NewDocuSerials />
+        <NewDocuSerials />
 
-      <NewTVShows />
-    </Scrollable>
+        <NewTVShows />
+      </Scrollable>
+    </>
   );
 };
 
