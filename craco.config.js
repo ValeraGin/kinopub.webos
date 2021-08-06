@@ -28,10 +28,10 @@ module.exports = {
       webpackConfig,
     ) => {
       // TODO: Review css order in @enact/ui @enact/moonstone components
-      // const instanceOfMiniCssExtractPlugin = webpackConfig.plugins.find((plugin) => plugin.constructor.name === 'MiniCssExtractPlugin');
-      // if (instanceOfMiniCssExtractPlugin) {
-      //   instanceOfMiniCssExtractPlugin.options.ignoreOrder = true;
-      // }
+      const instanceOfMiniCssExtractPlugin = webpackConfig.plugins.find((plugin) => plugin.constructor.name === 'MiniCssExtractPlugin');
+      if (instanceOfMiniCssExtractPlugin) {
+        instanceOfMiniCssExtractPlugin.options.ignoreOrder = true;
+      }
 
       return webpackConfig;
     },
