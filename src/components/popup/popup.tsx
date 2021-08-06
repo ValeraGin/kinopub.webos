@@ -16,7 +16,7 @@ const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
     onClose(false);
   }, [onClose]);
 
-  const handleCloseOnBackButton = useCallback(() => {
+  const handleCloseIfVisible = useCallback(() => {
     if (visible) {
       handleClose();
 
@@ -44,7 +44,8 @@ const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
     }
   }, [containerId]);
 
-  useButtonEffect('Back', handleCloseOnBackButton);
+  useButtonEffect('Back', handleCloseIfVisible);
+  useButtonEffect('Blue', handleCloseIfVisible);
 
   useEffect(() => {
     if (visible) {

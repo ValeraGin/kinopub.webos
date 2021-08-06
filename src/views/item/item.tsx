@@ -91,6 +91,9 @@ const ItemView: React.FC = () => {
   const handleBookmarksPopupClose = useCallback(() => {
     setBookmarksPopupVisible(false);
   }, []);
+  const handleBlueButton = useCallback(() => {
+    !bookmarksPopupVisible && handleOnBookmarksClick();
+  }, [bookmarksPopupVisible, handleOnBookmarksClick]);
 
   const handleOnVisibilityClick = useCallback(async () => {
     await watchingToggleWatchlistAsync([itemId!]);
@@ -98,7 +101,10 @@ const ItemView: React.FC = () => {
   }, [itemId, watchingToggleWatchlistAsync, refetch]);
 
   useStreamingTypeEffect();
-  useButtonEffect('Play', handleOnPlayClick);
+  useButtonEffect(['Play', 'Red'], handleOnPlayClick);
+  useButtonEffect('Green', handleOnTrailerClick);
+  useButtonEffect('Yellow', handleOnVisibilityClick);
+  useButtonEffect('Blue', handleBlueButton);
 
   return (
     <Scrollable>

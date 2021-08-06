@@ -89,8 +89,8 @@ const Settings: React.FC<Props> = ({ player, showButton }) => {
   }, [player]);
 
   const handleBlueButton = useCallback(() => {
-    (popupVisible ? handlePopupClose : handlePopupOpen)();
-  }, [popupVisible, handlePopupOpen, handlePopupClose]);
+    !popupVisible && handlePopupOpen();
+  }, [popupVisible, handlePopupOpen]);
 
   useButtonEffect('Blue', handleBlueButton);
   useButtonEffect('Play', handlePopupClose);
