@@ -53,7 +53,7 @@ const StartFrom: React.FC<Props> = ({ startTime, startInDelay = 5, player }) => 
   }
 
   return (
-    <div className="flex justify-center absolute w-full z-50 bottom-32">
+    <div className="flex justify-center absolute w-full z-101 bottom-32">
       <Button onClick={handleStartFromClick}>
         Смотреть с {startFrom} через {startIn}
       </Button>
