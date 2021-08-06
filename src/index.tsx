@@ -1,5 +1,5 @@
 import './polyfills';
-import './attachErrorHandler';
+import './plugins';
 
 import { render } from 'react-dom';
 
