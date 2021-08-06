@@ -9,7 +9,7 @@ type Props = {
   iconOnly?: boolean;
   autoFocus?: boolean;
   className?: string;
-} & React.HTMLAttributes<HTMLDivElement>;
+} & React.ComponentProps<typeof Spottable>;
 
 const Button: React.FC<Props> = ({ icon, iconOnly, children, autoFocus, className, ...props }) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -35,7 +35,7 @@ const Button: React.FC<Props> = ({ icon, iconOnly, children, autoFocus, classNam
     <Spottable
       {...props}
       ref={wrapperRef}
-      className={cx('text-primary whitespace-nowrap cursor-pointer rounded px-2 py-1', className)}
+      className={cx('text-gray-200 whitespace-nowrap cursor-pointer rounded px-2 py-1', className)}
       role="button"
     >
       <div className="flex items-center">

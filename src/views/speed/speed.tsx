@@ -16,6 +16,7 @@ const SpeedView: React.FC = () => {
   const { data } = useApi('serverLocations');
   const [speed, setSpeed] = useReducer(updateSpeedReducer, {});
   const [started, setStarted] = useState(false);
+  const [error, setError] = useState('');
 
   const servers = useMemo(
     () =>
@@ -30,28 +31,31 @@ const SpeedView: React.FC = () => {
       })),
     [data?.items],
   );
-  const workers = useMemo(
-    () =>
-      map(servers, (server) => {
-        // @ts-expect-error
-        const worker = new window['Speedtest']();
+  const workers = useMemo(() => {
+    // @ts-expect-error
+    if (!window['Speedtest']) {
+      return [];
+    }
 
-        worker._settings.test_order = 'IP_D';
-        worker._settings.xhr_dlMultistream = 1;
+    return map(servers, (server) => {
+      // @ts-expect-error
+      const worker = new window['Speedtest']();
 
-        worker.setSelectedServer(server);
+      worker._settings.test_order = 'IP_D';
+      worker._settings.xhr_dlMultistream = 1;
 
-        worker.onupdate = ({ testState, dlStatus }: { testState: number; dlStatus: string }) => {
-          setSpeed({
-            type: server.location,
-            payload: dlStatus || ((testState === 1 || testState === 2) && 'Начинаем') || '',
-          });
-        };
+      worker.setSelectedServer(server);
 
-        return worker;
-      }),
-    [servers, setSpeed],
-  );
+      worker.onupdate = ({ testState, dlStatus }: { testState: number; dlStatus: string }) => {
+        setSpeed({
+          type: server.location,
+          payload: dlStatus || ((testState === 1 || testState === 2) && 'Начинаем') || '',
+        });
+      };
+
+      return worker;
+    });
+  }, [servers, setSpeed]);
   const [currentWorkerIndex, setCurrentWorkerIndex] = useState(0);
 
   const handleStart = useCallback(() => {
@@ -93,6 +97,9 @@ const SpeedView: React.FC = () => {
     const script = document.createElement('script');
     script.src = './speedtest.js';
     script.async = true;
+    script.onerror = (error) => {
+      setError(`Не удалось загрузить скрипт для замера скорости: ${error}`);
+    };
 
     document.head.appendChild(script);
 
@@ -103,7 +110,13 @@ const SpeedView: React.FC = () => {
 
   return (
     <>
-      <Text className="m-1 mb-3">Проверка скорости</Text>
+      <Text className="m-1 mb-10">Проверка скорости</Text>
+
+      {error && (
+        <div className="m-1 mb-10">
+          <Text className="text-red-600">{error}</Text>
+        </div>
+      )}
 
       <div className="flex justify-around">
         {map(data?.items, (location) => (
@@ -121,7 +134,7 @@ const SpeedView: React.FC = () => {
             Стоп
           </Button>
         ) : (
-          <Button icon="play_arrow" onClick={handleStart}>
+          <Button icon="play_arrow" onClick={handleStart} disabled={!workers.length}>
             Начать
           </Button>
         )}

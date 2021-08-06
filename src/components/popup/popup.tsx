@@ -67,7 +67,7 @@ const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
         spotlightRestrict="self-only"
         spotlightDisabled={!visible}
         className={cx(
-          'fixed z-999 bottom-0 left-0 right-0 p-4 bg-primary ring',
+          'fixed z-999 bottom-0 left-0 right-0 p-4 bg-black ring',
           {
             hidden: !visible,
           },

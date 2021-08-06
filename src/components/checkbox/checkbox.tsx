@@ -25,7 +25,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ defaultChecked, checked, onChange, 
   }, []);
 
   return (
-    <Spottable component="label" className={cx('text-primary p-2', className)} onClick={handleClick} role="button">
+    <Spottable component="label" className={cx('text-gray-200 p-2', className)} onClick={handleClick} role="button">
       <div className="inline-flex items-center cursor-pointer">
         <input
           type="checkbox"

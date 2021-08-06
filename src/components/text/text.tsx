@@ -5,7 +5,7 @@ type Props = {
 };
 
 const Text: React.FC<Props> = ({ className, ...props }) => {
-  return <p {...props} className={cx('text-primary', className)} />;
+  return <p {...props} className={cx('text-gray-200', className)} />;
 };
 
 export default Text;

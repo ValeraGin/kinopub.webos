@@ -28,7 +28,7 @@ const VideoItem: React.FC<Props> = ({ item, className }) => {
   return (
     <ImageItem onClick={handleOnClick} source={item?.posters.medium} caption={title} className={cx('h-72', className)}>
       {item?.new && (
-        <div className="absolute bg-red-600 border-gray-300 border-t-2 border-r-2 text-primary px-2 py-1 rounded-bl rounded-tr-xl top-0 right-0">
+        <div className="absolute bg-red-600 border-gray-300 border-t-2 border-r-2 text-gray-200 px-2 py-1 rounded-bl rounded-tr-xl top-0 right-0">
           {item?.new}
         </div>
       )}

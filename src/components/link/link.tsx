@@ -28,7 +28,7 @@ const Link: React.FC<Props> = ({ href, state, children, icon, iconOnly, active, 
       className={cx(
         'whitespace-nowrap cursor-pointer p-1',
         {
-          'text-primary': !active,
+          'text-gray-200': !active,
           'text-red-600': active,
         },
         className,

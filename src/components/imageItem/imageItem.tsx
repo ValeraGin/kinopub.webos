@@ -20,7 +20,7 @@ const ImageItem: React.FC<Props> = ({ className, wrapperClassName, source, capti
           alt={caption}
         />
         <div className="px-2">
-          <p className="text-primary text-sm text-center overflow-hidden whitespace-nowrap">{caption}</p>
+          <p className="text-gray-200 text-sm text-center overflow-hidden whitespace-nowrap">{caption}</p>
         </div>
 
         {children}
