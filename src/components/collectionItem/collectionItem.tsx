@@ -19,9 +19,13 @@ const CollectionItem: React.FC<Props> = ({ collection, className }) => {
         generatePath(PATHS.Collection, {
           collectionId: collection.id,
         }),
+        {
+          collection,
+          title: collection.title,
+        },
       );
     }
-  }, [collection?.id, history]);
+  }, [collection, history]);
 
   return (
     <ImageItem onClick={handleOnClick} source={collection?.posters.medium} caption={collection?.title} className={cx('h-72', className)} />

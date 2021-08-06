@@ -133,7 +133,7 @@ const VideoView: React.FC = () => {
 
   return (
     <>
-      <Seo title={`Просмотр ${item.title} - Видео`} />
+      <Seo title={`Просмотр: ${item.title} - Видео`} />
       {playerProps && (
         <Player
           key={currentVideo.id}

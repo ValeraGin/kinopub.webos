@@ -109,7 +109,7 @@ const ItemView: React.FC = () => {
 
   return (
     <>
-      <Seo title={`Просмотр ${title}`} />
+      <Seo title={`Просмотр: ${title}`} />
       <Scrollable>
         <div className="relative w-screen h-screen">
           <img

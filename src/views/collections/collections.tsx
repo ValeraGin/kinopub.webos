@@ -18,7 +18,7 @@ const CollectionsView: React.FC = () => {
 
   return (
     <>
-      <Seo title="Коллекции" />
+      <Seo title="Подборки" />
       <div className="m-1 mb-3 mr-2">
         <Input placeholder="Название подборки..." value={query} onChange={handleQueryChange} />
       </div>

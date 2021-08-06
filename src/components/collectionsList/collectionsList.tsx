@@ -4,21 +4,26 @@ import map from 'lodash/map';
 import { Collection } from 'api';
 import CollectionItem from 'components/collectionItem';
 import Scrollable from 'components/scrollable';
+import Text from 'components/text';
 
 type Props = {
+  title?: string;
   collections?: Collection[];
   loading?: boolean;
   onScrollToEnd?: () => void;
   scrollable?: boolean;
 };
 
-const CollectionsList: React.FC<Props> = ({ collections, loading, onScrollToEnd, scrollable = true }) => {
+const CollectionsList: React.FC<Props> = ({ title, collections, loading, onScrollToEnd, scrollable = true }) => {
   const content = (
-    <div className="flex flex-wrap pr-2">
-      {map(collections, (collection) => (
-        <CollectionItem key={collection.id} collection={collection} />
-      ))}
-      {loading && map([...new Array(15)], (_, idx) => <CollectionItem key={idx} />)}
+    <div>
+      {title && <Text className="m-1 mb-3">{title}</Text>}
+      <div className="flex flex-wrap pr-2">
+        {map(collections, (collection) => (
+          <CollectionItem key={collection.id} collection={collection} />
+        ))}
+        {loading && map([...new Array(15)], (_, idx) => <CollectionItem key={idx} />)}
+      </div>
     </div>
   );
 

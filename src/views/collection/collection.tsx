@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import ItemsList from 'components/itemsList';
 import Seo from 'components/seo';
@@ -8,12 +8,13 @@ import { RouteParams } from 'routes';
 
 const CollectionView: React.FC = () => {
   const { collectionId } = useParams<RouteParams>();
+  const location = useLocation<{ title?: string }>();
   const { data, isLoading } = useApi('collectionItems', [collectionId!]);
-  const title = data?.collection.title;
+  const { title = data?.collection.title } = location.state || {};
 
   return (
     <>
-      <Seo title={`Коллекция ${title}`} />
+      <Seo title={`Подборка: ${title}`} />
       <ItemsList title={title} items={data?.items} loading={isLoading} />
     </>
   );

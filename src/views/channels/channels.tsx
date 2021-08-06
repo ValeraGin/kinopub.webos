@@ -6,11 +6,12 @@ import useApi from 'hooks/useApi';
 
 const CollectionsView: React.FC = () => {
   const { data, isLoading } = useApi('channels');
+  const title = 'Каналы';
 
   return (
     <>
-      <Seo title="Каналы" />
-      <ChannelsList channels={data?.channels} loading={isLoading} />
+      <Seo title={title} />
+      <ChannelsList title={title} channels={data?.channels} loading={isLoading} />
     </>
   );
 };

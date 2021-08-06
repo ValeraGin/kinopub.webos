@@ -48,6 +48,16 @@ const menuItems: {
       href: generatePath(PATHS.Category, { categoryId: 'serial' }),
     },
     {
+      name: 'Мультфильмы',
+      icon: 'toys',
+      href: generatePath(PATHS.Genre, { genreId: '23' }),
+    },
+    {
+      name: 'Аниме',
+      icon: 'auto_awesome',
+      href: generatePath(PATHS.Genre, { genreId: '25' }),
+    },
+    {
       name: 'Концерты',
       icon: 'library_music',
       href: generatePath(PATHS.Category, { categoryId: 'concert' }),

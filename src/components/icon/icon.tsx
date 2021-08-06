@@ -12,7 +12,8 @@ const ICONS_MAP = {
   sports_soccer: <>&#xea2f;</>,
   expand_more: <>&#xe5cf;</>,
   expand_less: <>&#xe5ce;</>,
-  settings: <>&#xe8b8;</>,
+  emoji_emotions: <>&#xea22;</>,
+  auto_awesome: <>&#xe65f;</>,
 } as const;
 
 export type IconName = keyof typeof ICONS_MAP;

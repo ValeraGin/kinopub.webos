@@ -6,33 +6,29 @@ import ItemsListInfinite from 'containers/itemsListInfinite';
 import useApiInfinite from 'hooks/useApiInfinite';
 import { RouteParams } from 'routes';
 
-const CATEGORY_ID_MAP = {
-  movie: 'Фильмы',
-  serial: 'Сериалы',
-  concert: 'Концерты',
-  documovie: 'Документальные фильмы',
-  docuserial: 'Документальные сериалы',
-  tvshow: 'ТВ Шоу',
+const GENDER_ID_MAP = {
+  23: 'Мультфильмы',
+  25: 'Аниме',
 } as const;
 
-const getCategoryById = (categoryId?: string) => {
+const getGenreById = (genreId?: string) => {
   return (
-    (categoryId
+    (genreId
       ? // @ts-expect-error
-        CATEGORY_ID_MAP[categoryId]
-      : categoryId) || ''
+        GENDER_ID_MAP[genreId]
+      : genreId) || ''
   );
 };
 
-const CategoryView: React.FC = () => {
-  const { categoryId } = useParams<RouteParams>();
+const GenreView: React.FC = () => {
+  const { genreId } = useParams<RouteParams>();
   const location = useLocation<{ params?: ItemsParams; title?: string }>();
-  const { params, title = getCategoryById(categoryId) } = location.state || {};
+  const { params, title = getGenreById(genreId) } = location.state || {};
 
   const queryResult = useApiInfinite('items', [
     {
       ...params,
-      type: categoryId,
+      genre: genreId,
     },
   ]);
 
@@ -44,4 +40,4 @@ const CategoryView: React.FC = () => {
   );
 };
 
-export default CategoryView;
+export default GenreView;

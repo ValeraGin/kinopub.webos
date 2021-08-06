@@ -12,6 +12,7 @@ import { PATHS } from 'routes';
 const BookmarkView = React.lazy(() => import('views/booksmark'));
 const BookmarksView = React.lazy(() => import('views/booksmarks'));
 const CategoryView = React.lazy(() => import('views/category'));
+const GenreView = React.lazy(() => import('views/genre'));
 const ChannelView = React.lazy(() => import('views/channel'));
 const ChannelsView = React.lazy(() => import('views/channels'));
 const CollectionView = React.lazy(() => import('views/collection'));
@@ -48,6 +49,7 @@ const App: React.FC<Props> = (props) => {
           <View path={PATHS.Home} component={HomeView} />
           <View path={PATHS.Search} component={SearchView} />
           <View path={PATHS.Category} component={CategoryView} />
+          <View path={PATHS.Genre} component={GenreView} />
           <View path={PATHS.Watching} component={WatchingView} />
           <View path={PATHS.Bookmark} component={BookmarkView} />
           <View path={PATHS.Bookmarks} component={BookmarksView} />

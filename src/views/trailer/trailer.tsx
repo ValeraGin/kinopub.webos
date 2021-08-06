@@ -27,7 +27,7 @@ const TrailerView: React.FC = () => {
 
   return (
     <>
-      <Seo title={`Просмотр ${item.title} - Трейлер`} />
+      <Seo title={`Просмотр: ${item.title} - Трейлер`} />
       <Player {...playerProps} onEnded={handleOnEnded} />
     </>
   );

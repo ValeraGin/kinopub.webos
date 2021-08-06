@@ -20,6 +20,7 @@ const ChannelItem: React.FC<Props> = ({ channel, className }) => {
         }),
         {
           channel,
+          title: channel.name,
         },
       );
     }

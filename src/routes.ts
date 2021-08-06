@@ -6,6 +6,7 @@ export const PATHS = {
   Search: '/search',
   Watching: '/watching',
   Category: '/category/:categoryId',
+  Genre: '/genres/:genreId',
   Channels: '/channels',
   Channel: '/channels/:channelId',
   Bookmarks: '/bookmarks',
@@ -25,6 +26,7 @@ export type PathValuesType = typeof PATHS[keyof typeof PATHS];
 
 export type RouteParams = {
   categoryId?: string;
+  genreId?: string;
   channelId?: string;
   collectionId?: string;
   bookmarkId?: string;

@@ -4,11 +4,12 @@ import useApi from 'hooks/useApi';
 
 const BooksmarksView: React.FC = () => {
   const { data, isLoading } = useApi('bookmarks');
+  const title = 'Закладки';
 
   return (
     <>
-      <Seo title="Закладки" />
-      <BookmarksList bookmarks={data?.items} loading={isLoading} />
+      <Seo title={title} />
+      <BookmarksList title={title} bookmarks={data?.items} loading={isLoading} />
     </>
   );
 };

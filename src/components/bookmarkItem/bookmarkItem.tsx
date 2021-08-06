@@ -24,6 +24,7 @@ const BookmarkItem: React.FC<Props> = ({ bookmark, className }) => {
         }),
         {
           bookmark,
+          title: bookmark.title,
         },
       );
     }

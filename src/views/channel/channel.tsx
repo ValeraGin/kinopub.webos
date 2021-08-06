@@ -33,7 +33,7 @@ const ChannelView: React.FC = () => {
 
   return (
     <>
-      <Seo title={`Канал ${channel.title}`} />
+      <Seo title={`Канал: ${channel.title}`} />
       <Player {...playerProps} onEnded={handleOnEnded} />
     </>
   );
