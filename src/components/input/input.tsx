@@ -1,29 +1,21 @@
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
+import InputBase, { InputProps } from '@enact/moonstone/Input';
 import cx from 'classnames';
 
-import Spottable from 'components/spottable';
-
 type Props = {
-  onChange?: (value: string, e: React.ChangeEvent<HTMLInputElement>) => void;
-} & React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
+  onChange?: (value: string) => void;
+  className?: string;
+} & InputProps;
 
 const Input: React.FC<Props> = ({ className, onChange, ...props }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
-    (e) => {
-      onChange?.(e.target.value, e);
+  const handleChange = useCallback(
+    ({ value }: { value: string }) => {
+      onChange?.(value);
     },
     [onChange],
   );
-  const handleClick = useCallback(() => {
-    inputRef.current?.focus();
-  }, []);
 
-  return (
-    <Spottable className={cx('w-full rounded', className)} onClick={handleClick}>
-      <input {...props} ref={inputRef} onChange={handleChange} className={'w-full h-auto px-2 py-1 rounded text-gray-500'} />
-    </Spottable>
-  );
+  return <InputBase {...props} className={cx('w-full', className)} onChange={handleChange} />;
 };
 
 export default Input;
