@@ -10,7 +10,7 @@ import { mapSources } from 'utils/video';
 const ChannelView: React.FC = () => {
   const history = useHistory();
   const location = useLocation<{ channel: Channel }>();
-  const { channel } = location.state;
+  const { channel } = location.state || {};
 
   const playerProps = useMemo<PlayerProps>(() => {
     return {

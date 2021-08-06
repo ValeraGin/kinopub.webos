@@ -51,7 +51,7 @@ const VideoView: React.FC = () => {
   const location = useLocation<{ title: string; item: ItemDetails; video: Video; season: Season }>();
   const { watchingMarkTimeAsync } = useApiMutation('watchingMarkTime');
   const [streamingType] = useStorageState<Streaming>('streaming_type');
-  const { item, video, season } = location.state;
+  const { item, video, season } = location.state || {};
 
   const [currentVideo, setCurrentVideo] = useState(video);
   const [previousVideo, nextVideo] = usePrevNextVideos(item, season, currentVideo);

@@ -10,7 +10,7 @@ import { mapSources } from 'utils/video';
 const TrailerView: React.FC = () => {
   const history = useHistory();
   const location = useLocation<{ item: ItemDetails; trailer: Trailer }>();
-  const { item, trailer } = location.state;
+  const { item, trailer } = location.state || {};
 
   const playerProps = useMemo<PlayerProps>(() => {
     return {
