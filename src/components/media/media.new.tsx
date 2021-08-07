@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import cx from 'classnames';
 import HLS from 'hls.js';
+import find from 'lodash/find';
 import forEach from 'lodash/forEach';
 import uniqBy from 'lodash/uniqBy';
 
@@ -95,6 +96,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
     },
     [subtitleTracks],
   );
+
   const currentAudioTrackIndex = useMemo(
     () => audioTracks?.findIndex((audioTrack) => audioTrack.name === currentAudioTrack.name) ?? 0,
     [audioTracks, currentAudioTrack],
@@ -109,6 +111,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
 
   const handleMediaLoaded = useCallback(() => {
     if (videoRef.current) {
+      // clear existing subtitles
       while (videoRef.current.firstChild) {
         // @ts-expect-error
         videoRef.current.lastChild.track.mode = 'disabled';
@@ -116,7 +119,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
       }
 
       if (hlsRef.current) {
-        const audioTrack = hlsRef.current.audioTracks.find((audioTrack) => audioTrack.name === currentAudioTrack?.name);
+        const audioTrack = find(hlsRef.current.audioTracks, (audioTrack) => audioTrack.name === currentAudioTrack?.name);
 
         if (audioTrack) {
           hlsRef.current.audioTrack = audioTrack.id;
@@ -144,8 +147,8 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
             track.src = src;
             track.kind = 'captions';
             track.id = currentSubtitleTrack.name;
-            track.srclang = currentSubtitleTrack.lang;
             track.label = currentSubtitleTrack.name;
+            track.srclang = currentSubtitleTrack.lang;
 
             track.track.mode = 'showing';
           }
@@ -174,7 +177,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
         });
       } else {
         videoRef.current.src = currentSrc;
-        videoRef.current.addEventListener('loadedmetadata', handleMediaLoaded);
+        videoRef.current.addEventListener('loadeddata', handleMediaLoaded);
       }
     }
 
@@ -182,7 +185,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
       if (videoRef.current) {
         startTimeRef.current = videoRef.current.currentTime;
         // eslint-disable-next-line
-        videoRef.current.removeEventListener('loadedmetadata', handleMediaLoaded);
+        videoRef.current.removeEventListener('loadeddata', handleMediaLoaded);
       }
       if (hlsRef.current) {
         hlsRef.current.destroy();
@@ -457,7 +460,7 @@ const Media = React.forwardRef<MediaRef, MediaProps>(
     );
     const player = useMediaPlayer(ref, { autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType });
 
-    return <video {...props} {...eventProps} className={cx('w-screen h-screen', className)} ref={player.videoRef} />;
+    return <video {...props} {...eventProps} autoPlay={false} className={cx('w-screen h-screen', className)} ref={player.videoRef} />;
   },
 );
 
