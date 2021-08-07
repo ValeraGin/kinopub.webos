@@ -26,10 +26,15 @@ export function mapSources(
   streamingType?: Streaming,
 ): SourceTrack[] {
   return orderBy(
-    map(files, (file) => ({
-      src: (typeof file.url === 'string' ? file.url : file.url[streamingType!] || file.url.http) as string,
-      name: file.quality!,
-    })),
+    map(files, (file) => {
+      const src = (typeof file.url === 'string' ? file.url : file.url[streamingType!] || file.url.http!) as string;
+
+      return {
+        src,
+        name: file.quality!,
+        type: src.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4',
+      };
+    }),
     ({ name }) => parseInt(name),
     'desc',
   );

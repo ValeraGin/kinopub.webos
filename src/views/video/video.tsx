@@ -138,6 +138,7 @@ const VideoView: React.FC = () => {
         <Player
           key={currentVideo.id}
           {...playerProps}
+          streamingType={streamingType}
           onPause={handlePause}
           onEnded={handleOnEnded}
           onJumpBackward={handleJumpBackward}

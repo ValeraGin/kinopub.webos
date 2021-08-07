@@ -18,10 +18,7 @@ const ChannelView: React.FC = () => {
       poster: channel.logos.m,
       sources: mapSources([
         {
-          url: {
-            http: channel.stream,
-            hls4: channel.stream,
-          },
+          url: channel.stream,
         },
       ]),
     };

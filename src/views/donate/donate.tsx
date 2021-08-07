@@ -32,6 +32,10 @@ const DonateView: React.FC = () => {
           <Text className="pt-2">paypal.me/adascal</Text>
         </div>
       </div>
+
+      <div className="absolute bottom-4">
+        <Text>Приложение не является официальным клиентом и разрабатывается силами одного человека для личного использования</Text>
+      </div>
     </>
   );
 };

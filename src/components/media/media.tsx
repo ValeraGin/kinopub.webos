@@ -21,6 +21,8 @@ export type SubtitleTrack = {
   lang: string;
 };
 
+export type StreamingType = 'http' | 'hls' | 'hls2' | 'hls4';
+
 class Media extends UIMedia {
   hls?: HLS;
 

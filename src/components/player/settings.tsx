@@ -3,6 +3,7 @@ import { VideoPlayerBase } from '@enact/moonstone/VideoPlayer';
 import map from 'lodash/map';
 
 import Button from 'components/button';
+import { AudioTrack, SourceTrack, SubtitleTrack } from 'components/media';
 import Popup from 'components/popup';
 import Radio from 'components/radio';
 import Text from 'components/text';
@@ -18,11 +19,11 @@ type Props = {
 const Settings: React.FC<Props> = ({ player, showButton }) => {
   const [popupVisible, setPopupVisible] = useState(false);
 
-  const [audios, setAudios] = useState<string[]>([]);
+  const [audios, setAudios] = useState<AudioTrack[]>([]);
   const [currentAudio, setCurrentAudio] = useState<string | null>(null);
-  const [sources, setSources] = useState<string[]>([]);
+  const [sources, setSources] = useState<SourceTrack[]>([]);
   const [currentSource, setCurrentSource] = useState<string | null>(null);
-  const [subtitles, setSubtitles] = useState<string[]>([]);
+  const [subtitles, setSubtitles] = useState<SubtitleTrack[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState<string | null>(null);
 
   const handleVideoUpdate = useCallback(
@@ -106,7 +107,7 @@ const Settings: React.FC<Props> = ({ player, showButton }) => {
               <Text>Звук</Text>
 
               <div className="flex flex-wrap mt-2">
-                {map(audios, (audio) => (
+                {map(audios, ({ name: audio }) => (
                   <div key={audio} className="w-1/2">
                     <Radio checked={audio === currentAudio} onChange={handleAudioChange(audio)}>
                       {audio}
@@ -121,7 +122,7 @@ const Settings: React.FC<Props> = ({ player, showButton }) => {
               <Text>Качество</Text>
 
               <div className="flex flex-wrap mt-2">
-                {map(sources, (source) => (
+                {map(sources, ({ name: source }) => (
                   <div key={source} className="w-1/6">
                     <Radio checked={source === currentSource} onChange={handleSourceChange(source)}>
                       {source}
@@ -142,7 +143,7 @@ const Settings: React.FC<Props> = ({ player, showButton }) => {
                   </Radio>
                 </div>
 
-                {map(subtitles, (subtitle) => (
+                {map(subtitles, ({ name: subtitle }) => (
                   <div key={subtitle} className="w-1/6">
                     <Radio checked={subtitle === currentSubtitle} onChange={handleSubtitleChange(subtitle)}>
                       {subtitle}

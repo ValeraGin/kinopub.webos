@@ -2,8 +2,9 @@ import castArray from 'lodash/castArray';
 
 export const KeyboardCodes = {
   Enter: 13,
-  Play: 415,
-  Pause: [413, 179],
+  Play: [71, 415],
+  Pause: [19, 74, 413],
+  PlayPause: [32, 179],
   Back: [461, 10009],
   Backspace: 8,
   Escape: 27,

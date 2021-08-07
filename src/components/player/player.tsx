@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import VideoPlayer, { VideoPlayerBase, VideoPlayerBaseProps } from '@enact/moonstone/VideoPlayer';
 
-import Media, { AudioTrack, SourceTrack, SubtitleTrack } from 'components/media';
+import Media, { AudioTrack, SourceTrack, StreamingType, SubtitleTrack } from 'components/media';
 import Text from 'components/text';
 import useButtonEffect from 'hooks/useButtonEffect';
 
@@ -17,6 +17,7 @@ export type PlayerProps = {
   subtitles?: SubtitleTrack[];
   startTime?: number;
   timeSyncInterval?: number;
+  streamingType?: StreamingType;
   onPlay?: () => void;
   onPause?: (currentTime: number) => void;
   onEnded?: (currentTime: number) => void;
@@ -32,6 +33,7 @@ const Player: React.FC<PlayerProps> = ({
   subtitles,
   startTime,
   timeSyncInterval = 30,
+  streamingType,
   onPlay,
   onPause,
   onEnded,
@@ -121,10 +123,11 @@ const Player: React.FC<PlayerProps> = ({
         onPause={handlePause}
         onEnded={handleEnded}
         onLoadedMetadata={handleLoadedMetadata}
+        streamingType={streamingType}
         audioTracks={audios}
         sourceTracks={sources}
         subtitleTracks={subtitles}
-        videoComponent={Media}
+        videoComponent={<Media />}
       />
     </>
   );

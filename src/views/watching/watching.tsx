@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import sumBy from 'lodash/sumBy';
 
 import { Bool } from 'api';
 import ItemsList from 'components/itemsList';
@@ -7,7 +8,8 @@ import useApi from 'hooks/useApi';
 
 const WatchingView: React.FC = () => {
   const { data, isLoading } = useApi('watchingSerials', [Bool.True]);
-  const title = 'Я смотрю';
+  const newEpisodes = useMemo(() => sumBy(data?.items, (item) => +(item.new || 0)), [data?.items]);
+  const title = newEpisodes ? `Новые эпизоды (${newEpisodes})` : 'Новые эпизоды';
 
   return (
     <>
