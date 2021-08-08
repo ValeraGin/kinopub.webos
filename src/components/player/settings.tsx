@@ -16,6 +16,7 @@ type Props = {
 };
 
 const Settings: React.FC<Props> = ({ visible, onClose, player }) => {
+  const [isOpen, setIsOpen] = useState(visible);
   const [audios, setAudios] = useState<AudioTrack[]>([]);
   const [currentAudio, setCurrentAudio] = useState<string | null>(null);
   const [sources, setSources] = useState<SourceTrack[]>([]);
@@ -80,8 +81,24 @@ const Settings: React.FC<Props> = ({ visible, onClose, player }) => {
     }
   }, [visible, player, handleClose]);
 
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    if (visible) {
+      timeoutId = setTimeout(() => {
+        setIsOpen(true);
+      }, 100);
+    } else {
+      setIsOpen(false);
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [visible]);
+
   return (
-    <Popup visible={visible} onClose={handleClose}>
+    <Popup visible={isOpen} onClose={handleClose}>
       <div className="flex flex-col">
         {audios?.length > 1 && (
           <div className="flex flex-col py-4">

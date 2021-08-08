@@ -32,7 +32,7 @@ type OwnProps = {
   sourceTracks?: SourceTrack[];
   subtitleTracks?: SubtitleTrack[];
   streamingType?: StreamingType;
-  settingsAreOpen?: boolean;
+  isSettingsOpen?: boolean;
   onUpdate?: () => void;
   mediaComponent?: string;
 };
@@ -58,11 +58,11 @@ export type MediaRef = {
   readonly proportionPlayed: number;
 };
 
-function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType, settingsAreOpen }: OwnProps) {
+function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType, isSettingsOpen }: OwnProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<HLS | null>(null);
   const startTimeRef = useRef(0);
-  const settingsAreOpenRef = useRef(false);
+  const isSettingsOpenRef = useRef(false);
   const [currentAudioTrack, setCurrentAudioTrack] = useState<AudioTrack>(audioTracks?.[0]!);
   const [currentSourceTrack, setCurrentSourceTrack] = useState<SourceTrack>(sourceTracks?.[0]!);
   const [currentSubtitleTrack, setCurrentSubtitleTrack] = useState<SubtitleTrack | null>(null);
@@ -138,7 +138,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
       if (startTimeRef.current > 0) {
         videoRef.current.currentTime = startTimeRef.current;
 
-        if (settingsAreOpenRef.current) {
+        if (isSettingsOpenRef.current) {
           videoRef.current.pause();
         } else {
           videoRef.current.play();
@@ -218,8 +218,8 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
   ]);
 
   useEffect(() => {
-    settingsAreOpenRef.current = Boolean(settingsAreOpen);
-  }, [settingsAreOpen]);
+    isSettingsOpenRef.current = Boolean(isSettingsOpen);
+  }, [isSettingsOpen]);
 
   return useMemo(
     () => ({
@@ -462,7 +462,7 @@ export type MediaProps = OwnProps & React.HTMLAttributes<HTMLVideoElement>;
 
 const Media = React.forwardRef<MediaRef, MediaProps>(
   (
-    { autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType, settingsAreOpen, onUpdate, className, mediaComponent, ...props },
+    { autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType, isSettingsOpen, onUpdate, className, mediaComponent, ...props },
     ref,
   ) => {
     const handleUpdate = useCallback(() => {
@@ -483,7 +483,7 @@ const Media = React.forwardRef<MediaRef, MediaProps>(
         ),
       [props, handleUpdate],
     );
-    const { player } = useVideoPlayerApi(ref, { autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType, settingsAreOpen });
+    const { player } = useVideoPlayerApi(ref, { autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType, isSettingsOpen });
 
     return <video {...props} {...eventProps} autoPlay={false} className={cx('w-screen h-screen', className)} ref={player.videoRef} />;
   },

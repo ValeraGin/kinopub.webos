@@ -8,7 +8,7 @@ import useApi from 'hooks/useApi';
 import useApiMutation from 'hooks/useApiMutation';
 import useStorageState from 'hooks/useStorageState';
 
-import { getItemTitle } from 'utils/item';
+import { getItemDescription, getItemTitle } from 'utils/item';
 import { mapAudios, mapSources, mapSubtitles } from 'utils/video';
 
 const useNextVideo = (item: ItemDetails, season: Season, video: Video) =>
@@ -70,7 +70,7 @@ const VideoView: React.FC = () => {
       currentVideoLinks?.data
         ? {
             title: getItemTitle(item, currentVideo, season),
-            description: currentVideo.title,
+            description: getItemDescription(item, currentVideo, season),
             poster: item.posters.wide || item.posters.big,
             audios: mapAudios(currentVideo.audios),
             sources: mapSources(currentVideoLinks.data.files, streamingType),

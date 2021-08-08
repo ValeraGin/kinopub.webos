@@ -42,17 +42,17 @@ const Player: React.FC<PlayerProps> = ({
   ...props
 }) => {
   const playerRef = useRef<VideoPlayerBase>();
+  const [isPaused, setIsPaused] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [titleVisible, setTitleVisible] = useState(true);
-  const [settingsAreOpen, setSettingsAreOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handlePlay = useCallback(() => {
-    setTitleVisible(false);
+    setIsPaused(false);
     onPlay?.();
   }, [onPlay]);
   const handlePause = useCallback(
     (e) => {
-      setTitleVisible(true);
+      setIsPaused(true);
       onPause?.(e.currentTime);
     },
     [onPause],
@@ -77,30 +77,33 @@ const Player: React.FC<PlayerProps> = ({
   }, []);
   const handleSettingsOpen = useCallback(() => {
     if (playerRef.current) {
-      const video: any = playerRef.current.getVideoNode();
+      setIsSettingsOpen(true);
 
+      const video: any = playerRef.current.getVideoNode();
       video.pause();
-      setSettingsAreOpen(true);
     }
   }, [playerRef]);
   const handleSettingsClose = useCallback(() => {
     if (playerRef.current) {
-      const video: any = playerRef.current.getVideoNode();
+      setIsSettingsOpen(false);
 
+      const video: any = playerRef.current.getVideoNode();
       video.play();
-      setSettingsAreOpen(false);
     }
   }, []);
-  const handleBlueButton = useCallback(() => {
-    !settingsAreOpen && handleSettingsOpen();
-  }, [settingsAreOpen, handleSettingsOpen]);
+  const handlePauseButton = useCallback(() => {
+    if (playerRef.current) {
+      const video: any = playerRef.current.getVideoNode();
+      video.pause();
+    }
+  }, [playerRef]);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
 
-    if (titleVisible) {
+    if (isPaused) {
       timeoutId = setTimeout(() => {
-        setTitleVisible(false);
+        setIsPaused(false);
       }, 5 * 1000);
     }
 
@@ -109,7 +112,7 @@ const Player: React.FC<PlayerProps> = ({
         clearTimeout(timeoutId);
       }
     };
-  }, [titleVisible]);
+  }, [isPaused]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -126,30 +129,30 @@ const Player: React.FC<PlayerProps> = ({
   }, [timeSyncInterval, onTimeSync, handleTimeSync]);
 
   useButtonEffect('Back', handleTimeSync);
-  useButtonEffect('Blue', handleBlueButton);
+  useButtonEffect('Blue', handleSettingsOpen);
   useButtonEffect('Play', handleSettingsClose);
+  useButtonEffect('Pause', handlePauseButton);
   useButtonEffect('ArrowUp', handleSettingsOpen);
 
   return (
     <>
-      <Settings visible={settingsAreOpen} onClose={handleSettingsClose} player={playerRef} />
-      {titleVisible && <Text className="absolute z-10 top-0 p-4">{title}</Text>}
-      {titleVisible && <Button className="absolute z-101 bottom-8 right-10" icon="settings" iconOnly onClick={handleSettingsOpen} />}
+      <Settings visible={isSettingsOpen} onClose={handleSettingsClose} player={playerRef} />
+      {isPaused && <Text className="absolute z-10 top-0 p-4">{title}</Text>}
+      {isPaused && <Button className="absolute z-101 bottom-8 right-10" icon="settings" iconOnly onClick={handleSettingsOpen} />}
       {isLoaded && startTime! > 0 && <StartFrom startTime={startTime} player={playerRef} />}
 
       <VideoPlayer
         {...props}
         //@ts-expect-error
         ref={playerRef}
-        title={description}
         poster={poster}
-        jumpBy={10}
+        title={description}
         onPlay={handlePlay}
         onPause={handlePause}
         onEnded={handleEnded}
         onLoadedMetadata={handleLoadedMetadata}
         streamingType={streamingType}
-        settingsAreOpen={settingsAreOpen}
+        isSettingsOpen={isSettingsOpen}
         audioTracks={audios}
         sourceTracks={sources}
         subtitleTracks={subtitles}
