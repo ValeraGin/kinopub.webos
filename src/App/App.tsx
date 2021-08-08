@@ -30,6 +30,7 @@ const SpeedView = React.lazy(() => import('views/speed'));
 const TrailerView = React.lazy(() => import('views/trailer'));
 const VideoView = React.lazy(() => import('views/video'));
 const WatchingView = React.lazy(() => import('views/watching'));
+const ReleasesView = React.lazy(() => import('views/releases'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,6 +53,7 @@ const App: React.FC<Props> = (props) => {
           <View path={PATHS.Category} component={CategoryView} />
           <View path={PATHS.Genre} component={GenreView} />
           <View path={PATHS.Watching} component={WatchingView} />
+          <View path={PATHS.Releases} component={ReleasesView} />
           <View path={PATHS.Bookmark} component={BookmarkView} />
           <View path={PATHS.Bookmarks} component={BookmarksView} />
           <View path={PATHS.Collection} component={CollectionView} />

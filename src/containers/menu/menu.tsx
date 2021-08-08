@@ -40,6 +40,11 @@ const menuItems: (MenuItem | null)[][] = [
   ].filter(Boolean),
   [
     {
+      name: 'Новинки',
+      icon: 'new_releases',
+      href: generatePath(PATHS.Releases),
+    },
+    {
       name: 'Фильмы',
       icon: 'movie',
       href: generatePath(PATHS.Category, { categoryId: 'movie' }),
@@ -117,7 +122,7 @@ const Menu: React.FC<Props> = (props) => {
         <ul key={idx}>
           {map(list, (item: MenuItem) => (
             <li key={item.href}>
-              <Link href={item.href} icon={item.icon} active={location.pathname === item.href} className="px-2 py-1 rounded-r">
+              <Link href={item.href} icon={item.icon} active={location.pathname.startsWith(item.href)} className="px-2 py-1 rounded-r">
                 {item.name}
               </Link>
             </li>
