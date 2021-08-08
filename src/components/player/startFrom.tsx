@@ -3,6 +3,8 @@ import { VideoPlayerBase } from '@enact/moonstone/VideoPlayer';
 
 import Button from 'components/button';
 
+import { secondsToDuration } from 'utils/date';
+
 type Props = {
   player: React.MutableRefObject<VideoPlayerBase | undefined>;
   startTime?: number;
@@ -12,7 +14,7 @@ type Props = {
 const StartFrom: React.FC<Props> = ({ startTime, startInDelay = 5, player }) => {
   const [visible, setVisible] = useState(true);
   const [startIn, setStartIn] = useState(startInDelay);
-  const startFrom = useMemo(() => new Date((startTime || 0) * 1000).toISOString().substr(11, 8).replace(/^00:/, ''), [startTime]);
+  const startFrom = useMemo(() => secondsToDuration(startTime), [startTime]);
 
   const handleStartFromClick = useCallback(() => {
     if (player.current) {

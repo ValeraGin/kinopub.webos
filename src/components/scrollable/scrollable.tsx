@@ -16,7 +16,7 @@ const Scrollable: React.FC<Props> = ({ children, className, onScrollToEnd, ...pr
   return (
     <div className={cx('overflow-y-auto h-full', className)} {...props}>
       {children}
-      <div className="h-40" ref={footerRef} />
+      {onScrollToEnd && <div className="h-40" ref={footerRef} />}
     </div>
   );
 };

@@ -10,9 +10,11 @@ import { PATHS, generatePath } from 'routes';
 type Props = {
   item: Item;
   season: Season;
+  onEpisodeFocus?: (episode: Video) => void;
+  onEpisodeBlur?: (episode: Video) => void;
 };
 
-const SeasonItem: React.FC<Props> = ({ item, season }) => {
+const SeasonItem: React.FC<Props> = ({ item, season, onEpisodeFocus, onEpisodeBlur }) => {
   const history = useHistory();
   const handleEpisodeClick = useCallback(
     (episode: Video) => () => {
@@ -31,6 +33,18 @@ const SeasonItem: React.FC<Props> = ({ item, season }) => {
     },
     [item, season, history],
   );
+  const handleEpisodeFocus = useCallback(
+    (episode: Video) => () => {
+      onEpisodeFocus?.(episode);
+    },
+    [onEpisodeFocus],
+  );
+  const handleEpisodeBlur = useCallback(
+    (episode: Video) => () => {
+      onEpisodeBlur?.(episode);
+    },
+    [onEpisodeBlur],
+  );
 
   return (
     <div className="flex flex-col">
@@ -42,6 +56,8 @@ const SeasonItem: React.FC<Props> = ({ item, season }) => {
               source={episode.thumbnail}
               caption={`Эпизод ${episode.number}`}
               onClick={handleEpisodeClick(episode)}
+              onFocus={handleEpisodeFocus(episode)}
+              onBlur={handleEpisodeBlur(episode)}
             >
               {episode.watched === WatchingStatus.Watched && (
                 <div className="absolute flex justify-center items-center rounded-xl bg-black bg-opacity-60 top-0 bottom-0 left-0 right-0">

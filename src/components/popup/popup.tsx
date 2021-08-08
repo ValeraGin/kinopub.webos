@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import Spotlight from '@enact/spotlight';
 import cx from 'classnames';
 
+import Scrollable from 'components/scrollable';
 import SpotlightContainer from 'components/spotlightContainer';
 import useButtonEffect, { KeyboardCodesKeys } from 'hooks/useButtonEffect';
 
@@ -11,7 +12,7 @@ type Props = {
   closeButton?: KeyboardCodesKeys;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-const Popup: React.FC<Props> = ({ visible, onClose, className, closeButton = 'Blue', ...props }) => {
+const Popup: React.FC<Props> = ({ visible, onClose, children, className, closeButton = 'Blue', ...props }) => {
   const containerId = useMemo(() => Spotlight.add({}), []);
   const handleClose = useCallback(() => {
     onClose();
@@ -74,7 +75,9 @@ const Popup: React.FC<Props> = ({ visible, onClose, className, closeButton = 'Bl
           },
           className,
         )}
-      />
+      >
+        <Scrollable className="max-h-screen">{children}</Scrollable>
+      </SpotlightContainer>
     </>
   );
 };

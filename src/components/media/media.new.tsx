@@ -134,7 +134,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
       } else {
         // Do not change audio if we don't have it (mostly on HLS)
         // @ts-expect-error
-        if (videoRef.current.audioTracks[currentAudioTrackIndex]) {
+        if (videoRef.current.audioTracks?.[currentAudioTrackIndex]) {
           // @ts-expect-error
           forEach(videoRef.current.audioTracks, (audioTrack, idx: number) => {
             audioTrack.enabled = idx === currentAudioTrackIndex;
