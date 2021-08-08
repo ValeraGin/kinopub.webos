@@ -3,14 +3,15 @@ import Spotlight from '@enact/spotlight';
 import cx from 'classnames';
 
 import SpotlightContainer from 'components/spotlightContainer';
-import useButtonEffect from 'hooks/useButtonEffect';
+import useButtonEffect, { KeyboardCodesKeys } from 'hooks/useButtonEffect';
 
 type Props = {
   visible: boolean;
   onClose: () => void;
+  closeButton?: KeyboardCodesKeys;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
+const Popup: React.FC<Props> = ({ visible, onClose, className, closeButton = 'Blue', ...props }) => {
   const containerId = useMemo(() => Spotlight.add({}), []);
   const handleClose = useCallback(() => {
     onClose();
@@ -45,7 +46,7 @@ const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
   }, [containerId]);
 
   useButtonEffect('Back', handleCloseIfVisible);
-  useButtonEffect('Blue', handleCloseIfVisible);
+  useButtonEffect(closeButton, handleCloseIfVisible);
 
   useEffect(() => {
     if (visible) {

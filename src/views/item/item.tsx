@@ -92,9 +92,6 @@ const ItemView: React.FC = () => {
   const handleBookmarksPopupClose = useCallback(() => {
     setBookmarksPopupVisible(false);
   }, []);
-  const handleBlueButton = useCallback(() => {
-    !bookmarksPopupVisible && handleOnBookmarksClick();
-  }, [bookmarksPopupVisible, handleOnBookmarksClick]);
 
   const handleOnVisibilityClick = useCallback(async () => {
     await watchingToggleWatchlistAsync([itemId!]);
@@ -104,8 +101,8 @@ const ItemView: React.FC = () => {
   useStreamingTypeEffect();
   useButtonEffect(['Play', 'Red'], handleOnPlayClick);
   useButtonEffect('Green', handleOnTrailerClick);
-  useButtonEffect('Yellow', handleOnVisibilityClick);
-  useButtonEffect('Blue', handleBlueButton);
+  useButtonEffect('Yellow', handleOnBookmarksClick);
+  useButtonEffect('Blue', handleOnVisibilityClick);
 
   return (
     <>
@@ -122,28 +119,32 @@ const ItemView: React.FC = () => {
 
           <div className="absolute flex bottom-8 left-4 right-4">
             <div>
-              <Button icon="play_circle_outline" onClick={handleOnPlayClick} className="mr-2">
+              <Button icon="play_circle_outline" onClick={handleOnPlayClick} className="text-red-600">
                 Смотреть
               </Button>
 
-              <Button icon="bookmark" onClick={handleOnBookmarksClick} className="mr-2">
+              <Button icon="bookmark" onClick={handleOnBookmarksClick} className="text-yellow-600">
                 В закладки
               </Button>
 
-              <Popup visible={bookmarksPopupVisible} onClose={handleBookmarksPopupClose}>
+              <Popup visible={bookmarksPopupVisible} onClose={handleBookmarksPopupClose} closeButton="Yellow">
                 <Bookmarks key={`${itemId}-${bookmarksPopupVisible}`} itemId={itemId!} />
               </Popup>
             </div>
 
             <div>
               {trailer && (
-                <Button icon="videocam" onClick={handleOnTrailerClick}>
+                <Button icon="videocam" onClick={handleOnTrailerClick} className="text-green-600">
                   Трейлер
                 </Button>
               )}
 
               {typeof data?.item?.subscribed === 'boolean' && (
-                <Button icon={data?.item?.subscribed ? 'visibility_off' : 'visibility'} onClick={handleOnVisibilityClick}>
+                <Button
+                  icon={data?.item?.subscribed ? 'visibility_off' : 'visibility'}
+                  onClick={handleOnVisibilityClick}
+                  className="text-blue-600"
+                >
                   {data?.item.subscribed ? 'Не буду смотреть' : 'Буду смотреть'}
                 </Button>
               )}
