@@ -48,6 +48,7 @@ const Player: React.FC<PlayerProps> = ({
 
   const handlePlay = useCallback(() => {
     setIsPaused(false);
+    setIsSettingsOpen(false);
     onPlay?.();
   }, [onPlay]);
   const handlePause = useCallback(

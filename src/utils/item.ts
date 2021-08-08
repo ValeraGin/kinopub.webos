@@ -11,3 +11,7 @@ export function getItemDescription(item?: ItemDetails, video?: Video, season?: S
 
   return season ? `${title} (s${season.number}e${video?.number || 1})` : title;
 }
+
+export function getItemQualityIcon(item?: ItemDetails) {
+  return item?.quality ? (item.quality === 2160 ? '4k' : item.quality === 1080 || item.quality === 720 ? 'hd' : 'sd') : null;
+}

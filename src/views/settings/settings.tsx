@@ -12,6 +12,7 @@ import Text from 'components/text';
 import useApi from 'hooks/useApi';
 import useApiMutation from 'hooks/useApiMutation';
 import useDeviceInfo from 'hooks/useDeviceInfo';
+import useStorageState from 'hooks/useStorageState';
 
 const SettingBool: React.FC<{ setting: DeviceSettingBoolean; onChange?: (checked: boolean) => void }> = ({ setting, onChange }) => {
   return (
@@ -44,6 +45,7 @@ const SettingsView: React.FC = () => {
   const { saveDeviceSettingsAsync } = useApiMutation('saveDeviceSettings');
   const { deactivate } = useApiMutation('deactivate');
   const [newSettings, setNewSettings] = useState<DeviceSettingsParams>({});
+  const [isHLSJSActive, setIsHLSJSActive] = useStorageState<boolean>('is_hls.js_active');
   const { software, hardware } = useDeviceInfo();
 
   const boolSettings = useMemo(
@@ -63,6 +65,12 @@ const SettingsView: React.FC = () => {
     [deviceInfo?.device?.settings],
   );
 
+  const handleHLSJSToogle = useCallback(
+    (checked: boolean) => {
+      setIsHLSJSActive(checked);
+    },
+    [setIsHLSJSActive],
+  );
   const handleBoolSettingToggle = useCallback(
     (setting: typeof boolSettings[0]) => async (checked: boolean) => {
       setNewSettings({ ...newSettings, [setting['key']]: checked ? Bool.True : Bool.False });
@@ -101,6 +109,11 @@ const SettingsView: React.FC = () => {
                       <SettingBool setting={setting} onChange={handleBoolSettingToggle(setting)} />
                     </div>
                   ))}
+                  <div className="flex w-1/2 pr-4" key="use-hls.js">
+                    <Checkbox className="w-full" defaultChecked={isHLSJSActive} onChange={handleHLSJSToogle}>
+                      Использовать HLS.js
+                    </Checkbox>
+                  </div>
                 </div>
                 <div className="flex flex-wrap pb-4" key={`list-${deviceInfo?.device.updated}`}>
                   {map(listSettings, (setting) => (

@@ -5,6 +5,8 @@ import find from 'lodash/find';
 import forEach from 'lodash/forEach';
 import uniqBy from 'lodash/uniqBy';
 
+import useStorageState from 'hooks/useStorageState';
+
 import { convertToVTT } from 'utils/subtitles';
 
 export type AudioTrack = {
@@ -63,6 +65,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
   const hlsRef = useRef<HLS | null>(null);
   const startTimeRef = useRef(0);
   const isSettingsOpenRef = useRef(false);
+  const [isHLSJSActive] = useStorageState<boolean>('is_hls.js_active');
   const [currentAudioTrack, setCurrentAudioTrack] = useState<AudioTrack>(audioTracks?.[0]!);
   const [currentSourceTrack, setCurrentSourceTrack] = useState<SourceTrack>(sourceTracks?.[0]!);
   const [currentSubtitleTrack, setCurrentSubtitleTrack] = useState<SubtitleTrack | null>(null);
@@ -129,10 +132,14 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
           hlsRef.current.audioTrack = audioTrack.id;
         }
       } else {
+        // Do not change audio if we don't have it (mostly on HLS)
         // @ts-expect-error
-        forEach(videoRef.current.audioTracks, (audioTrack, idx: number) => {
-          audioTrack.enabled = idx === currentAudioTrackIndex;
-        });
+        if (videoRef.current.audioTracks[currentAudioTrackIndex]) {
+          // @ts-expect-error
+          forEach(videoRef.current.audioTracks, (audioTrack, idx: number) => {
+            audioTrack.enabled = idx === currentAudioTrackIndex;
+          });
+        }
       }
 
       if (startTimeRef.current > 0) {
@@ -174,7 +181,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
 
   useEffect(() => {
     if (videoRef.current) {
-      if (currentSrc.includes('.m3u8') && HLS.isSupported()) {
+      if (isHLSJSActive && currentSrc.includes('.m3u8') && HLS.isSupported()) {
         const hls = (hlsRef.current = new HLS({
           enableWebVTT: false,
           enableCEA708Captions: false,
@@ -209,6 +216,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
     videoRef,
     startTimeRef,
     handleMediaLoaded,
+    isHLSJSActive,
     streamingType,
     currentAudioTrack,
     currentSourceTrack,

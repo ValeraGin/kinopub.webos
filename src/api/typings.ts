@@ -385,6 +385,8 @@ export type Item = {
   kinopoisk_rating: number;
   kinopoisk_votes: number;
   rating: number;
+  rating_votes: number;
+  rating_percentage: number;
   views: number;
   comments: number;
 
