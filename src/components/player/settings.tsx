@@ -1,24 +1,21 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { VideoPlayerBase } from '@enact/moonstone/VideoPlayer';
 import map from 'lodash/map';
 
-import Button from 'components/button';
 import { AudioTrack, SourceTrack, SubtitleTrack } from 'components/media';
 import Popup from 'components/popup';
 import Radio from 'components/radio';
 import Text from 'components/text';
-import useButtonEffect from 'hooks/useButtonEffect';
 
 const NONE = 'NONE';
 
 type Props = {
+  visible: boolean;
+  onClose: () => void;
   player: React.MutableRefObject<VideoPlayerBase | undefined>;
-  showButton?: boolean;
 };
 
-const Settings: React.FC<Props> = ({ player, showButton }) => {
-  const [popupVisible, setPopupVisible] = useState(false);
-
+const Settings: React.FC<Props> = ({ visible, onClose, player }) => {
   const [audios, setAudios] = useState<AudioTrack[]>([]);
   const [currentAudio, setCurrentAudio] = useState<string | null>(null);
   const [sources, setSources] = useState<SourceTrack[]>([]);
@@ -59,8 +56,12 @@ const Settings: React.FC<Props> = ({ player, showButton }) => {
     [handleVideoUpdate],
   );
 
-  const handlePopupOpen = useCallback(() => {
-    if (player.current && !popupVisible) {
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
+
+  useEffect(() => {
+    if (visible && player.current) {
       const video: any = player.current.getVideoNode();
       const { audioTracks, audioTrack, sourceTracks, sourceTrack, subtitleTracks, subtitleTrack } = video;
 
@@ -73,89 +74,68 @@ const Settings: React.FC<Props> = ({ player, showButton }) => {
 
         setSubtitles(subtitleTracks);
         setCurrentSubtitle(subtitleTrack);
-
-        player.current.pause();
-
-        setPopupVisible(true);
+      } else {
+        handleClose();
       }
     }
-  }, [popupVisible, player]);
-
-  const handlePopupClose = useCallback(() => {
-    setPopupVisible(false);
-
-    if (player.current) {
-      player.current.play();
-    }
-  }, [player]);
-
-  const handleBlueButton = useCallback(() => {
-    !popupVisible && handlePopupOpen();
-  }, [popupVisible, handlePopupOpen]);
-
-  useButtonEffect('Blue', handleBlueButton);
-  useButtonEffect('Play', handlePopupClose);
-  useButtonEffect('ArrowUp', handlePopupOpen);
+  }, [visible, player, handleClose]);
 
   return (
-    <>
-      {showButton && <Button className="absolute z-101 bottom-8 right-10" icon="settings" iconOnly onClick={handlePopupOpen} />}
-      <Popup visible={popupVisible} onClose={handlePopupClose}>
-        <div className="flex flex-col">
-          {audios?.length > 1 && (
-            <div className="flex flex-col py-4">
-              <Text>Звук</Text>
+    <Popup visible={visible} onClose={handleClose}>
+      <div className="flex flex-col">
+        {audios?.length > 1 && (
+          <div className="flex flex-col py-4">
+            <Text>Звук</Text>
 
-              <div className="flex flex-wrap mt-2">
-                {map(audios, ({ name: audio }) => (
-                  <div key={audio} className="w-1/2">
-                    <Radio checked={audio === currentAudio} onChange={handleAudioChange(audio)}>
-                      {audio}
-                    </Radio>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {sources?.length > 1 && (
-            <div className="flex flex-col py-4">
-              <Text>Качество</Text>
-
-              <div className="flex flex-wrap mt-2">
-                {map(sources, ({ name: source }) => (
-                  <div key={source} className="w-1/6">
-                    <Radio checked={source === currentSource} onChange={handleSourceChange(source)}>
-                      {source}
-                    </Radio>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {subtitles?.length > 0 && (
-            <div className="flex flex-col py-4">
-              <Text>Субтитры</Text>
-
-              <div className="flex flex-wrap mt-2">
-                <div className="w-1/6">
-                  <Radio checked={!currentSubtitle || currentSubtitle === NONE} onChange={handleSubtitleChange(NONE)}>
-                    Нет
+            <div className="flex flex-wrap mt-2">
+              {map(audios, ({ name: audio }) => (
+                <div key={audio} className="w-1/2">
+                  <Radio checked={audio === currentAudio} onChange={handleAudioChange(audio)}>
+                    {audio}
                   </Radio>
                 </div>
-
-                {map(subtitles, ({ name: subtitle }) => (
-                  <div key={subtitle} className="w-1/6">
-                    <Radio checked={subtitle === currentSubtitle} onChange={handleSubtitleChange(subtitle)}>
-                      {subtitle}
-                    </Radio>
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
-          )}
-        </div>
-      </Popup>
-    </>
+          </div>
+        )}
+        {sources?.length > 1 && (
+          <div className="flex flex-col py-4">
+            <Text>Качество</Text>
+
+            <div className="flex flex-wrap mt-2">
+              {map(sources, ({ name: source }) => (
+                <div key={source} className="w-1/6">
+                  <Radio checked={source === currentSource} onChange={handleSourceChange(source)}>
+                    {source}
+                  </Radio>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {subtitles?.length > 0 && (
+          <div className="flex flex-col py-4">
+            <Text>Субтитры</Text>
+
+            <div className="flex flex-wrap mt-2">
+              <div className="w-1/6">
+                <Radio checked={!currentSubtitle || currentSubtitle === NONE} onChange={handleSubtitleChange(NONE)}>
+                  Нет
+                </Radio>
+              </div>
+
+              {map(subtitles, ({ name: subtitle }) => (
+                <div key={subtitle} className="w-1/6">
+                  <Radio checked={subtitle === currentSubtitle} onChange={handleSubtitleChange(subtitle)}>
+                    {subtitle}
+                  </Radio>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </Popup>
   );
 };
 

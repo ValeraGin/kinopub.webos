@@ -32,6 +32,7 @@ type OwnProps = {
   sourceTracks?: SourceTrack[];
   subtitleTracks?: SubtitleTrack[];
   streamingType?: StreamingType;
+  settingsAreOpen?: boolean;
   onUpdate?: () => void;
   mediaComponent?: string;
 };
@@ -57,10 +58,11 @@ export type MediaRef = {
   readonly proportionPlayed: number;
 };
 
-function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType }: OwnProps) {
+function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType, settingsAreOpen }: OwnProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<HLS | null>(null);
   const startTimeRef = useRef(0);
+  const settingsAreOpenRef = useRef(false);
   const [currentAudioTrack, setCurrentAudioTrack] = useState<AudioTrack>(audioTracks?.[0]!);
   const [currentSourceTrack, setCurrentSourceTrack] = useState<SourceTrack>(sourceTracks?.[0]!);
   const [currentSubtitleTrack, setCurrentSubtitleTrack] = useState<SubtitleTrack | null>(null);
@@ -111,6 +113,8 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
 
   const handleMediaLoaded = useCallback(() => {
     if (videoRef.current) {
+      videoRef.current.removeEventListener('canplay', handleMediaLoaded);
+
       // clear existing subtitles
       while (videoRef.current.firstChild) {
         // @ts-expect-error
@@ -133,7 +137,12 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
 
       if (startTimeRef.current > 0) {
         videoRef.current.currentTime = startTimeRef.current;
-        videoRef.current.pause();
+
+        if (settingsAreOpenRef.current) {
+          videoRef.current.pause();
+        } else {
+          videoRef.current.play();
+        }
       } else if (autoPlay) {
         videoRef.current.play();
       }
@@ -173,19 +182,22 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
         hls.attachMedia(videoRef.current);
         hls.on(HLS.Events.MEDIA_ATTACHED, () => {
           hls.loadSource(currentSrc);
-          hls.on(HLS.Events.MANIFEST_LOADED, handleMediaLoaded);
         });
       } else {
         videoRef.current.src = currentSrc;
-        videoRef.current.addEventListener('loadeddata', handleMediaLoaded);
       }
+
+      videoRef.current.addEventListener('canplay', handleMediaLoaded);
     }
 
     return () => {
       if (videoRef.current) {
-        startTimeRef.current = videoRef.current.currentTime;
+        if (videoRef.current.currentTime > 0) {
+          // eslint-disable-next-line
+          startTimeRef.current = videoRef.current.currentTime;
+        }
         // eslint-disable-next-line
-        videoRef.current.removeEventListener('loadeddata', handleMediaLoaded);
+        videoRef.current.removeEventListener('canplay', handleMediaLoaded);
       }
       if (hlsRef.current) {
         hlsRef.current.destroy();
@@ -204,6 +216,10 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
     currentAudioTrackIndex,
     audioTracks,
   ]);
+
+  useEffect(() => {
+    settingsAreOpenRef.current = Boolean(settingsAreOpen);
+  }, [settingsAreOpen]);
 
   return useMemo(
     () => ({
@@ -233,7 +249,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
   );
 }
 
-function useMediaPlayer(ref: React.ForwardedRef<MediaRef>, props: OwnProps) {
+function useVideoPlayerApi(ref: React.ForwardedRef<MediaRef>, props: OwnProps) {
   const player = useVideoPlayer(props);
   const videoRef = player.videoRef;
 
@@ -405,7 +421,13 @@ function useMediaPlayer(ref: React.ForwardedRef<MediaRef>, props: OwnProps) {
 
   useImperativeHandle(ref, () => api, [api]);
 
-  return player;
+  return useMemo(
+    () => ({
+      api,
+      player,
+    }),
+    [api, player],
+  );
 }
 
 const MEDIA_EVENTS = [
@@ -439,7 +461,10 @@ type MediaEvents = keyof typeof MEDIA_EVENTS;
 export type MediaProps = OwnProps & React.HTMLAttributes<HTMLVideoElement>;
 
 const Media = React.forwardRef<MediaRef, MediaProps>(
-  ({ autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType, onUpdate, className, mediaComponent, ...props }, ref) => {
+  (
+    { autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType, settingsAreOpen, onUpdate, className, mediaComponent, ...props },
+    ref,
+  ) => {
     const handleUpdate = useCallback(() => {
       onUpdate?.();
     }, [onUpdate]);
@@ -458,7 +483,7 @@ const Media = React.forwardRef<MediaRef, MediaProps>(
         ),
       [props, handleUpdate],
     );
-    const player = useMediaPlayer(ref, { autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType });
+    const { player } = useVideoPlayerApi(ref, { autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType, settingsAreOpen });
 
     return <video {...props} {...eventProps} autoPlay={false} className={cx('w-screen h-screen', className)} ref={player.videoRef} />;
   },

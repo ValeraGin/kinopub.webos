@@ -14,6 +14,7 @@ const ICONS_MAP = {
   expand_less: <>&#xe5ce;</>,
   emoji_emotions: <>&#xea22;</>,
   auto_awesome: <>&#xe65f;</>,
+  visibility_off: <>&#xe8f5;</>,
 } as const;
 
 export type IconName = keyof typeof ICONS_MAP;

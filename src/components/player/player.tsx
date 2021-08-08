@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import VideoPlayer, { VideoPlayerBase, VideoPlayerBaseProps } from '@enact/moonstone/VideoPlayer';
 
+import Button from 'components/button';
 import Media, { AudioTrack, SourceTrack, StreamingType, SubtitleTrack } from 'components/media';
 import Text from 'components/text';
 import useButtonEffect from 'hooks/useButtonEffect';
@@ -43,6 +44,7 @@ const Player: React.FC<PlayerProps> = ({
   const playerRef = useRef<VideoPlayerBase>();
   const [isLoaded, setIsLoaded] = useState(false);
   const [titleVisible, setTitleVisible] = useState(true);
+  const [settingsAreOpen, setSettingsAreOpen] = useState(false);
 
   const handlePlay = useCallback(() => {
     setTitleVisible(false);
@@ -73,6 +75,25 @@ const Player: React.FC<PlayerProps> = ({
   const handleLoadedMetadata = useCallback(() => {
     setIsLoaded(true);
   }, []);
+  const handleSettingsOpen = useCallback(() => {
+    if (playerRef.current) {
+      const video: any = playerRef.current.getVideoNode();
+
+      video.pause();
+      setSettingsAreOpen(true);
+    }
+  }, [playerRef]);
+  const handleSettingsClose = useCallback(() => {
+    if (playerRef.current) {
+      const video: any = playerRef.current.getVideoNode();
+
+      video.play();
+      setSettingsAreOpen(false);
+    }
+  }, []);
+  const handleBlueButton = useCallback(() => {
+    !settingsAreOpen && handleSettingsOpen();
+  }, [settingsAreOpen, handleSettingsOpen]);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
@@ -105,11 +126,15 @@ const Player: React.FC<PlayerProps> = ({
   }, [timeSyncInterval, onTimeSync, handleTimeSync]);
 
   useButtonEffect('Back', handleTimeSync);
+  useButtonEffect('Blue', handleBlueButton);
+  useButtonEffect('Play', handleSettingsClose);
+  useButtonEffect('ArrowUp', handleSettingsOpen);
 
   return (
     <>
-      {titleVisible && <Text className="p-4 absolute top-0 z-10">{title}</Text>}
-      <Settings showButton={titleVisible} player={playerRef} />
+      <Settings visible={settingsAreOpen} onClose={handleSettingsClose} player={playerRef} />
+      {titleVisible && <Text className="absolute z-10 top-0 p-4">{title}</Text>}
+      {titleVisible && <Button className="absolute z-101 bottom-8 right-10" icon="settings" iconOnly onClick={handleSettingsOpen} />}
       {isLoaded && startTime! > 0 && <StartFrom startTime={startTime} player={playerRef} />}
 
       <VideoPlayer
@@ -124,6 +149,7 @@ const Player: React.FC<PlayerProps> = ({
         onEnded={handleEnded}
         onLoadedMetadata={handleLoadedMetadata}
         streamingType={streamingType}
+        settingsAreOpen={settingsAreOpen}
         audioTracks={audios}
         sourceTracks={sources}
         subtitleTracks={subtitles}

@@ -7,13 +7,13 @@ import useButtonEffect from 'hooks/useButtonEffect';
 
 type Props = {
   visible: boolean;
-  onClose: (visible: boolean) => void;
+  onClose: () => void;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 const Popup: React.FC<Props> = ({ visible, onClose, className, ...props }) => {
   const containerId = useMemo(() => Spotlight.add({}), []);
   const handleClose = useCallback(() => {
-    onClose(false);
+    onClose();
   }, [onClose]);
 
   const handleCloseIfVisible = useCallback(() => {
