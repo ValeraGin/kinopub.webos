@@ -8,8 +8,9 @@ export function getItemTitle(item?: ItemDetails, video?: Video, season?: Season)
 
 export function getItemDescription(item?: ItemDetails, video?: Video, season?: Season) {
   const title = video?.title || '';
+  const episode = `s${season?.number || 1}e${video?.number || 1}`;
 
-  return season ? `${title} (s${season.number}e${video?.number || 1})` : title;
+  return season ? (title ? `${title} (${episode})` : episode) : title;
 }
 
 export function getItemQualityIcon(item?: ItemDetails) {
