@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { VideoPlayerBase } from '@enact/moonstone/VideoPlayer';
 import map from 'lodash/map';
 
 import { AudioTrack, SourceTrack, SubtitleTrack } from 'components/media';
 import Popup from 'components/popup';
-import Radio from 'components/radio';
-import Text from 'components/text';
+import Select from 'components/select';
 
 const NONE = 'NONE';
 
@@ -22,7 +21,14 @@ const Settings: React.FC<Props> = ({ visible, onClose, player }) => {
   const [sources, setSources] = useState<SourceTrack[]>([]);
   const [currentSource, setCurrentSource] = useState<string | null>(null);
   const [subtitles, setSubtitles] = useState<SubtitleTrack[]>([]);
-  const [currentSubtitle, setCurrentSubtitle] = useState<string | null>(null);
+  const [currentSubtitle, setCurrentSubtitle] = useState<string | null>(NONE);
+
+  const audioOptions = useMemo(() => map(audios, (audio) => ({ title: audio.name, value: audio.name })), [audios]);
+  const sourceOptions = useMemo(() => map(sources, (source) => ({ title: source.name, value: source.name })), [sources]);
+  const subtitleOptions = useMemo(
+    () => [{ title: 'Нет', value: NONE }, ...map(subtitles, (subtitle) => ({ title: subtitle.name, value: subtitle.name }))],
+    [subtitles],
+  );
 
   const handleVideoUpdate = useCallback(
     (name: string, value: string) => {
@@ -74,7 +80,7 @@ const Settings: React.FC<Props> = ({ visible, onClose, player }) => {
         setCurrentSource(sourceTrack);
 
         setSubtitles(subtitleTracks);
-        setCurrentSubtitle(subtitleTrack);
+        setCurrentSubtitle(subtitleTrack || NONE);
       } else {
         handleClose();
       }
@@ -99,59 +105,39 @@ const Settings: React.FC<Props> = ({ visible, onClose, player }) => {
 
   return (
     <Popup visible={isOpen} onClose={handleClose}>
-      <div className="flex flex-col">
-        {audios?.length > 1 && (
-          <div className="flex flex-col py-4">
-            <Text>Звук</Text>
-
-            <div className="flex flex-wrap mt-2">
-              {map(audios, ({ name: audio }) => (
-                <div key={audio} className="w-1/2">
-                  <Radio checked={audio === currentAudio} onChange={handleAudioChange(audio)}>
-                    {audio}
-                  </Radio>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        {sources?.length > 1 && (
-          <div className="flex flex-col py-4">
-            <Text>Качество</Text>
-
-            <div className="flex flex-wrap mt-2">
-              {map(sources, ({ name: source }) => (
-                <div key={source} className="w-1/6">
-                  <Radio checked={source === currentSource} onChange={handleSourceChange(source)}>
-                    {source}
-                  </Radio>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        {subtitles?.length > 0 && (
-          <div className="flex flex-col py-4">
-            <Text>Субтитры</Text>
-
-            <div className="flex flex-wrap mt-2">
-              <div className="w-1/6">
-                <Radio checked={!currentSubtitle || currentSubtitle === NONE} onChange={handleSubtitleChange(NONE)}>
-                  Нет
-                </Radio>
-              </div>
-
-              {map(subtitles, ({ name: subtitle }) => (
-                <div key={subtitle} className="w-1/6">
-                  <Radio checked={subtitle === currentSubtitle} onChange={handleSubtitleChange(subtitle)}>
-                    {subtitle}
-                  </Radio>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+      {audioOptions.length > 1 && (
+        <Select
+          className="my-4"
+          label="Звук"
+          value={currentAudio}
+          options={audioOptions}
+          onChange={handleAudioChange}
+          splitIn={2}
+          closeOnChange
+        />
+      )}
+      {sourceOptions.length > 1 && (
+        <Select
+          className="my-4"
+          label="Качество"
+          value={currentSource}
+          options={sourceOptions}
+          onChange={handleSourceChange}
+          splitIn={5}
+          closeOnChange
+        />
+      )}
+      {subtitleOptions.length > 1 && (
+        <Select
+          className="my-4"
+          label="Субтитры"
+          value={currentSubtitle}
+          options={subtitleOptions}
+          onChange={handleSubtitleChange}
+          splitIn={5}
+          closeOnChange
+        />
+      )}
     </Popup>
   );
 };

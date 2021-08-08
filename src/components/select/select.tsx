@@ -17,9 +17,11 @@ type Props<T = any> = {
   defaultValue?: T;
   onChange?: (value: T) => void;
   closeOnChange?: boolean;
+  className?: string;
+  splitIn?: number;
 };
 
-const Select: React.FC<Props> = ({ label, options, defaultValue, value, onChange, closeOnChange }) => {
+const Select: React.FC<Props> = ({ label, options, defaultValue, value, onChange, closeOnChange, className, splitIn }) => {
   const [open, setOpen] = useState(false);
   const [val, setVal] = useChangebleState(value || defaultValue);
   const opts = useMemo(
@@ -50,10 +52,15 @@ const Select: React.FC<Props> = ({ label, options, defaultValue, value, onChange
   );
 
   return (
-    <Accordion open={open} onToggle={setOpen} title={label} subtitle={selectedOption?.title}>
-      <div className="flex flex-col">
+    <Accordion open={open} onToggle={setOpen} title={label} subtitle={selectedOption?.title} className={className}>
+      <div className="flex flex-wrap">
         {map(opts, (opt) => (
-          <Radio key={opt.value} checked={opt.value === val} onChange={handleChecked(opt)}>
+          <Radio
+            key={opt.value}
+            className={splitIn ? `w-1/${splitIn}` : 'w-full'}
+            checked={opt.value === val}
+            onChange={handleChecked(opt)}
+          >
             {opt.title}
           </Radio>
         ))}

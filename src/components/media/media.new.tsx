@@ -180,7 +180,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
   }, [autoPlay, currentAudioTrackIndex, currentAudioTrack?.name, currentSubtitleTrack]);
 
   useEffect(() => {
-    if (videoRef.current) {
+    if (videoRef.current && currentSrc) {
       if (isHLSJSActive && currentSrc.includes('.m3u8') && HLS.isSupported()) {
         const hls = (hlsRef.current = new HLS({
           enableWebVTT: false,
