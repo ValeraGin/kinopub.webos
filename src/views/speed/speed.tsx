@@ -17,6 +17,7 @@ const SpeedView: React.FC = () => {
   const { data } = useApi('serverLocations');
   const [speed, setSpeed] = useReducer(updateSpeedReducer, {});
   const [started, setStarted] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState('');
 
   const servers = useMemo(
@@ -34,7 +35,7 @@ const SpeedView: React.FC = () => {
   );
   const workers = useMemo(() => {
     // @ts-expect-error
-    if (!window['Speedtest']) {
+    if (!loaded && !window['Speedtest']) {
       return [];
     }
 
@@ -56,7 +57,7 @@ const SpeedView: React.FC = () => {
 
       return worker;
     });
-  }, [servers, setSpeed]);
+  }, [servers, setSpeed, loaded]);
   const [currentWorkerIndex, setCurrentWorkerIndex] = useState(0);
 
   const handleStart = useCallback(() => {
@@ -98,6 +99,9 @@ const SpeedView: React.FC = () => {
     const script = document.createElement('script');
     script.src = './speedtest.js';
     script.async = true;
+    script.onload = () => {
+      setLoaded(true);
+    };
     script.onerror = (error) => {
       setError(`Не удалось загрузить скрипт для замера скорости: ${error}`);
     };
@@ -119,6 +123,7 @@ const SpeedView: React.FC = () => {
           <Text className="text-red-600">{error}</Text>
         </div>
       ) : (
+        loaded &&
         servers.length > 0 &&
         !workers.length && (
           <div className="m-1 mb-10">
@@ -129,7 +134,7 @@ const SpeedView: React.FC = () => {
 
       <div className="flex justify-around">
         {map(data?.items, (location) => (
-          <div className="flex flex-col items-center" key={location.id}>
+          <div className={`flex flex-col items-center w-1/${data?.items.length}`} key={location.id}>
             <Text>{location.name}</Text>
             {speed[location.location] || '0.00'}
             <Text>Mbit/s</Text>
