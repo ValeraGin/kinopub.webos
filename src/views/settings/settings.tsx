@@ -65,7 +65,7 @@ const SettingsView: React.FC = () => {
 
   const handleBoolSettingToggle = useCallback(
     (setting: typeof boolSettings[0]) => async (checked: boolean) => {
-      setNewSettings({ ...newSettings, [setting['key']]: checked });
+      setNewSettings({ ...newSettings, [setting['key']]: checked ? Bool.True : Bool.False });
     },
     [newSettings],
   );
