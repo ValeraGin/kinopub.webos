@@ -24,7 +24,10 @@
           column: ev.colno,
           ua: navigator.userAgent,
         };
-        console.error(JSON.stringify(errorInfo));
+        console.log(JSON.stringify(errorInfo));
+        if (ev.message && ev.message.indexOf('ChunkLoadError') !== -1) {
+          window.location.reload();
+        }
       });
     </script>
   </head>
