@@ -1,11 +1,9 @@
-import { useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import useSearchParams from './useSearchParams';
 
 function useSearchParam(param: string) {
-  const location = useLocation<{ param: string }>();
-  const value = useMemo(() => new URLSearchParams(location.search).get(param), [param, location.search]);
+  const searchParams = useSearchParams();
 
-  return value;
+  return searchParams[param];
 }
 
 export default useSearchParam;

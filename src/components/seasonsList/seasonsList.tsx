@@ -53,7 +53,7 @@ const SeasonsList: React.FC<Props> = ({ item, seasons, className, onSeasonToggle
 
   return (
     <div className={className}>
-      <Text>Список сезонов</Text>
+      <Text className="text-gray-500">Список сезонов</Text>
 
       {map(seasons, (season) => (
         <SeasonItem

@@ -1,13 +1,11 @@
-import { useMemo } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
 import { ItemsParams } from 'api';
 import Seo from 'components/seo';
 import ItemsListInfinite from 'containers/itemsListInfinite';
 import useApiInfinite from 'hooks/useApiInfinite';
+import useSearchParams from 'hooks/useSearchParams';
 import { RouteParams } from 'routes';
-
-import { queryToObject } from 'utils/url';
 
 const CATEGORY_ID_MAP = {
   movie: 'Фильмы',
@@ -29,14 +27,14 @@ const getCategoryById = (categoryId?: string) => {
 
 const CategoryView: React.FC = () => {
   const { categoryId } = useParams<RouteParams>();
+  const searchParams = useSearchParams();
   const location = useLocation<{ params?: ItemsParams; title?: string }>();
   const { params, title = getCategoryById(categoryId) } = location.state || {};
-  const query = useMemo(() => queryToObject(location.search), [location.search]);
 
   const queryResult = useApiInfinite('items', [
     {
+      ...searchParams,
       ...params,
-      ...query,
       type: categoryId,
     },
   ]);

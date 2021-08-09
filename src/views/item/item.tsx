@@ -21,6 +21,7 @@ import { PATHS, RouteParams, generatePath } from 'routes';
 
 import { secondsToDuration } from 'utils/date';
 import { getItemTitle } from 'utils/item';
+import { mapAudios, mapSubtitles } from 'utils/video';
 
 const SimilarItems: React.FC<{ itemId: string; className?: string }> = ({ itemId, className }) => {
   const { data } = useApi('itemSmiliar', [itemId]);
@@ -28,7 +29,7 @@ const SimilarItems: React.FC<{ itemId: string; className?: string }> = ({ itemId
   if (data && data.items?.length > 0) {
     return (
       <div className={className}>
-        <ItemsList title="Похожие" items={data.items} scrollable={false} />
+        <ItemsList title="Похожие" titleClassName="text-gray-500" items={data.items} scrollable={false} />
       </div>
     );
   }
@@ -62,6 +63,8 @@ const ItemView: React.FC = () => {
   const title = useMemo(() => getItemTitle(data?.item, videoToPlay, season), [data?.item, season, videoToPlay]);
   const durationAverage = useMemo(() => secondsToDuration(data?.item?.duration?.average), [data?.item]);
   const durationTotal = useMemo(() => secondsToDuration(data?.item?.duration?.total), [data?.item]);
+  const audios = useMemo(() => mapAudios((video || episode)?.audios || []), [video, episode]);
+  const subtitles = useMemo(() => mapSubtitles((video || episode)?.subtitles || []), [video, episode]);
 
   const handleOnPlayClick = useCallback(() => {
     if (videoToPlay?.id) {
@@ -172,24 +175,22 @@ const ItemView: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-col px-6 py-6">
-          <div className="flex">
-            <div className="flex flex-shrink-0 items-start">
+        <div className="flex flex-col p-6">
+          <div className="flex pb-6">
+            <div className="flex flex-shrink-0 items-start w-58 pr-8">
               <VideoItem item={data?.item} wrapperClassName="w-full" showViews noCaption disableNavigation />
             </div>
 
-            <div className="flex flex-col px-8">
-              <div>
-                <Text className="text-2xl">{data?.item?.title}</Text>
-                <Text className="text-gray-500">
-                  {data?.item?.year}
-                  {map(data?.item?.countries, (country) => (
-                    <span key={country.id} className="ml-2">
-                      {country.title}
-                    </span>
-                  ))}
-                </Text>
-              </div>
+            <div className="flex flex-col">
+              <Text className="text-2xl">{data?.item?.title}</Text>
+              <Text className="text-gray-500">
+                {data?.item?.year}
+                {map(data?.item?.countries, (country) => (
+                  <span key={country.id} className="ml-2">
+                    {country.title}
+                  </span>
+                ))}
+              </Text>
 
               {!!data?.item?.genres?.length && (
                 <div className="flex py-2">
@@ -210,7 +211,7 @@ const ItemView: React.FC = () => {
                   <Text className="text-gray-500">Длительность</Text>
                   <div className="flex">
                     {durationTotal === durationAverage ? (
-                      <Text>{durationTotal}</Text>
+                      <Text className="pl-1">{durationTotal}</Text>
                     ) : (
                       <>
                         <div className="flex mr-2">
@@ -230,61 +231,89 @@ const ItemView: React.FC = () => {
               {data?.item?.plot && (
                 <div className="py-2">
                   <Text className="text-gray-500">Описание</Text>
-                  <Text className="text-gray-300">{data?.item?.plot}</Text>
+                  <Text className="text-gray-300 pl-1">{data?.item?.plot}</Text>
                 </div>
               )}
 
-              {data?.item?.voice && (
+              {audios.length > 0 && (
                 <div className="py-2">
                   <Text className="text-gray-500">Перевод</Text>
-                  <Text>{data.item.voice}</Text>
+                  <div className="flex flex-wrap">
+                    {map(audios, (voice) => (
+                      <Text className="w-1/2 px-1" key={voice.name}>
+                        {voice.name}
+                      </Text>
+                    ))}
+                  </div>
                 </div>
               )}
 
-              {(data?.item?.director || data?.item?.cast) && (
-                <div className="flex py-2">
-                  {data?.item?.director && (
-                    <div className="w-1/3 mr-4">
-                      <Text className="text-gray-500">Создатели</Text>
-                      <Text>{data?.item?.director}</Text>
-                    </div>
-                  )}
-                  {data?.item?.cast && (
-                    <div className="w-full">
-                      <Text className="text-gray-500">В ролях</Text>
-                      <Text>{data?.item?.cast}</Text>
-                    </div>
-                  )}
+              {subtitles.length > 0 && (
+                <div className="py-2">
+                  <Text className="text-gray-500">Субтитры</Text>
+                  <div className="flex flex-wrap pl-1">
+                    {map(subtitles, (subtitle) => (
+                      <Text className="w-1/6" key={subtitle.name}>
+                        {subtitle.name}
+                      </Text>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="flex flex-col whitespace-pre-wrap">
-            {!!data?.item?.tracklist?.length && (
-              <>
-                <Text className="my-4">Треклист</Text>
-                <div className="flex flex-wrap flex-col">
-                  {map(data?.item.tracklist, (track, idx) => (
-                    <Text key={idx}>
-                      {idx + 1}. {track.title}
-                    </Text>
+          {!!data?.item?.tracklist?.length && (
+            <div className="flex flex-col pb-6">
+              <Text className="text-gray-500">Треклист</Text>
+              <div className="flex flex-wrap flex-col">
+                {map(data?.item.tracklist, (track, idx) => (
+                  <Text key={idx}>
+                    {idx + 1}. {track.title}
+                  </Text>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <SeasonsList
+            className="pb-6"
+            item={data?.item!}
+            seasons={data?.item?.seasons}
+            onSeasonToggle={handleSeasonToggle}
+            onEpisodeToggle={handleEpisodeToggle}
+          />
+
+          {(data?.item?.director || data?.item?.cast) && (
+            <div className="flex pb-6">
+              {data?.item?.director && (
+                <div className="flex-shrink-0 w-58 pr-8">
+                  <Text className="text-gray-500">Создатели</Text>
+                  {map(data?.item?.director.split(', '), (director) => (
+                    <Link key={director} href={generatePath(PATHS.Search, {}, { q: director, mode: 'director' })}>
+                      {director}
+                    </Link>
                   ))}
                 </div>
-              </>
-            )}
-          </div>
+              )}
+              {data?.item?.cast && (
+                <div className="flex flex-col">
+                  <Text className="text-gray-500">В ролях</Text>
+                  <div className="flex flex-wrap">
+                    {map(data?.item?.cast.split(', '), (actor, idx, arr) => (
+                      <Link key={actor} href={generatePath(PATHS.Search, {}, { q: actor, mode: 'actor' })}>
+                        {actor}
+                        {idx !== arr.length - 1 && ', '}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          <SimilarItems className="pb-6" itemId={itemId!} />
         </div>
-
-        <SeasonsList
-          className="p-6 pb-6"
-          item={data?.item!}
-          seasons={data?.item?.seasons}
-          onSeasonToggle={handleSeasonToggle}
-          onEpisodeToggle={handleEpisodeToggle}
-        />
-
-        <SimilarItems className="px-6 pb-6" itemId={itemId!} />
       </Scrollable>
     </>
   );

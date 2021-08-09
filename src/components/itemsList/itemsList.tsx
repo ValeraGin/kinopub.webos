@@ -14,12 +14,13 @@ type Props = {
   onScrollToEnd?: () => void;
   scrollable?: boolean;
   className?: string;
+  titleClassName?: string;
 };
 
-const ItemsList: React.FC<Props> = ({ title, items, loading, onScrollToEnd, scrollable = true, className }) => {
+const ItemsList: React.FC<Props> = ({ title, items, loading, onScrollToEnd, scrollable = true, className, titleClassName }) => {
   const content = (
     <div>
-      <Title title={title} />
+      <Title title={title} className={titleClassName} />
       <div className={cx('flex flex-wrap', className)}>
         {map(items, (item) => (
           <VideoItem key={item.id} item={item} />

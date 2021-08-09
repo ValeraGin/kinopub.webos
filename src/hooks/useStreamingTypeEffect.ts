@@ -12,7 +12,7 @@ function useStreamingTypeEffect() {
   const [, setStreamingType] = useStorageState<string>('streaming_type');
 
   const selectedStreamingType = useMemo(
-    () => find(deviceInfo?.device.settings.streamingType.value, ({ selected }) => selected === Bool.True),
+    () => find(deviceInfo?.device?.settings?.streamingType?.value, ({ selected }) => selected === Bool.True),
     [deviceInfo?.device],
   );
   const streamingType = useMemo(

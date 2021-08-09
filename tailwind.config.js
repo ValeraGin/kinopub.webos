@@ -12,6 +12,9 @@ module.exports = {
           600: '#cf0652',
         },
       },
+      spacing: {
+        58: '14.5rem',
+      },
     },
   },
   variants: {

@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
 import orderBy from 'lodash/orderBy';
 
 import { Item } from 'api';
@@ -8,19 +7,19 @@ import Seo from 'components/seo';
 import ItemsListInfinite from 'containers/itemsListInfinite';
 import useApiInfinite from 'hooks/useApiInfinite';
 import useRouteState from 'hooks/useRouteState';
+import useSearchParams from 'hooks/useSearchParams';
 
 function orderItems(items: Item[]) {
   return orderBy(items, 'year', 'desc');
 }
 
 const SearchView: React.FC = () => {
-  const location = useLocation<{ type?: string; field?: string }>();
+  const searchParams = useSearchParams();
   const [query, setQuery] = useRouteState('q', '');
   const queryResult = useApiInfinite('itemsSearch', [
     {
+      ...searchParams,
       q: query,
-      type: location.state?.type,
-      field: location.state?.field,
     },
   ]);
   const handleQueryChange = useCallback(
