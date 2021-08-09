@@ -215,7 +215,7 @@ const ItemView: React.FC = () => {
                       <>
                         <div className="flex mr-2">
                           <Text className="text-gray-500 mr-2">Серия:</Text>
-                          <Text>{durationAverage}</Text>
+                          <Text>≈{durationAverage}</Text>
                         </div>
                         <div className="flex mr-2">
                           <Text className="text-gray-500 mr-2">Сериал:</Text>
