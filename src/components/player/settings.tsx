@@ -42,21 +42,21 @@ const Settings: React.FC<Props> = ({ visible, onClose, player }) => {
   );
 
   const handleAudioChange = useCallback(
-    (audio: string) => () => {
+    (audio: string) => {
       setCurrentAudio(audio);
       handleVideoUpdate('audioTrack', audio);
     },
     [handleVideoUpdate],
   );
   const handleSourceChange = useCallback(
-    (source: string) => () => {
+    (source: string) => {
       setCurrentSource(source);
       handleVideoUpdate('sourceTrack', source);
     },
     [handleVideoUpdate],
   );
   const handleSubtitleChange = useCallback(
-    (subtitle: string) => () => {
+    (subtitle: string) => {
       setCurrentSubtitle(subtitle);
       handleVideoUpdate('subtitleTrack', subtitle);
     },
