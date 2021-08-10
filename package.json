@@ -9,8 +9,8 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "postbuild": "node ./scripts/msx.js",
-    "package": "node ./scripts/package.js",
+    "postbuild": "dotenv-load node ./scripts/msx.js",
+    "package": "dotenv-load node ./scripts/package.js",
     "test": "craco test",
     "lint": "concurrently \"yarn run eslint\"",
     "lint:fix": "concurrently \"yarn run eslint:fix\"",
