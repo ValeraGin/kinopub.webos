@@ -150,6 +150,7 @@ const Player: React.FC<PlayerProps> = ({
         ref={playerRef}
         poster={poster}
         title={description}
+        jumpBy={15}
         onPlay={handlePlay}
         onPause={handlePause}
         onEnded={handleEnded}
