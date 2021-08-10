@@ -5,6 +5,7 @@ import cx from 'classnames';
 import Scrollable from 'components/scrollable';
 import SpotlightContainer from 'components/spotlightContainer';
 import useButtonEffect, { KeyboardCodesKeys } from 'hooks/useButtonEffect';
+import useHashTrigger from 'hooks/useHashTrigger';
 
 type Props = {
   visible: boolean;
@@ -48,12 +49,16 @@ const Popup: React.FC<Props> = ({ visible, onClose, children, className, closeBu
 
   useButtonEffect('Back', handleCloseIfVisible);
   useButtonEffect(closeButton, handleCloseIfVisible);
+  const hashTrigger = useHashTrigger('popup', handleCloseIfVisible);
 
   useEffect(() => {
     if (visible) {
       spotPopupContent();
+      hashTrigger.open();
+    } else {
+      hashTrigger.close();
     }
-  }, [visible, spotPopupContent]);
+  }, [visible, spotPopupContent, hashTrigger]);
 
   return (
     <>
