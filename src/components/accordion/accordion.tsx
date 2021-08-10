@@ -18,14 +18,10 @@ const Accordion: React.FC<Props> = ({ open, onToggle, title, subtitle, className
   const [visible, setVisible] = useChangebleState(open);
 
   const handleClick = useCallback(() => {
-    setVisible((visible) => {
-      const newVisible = !visible;
-
-      onToggle?.(newVisible);
-
-      return newVisible;
-    });
-  }, [setVisible, onToggle]);
+    const newVisible = !visible;
+    onToggle?.(newVisible);
+    setVisible(newVisible);
+  }, [visible, setVisible, onToggle]);
 
   return (
     <div className="flex flex-col w-full">
