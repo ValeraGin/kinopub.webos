@@ -54,6 +54,7 @@
     "@babel/preset-typescript": "7.15.0",
     "@craco/craco": "6.2.0",
     "@enact/dev-utils": "4.1.1",
+    "@simbathesailor/use-what-changed": "2.0.0",
     "@types/hls.js": "1.0.0",
     "@types/lodash": "4.14.172",
     "@types/react": "17.0.16",

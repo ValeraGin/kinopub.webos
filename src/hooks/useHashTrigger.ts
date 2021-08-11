@@ -9,6 +9,9 @@ function useHashTrigger(hash: string, onClose?: Function, onOpen?: Function) {
     if (!hasHash()) {
       history.push({
         hash,
+        state: history.location.state,
+        search: history.location.search,
+        pathname: history.location.pathname,
       });
     }
     onOpen?.();

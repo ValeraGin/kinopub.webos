@@ -6,6 +6,7 @@ import Player, { PlayerProps } from 'components/player';
 import Seo from 'components/seo';
 import useApi from 'hooks/useApi';
 import useApiMutation from 'hooks/useApiMutation';
+import useDeepMemo from 'hooks/useDeepMemo';
 import useStorageState from 'hooks/useStorageState';
 
 import { getItemDescription, getItemTitle } from 'utils/item';
@@ -65,10 +66,10 @@ const VideoView: React.FC = () => {
     [watchingMarkTimeAsync, item, season],
   );
 
-  const playerProps = useMemo<PlayerProps | null>(
+  const playerProps = useDeepMemo(
     () =>
       currentVideoLinks?.data
-        ? {
+        ? ({
             title: getItemTitle(item, currentVideo, season),
             description: getItemDescription(item, currentVideo, season),
             poster: item.posters.wide || item.posters.big,
@@ -76,7 +77,7 @@ const VideoView: React.FC = () => {
             sources: mapSources(currentVideoLinks.data.files, streamingType),
             subtitles: mapSubtitles(currentVideoLinks.data.subtitles),
             startTime: currentVideo.watching.status === WatchingStatus.Watching ? currentVideo.watching.time : 0,
-          }
+          } as PlayerProps)
         : null,
     [item, season, currentVideo, currentVideoLinks?.data, streamingType],
   );
