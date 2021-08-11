@@ -33,3 +33,7 @@
 ## Player settings
 
 ![Player settings](screenshots/09.%20player%20settings.png)
+
+## Settings
+
+![Player settings](screenshots/10.%20settings.png)
