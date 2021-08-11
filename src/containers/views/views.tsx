@@ -1,6 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Switch, useHistory } from 'react-router-dom';
 
+import Spinner from 'components/spinner';
 import Text from 'components/text';
 import useButtonEffect from 'hooks/useButtonEffect';
 import useDeviceAuthorizationEffect from 'hooks/useDeviceAuthorizationEffect';
@@ -9,6 +10,8 @@ import { PATHS } from 'routes';
 const Views: React.FC = ({ children, ...props }) => {
   const history = useHistory();
   const [showNotice, setShowNotice] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   const handleBackButtonClick = useCallback(() => {
     if (history.location.pathname !== PATHS.Home) {
@@ -24,8 +27,36 @@ const Views: React.FC = ({ children, ...props }) => {
     }
   }, [history, showNotice]);
 
+  const handleAuthorization = useCallback(
+    (isAuthorized: boolean) => {
+      setIsAuthorized(isAuthorized);
+
+      const path = history.location.pathname;
+      if (isAuthorized) {
+        if (path === PATHS.Pair || path === PATHS.Index) {
+          history.replace(PATHS.Home);
+        }
+      }
+    },
+    [history],
+  );
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setShowSpinner(!isAuthorized && history.location.pathname !== PATHS.Pair);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [isAuthorized, history.location.pathname]);
+
   useButtonEffect('Back', handleBackButtonClick);
-  useDeviceAuthorizationEffect();
+  useDeviceAuthorizationEffect(handleAuthorization);
+
+  if (showSpinner) {
+    return <Spinner />;
+  }
 
   return (
     <div {...props}>

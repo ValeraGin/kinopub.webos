@@ -69,7 +69,7 @@ class KinopubApiClient extends BaseApiClient {
     this.accessTokenCheckIntervaId = null;
   }
 
-  private async processTokensReponse(response: TokensResponse, deviceInfo: DeviceInfo, onSuccess?: Function) {
+  private async processTokensReponse(response: TokensResponse, onSuccess?: Function) {
     await this.clearTokens();
 
     switch (response.error) {
@@ -80,7 +80,6 @@ class KinopubApiClient extends BaseApiClient {
         this.clearTimers();
 
         await this.saveTokens(response);
-        this.deviceNotify(deviceInfo);
         onSuccess?.();
         return;
 
@@ -136,13 +135,13 @@ class KinopubApiClient extends BaseApiClient {
   /**
    * Авторизация устройства
    */
-  async deviceAuthorization(deviceInfo: DeviceInfo, onConfirm?: OnConfirm) {
+  async deviceAuthorization(onConfirm?: OnConfirm) {
     const refreshToken = this.getRefreshToken();
 
     if (refreshToken) {
       const response = await this.refreshTokens(refreshToken);
 
-      await this.processTokensReponse(response, deviceInfo);
+      await this.processTokensReponse(response);
     } else {
       const { interval, code, user_code, verification_uri } = await this.requestDeviceCode();
 
@@ -154,7 +153,7 @@ class KinopubApiClient extends BaseApiClient {
           const response = await this.requestTokens(code);
 
           try {
-            await this.processTokensReponse(response, deviceInfo, resolve);
+            await this.processTokensReponse(response, resolve);
           } catch (ex) {
             reject(ex);
           }

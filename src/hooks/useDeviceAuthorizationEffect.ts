@@ -6,7 +6,7 @@ import useDeviceInfo from 'hooks/useDeviceInfo';
 import useStorageState from 'hooks/useStorageState';
 import { PATHS } from 'routes';
 
-function useDeviceAuthorizationEffect() {
+function useDeviceAuthorizationEffect(onAuthorization?: (isAuthorized: boolean) => void) {
   const history = useHistory();
   const deviceInfo = useDeviceInfo();
   const { deviceAuthorizationAsync } = useApiMutation('deviceAuthorization');
@@ -25,28 +25,29 @@ function useDeviceAuthorizationEffect() {
 
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
-      const path = history.location.pathname;
-      await deviceAuthorizationAsync([deviceInfo, handleOnConfirm]);
+      onAuthorization?.(false);
 
-      if (path === PATHS.Pair || path === PATHS.Index) {
-        history.replace(PATHS.Home);
-      }
+      await deviceAuthorizationAsync([handleOnConfirm]);
+
+      onAuthorization?.(true);
     }, 500);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [isLogged, deviceInfo, history, handleOnConfirm, deviceAuthorizationAsync]);
+  }, [isLogged, onAuthorization, handleOnConfirm, deviceAuthorizationAsync]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      deviceNotify([deviceInfo]);
+      if (isLogged) {
+        deviceNotify([deviceInfo]);
+      }
     }, 2 * 1000);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [deviceInfo, deviceNotify]);
+  }, [isLogged, deviceInfo, deviceNotify]);
 }
 
 export default useDeviceAuthorizationEffect;
