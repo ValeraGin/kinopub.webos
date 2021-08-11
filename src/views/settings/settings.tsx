@@ -110,7 +110,7 @@ const SettingsView: React.FC = () => {
                     </div>
                   ))}
                   <div className="flex w-1/2 pr-4" key="use-hls.js">
-                    <Checkbox className="w-full" defaultChecked={isHLSJSActive} onChange={handleHLSJSToogle}>
+                    <Checkbox className="w-full" defaultChecked={isHLSJSActive !== false} onChange={handleHLSJSToogle}>
                       Использовать HLS.js
                     </Checkbox>
                   </div>
