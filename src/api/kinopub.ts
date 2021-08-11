@@ -41,7 +41,7 @@ import {
   WatchingToggleWatchlistResponse,
 } from './typings';
 
-const KINOPUB_API_BASE_URL = process.env.KINOPUB_API_BASE_URL || 'api.service-kp.com';
+const KINOPUB_API_BASE_URL = process.env.KINOPUB_API_BASE_URL || 'https://api.service-kp.com';
 const KINOPUB_API_CLIENT_ID = process.env.KINOPUB_API_CLIENT_ID || 'xbmc';
 const KINOPUB_API_CLIENT_SECRET = process.env.KINOPUB_API_CLIENT_SECRET || 'cgg3gtifu46urtfp2zp1nqtba0k2ezxh';
 

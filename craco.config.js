@@ -20,7 +20,7 @@ module.exports = {
     /**
      * @type import("webpack").Configuration['plugins']
      */
-    plugins: [new GracefulFsPlugin(), new WebOSMetaPlugin(), new ILibPlugin({ symlinks: false })],
+    plugins: [new GracefulFsPlugin(), new WebOSMetaPlugin(), new ILibPlugin({ symlinks: false, ilib: 'resources/ilib' })],
     configure: (
       /**
        * @type import("webpack").Configuration

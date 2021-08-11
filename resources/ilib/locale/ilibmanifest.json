@@ -1,0 +1,18 @@
+{
+  "files": [
+    "ru/addressres.json",
+    "ru/collation.json",
+    "ru/ctrynames.json",
+    "ru/ctryreverse.json",
+    "ru/dateformats.json",
+    "ru/list.json",
+    "ru/localeinfo.json",
+    "ru/name.json",
+    "ru/plurals.json",
+    "ru/regionnames.json",
+    "ru/sysres.json",
+    "ru/unitfmt.json",
+    "dateformats.json",
+    "sysres.json"
+  ]
+}

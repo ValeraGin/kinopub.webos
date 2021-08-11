@@ -148,6 +148,7 @@ const Player: React.FC<PlayerProps> = ({
         {...props}
         //@ts-expect-error
         ref={playerRef}
+        locale="ru"
         poster={poster}
         title={description}
         jumpBy={15}
