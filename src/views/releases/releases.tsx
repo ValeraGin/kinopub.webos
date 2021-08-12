@@ -5,6 +5,7 @@ import map from 'lodash/map';
 
 import Link from 'components/link';
 import Seo from 'components/seo';
+import Text from 'components/text';
 import ItemsListInfinite from 'containers/itemsListInfinite';
 import useApiInfinite from 'hooks/useApiInfinite';
 import { PATHS, RouteParams, generatePath } from 'routes';
@@ -34,20 +35,27 @@ const ReleasesView: React.FC = () => {
   return (
     <>
       <Seo title={seoTitle} />
-      <div className="flex">
-        {map(RELEASE_TYPES_MAP, (releaseName, releaseKey) => (
-          <Link
-            key={releaseKey}
-            className="mr-2"
-            replace
-            active={releaseType === releaseKey}
-            href={generatePath(PATHS.Releases, { releaseType: releaseKey })}
-          >
-            {releaseName}
-          </Link>
-        ))}
-      </div>
-      <ItemsListInfinite title={title} queryResult={queryResult} />
+      <ItemsListInfinite
+        title={
+          <>
+            <Text>{title}</Text>
+            <div className="flex">
+              {map(RELEASE_TYPES_MAP, (releaseName, releaseKey) => (
+                <Link
+                  key={releaseKey}
+                  className="mr-2"
+                  replace
+                  active={releaseType === releaseKey}
+                  href={generatePath(PATHS.Releases, { releaseType: releaseKey })}
+                >
+                  {releaseName}
+                </Link>
+              ))}
+            </div>
+          </>
+        }
+        queryResult={queryResult}
+      />
     </>
   );
 };

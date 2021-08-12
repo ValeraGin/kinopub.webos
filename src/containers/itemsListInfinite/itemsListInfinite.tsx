@@ -3,7 +3,7 @@ import ItemsList from 'components/itemsList';
 import useInfiniteItems, { QueryResult } from 'hooks/useInfiniteItems';
 
 type Props = {
-  title?: string;
+  title?: React.ReactNode;
   queryResult: QueryResult;
   processItems?: (items: Item[]) => Item[];
 };

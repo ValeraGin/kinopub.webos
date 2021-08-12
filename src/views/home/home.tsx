@@ -14,11 +14,17 @@ const ItemsSection: React.FC<{ title: string; params: ItemsParams }> = ({ title,
 
   return (
     <div className="pb-2">
-      <Link href={href} state={{ params, title }} className="mb-2">
-        {title}
-      </Link>
-
-      <ItemsList items={data?.items} loading={isLoading} scrollable={false} />
+      <ItemsList
+        title={
+          <Link href={href} state={{ params, title }} className="w-full">
+            {title}
+          </Link>
+        }
+        titleClassName="ml-0"
+        items={data?.items}
+        loading={isLoading}
+        scrollable={false}
+      />
     </div>
   );
 };

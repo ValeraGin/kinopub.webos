@@ -8,6 +8,7 @@ import { Bool } from 'api';
 import ItemsList from 'components/itemsList';
 import Link from 'components/link';
 import Seo from 'components/seo';
+import Text from 'components/text';
 import useApi from 'hooks/useApi';
 import { PATHS, RouteParams } from 'routes';
 
@@ -28,20 +29,29 @@ const WatchingView: React.FC = () => {
   return (
     <>
       <Seo title={seoTitle} />
-      <div className="flex">
-        {map(WATCHING_TYPES_MAP, (watchingTypeName, watchingTypeKey) => (
-          <Link
-            key={watchingTypeKey}
-            className="mr-2"
-            replace
-            active={watchingType === watchingTypeKey}
-            href={generatePath(PATHS.Watching, { watchingType: watchingTypeKey })}
-          >
-            {watchingTypeName}
-          </Link>
-        ))}
-      </div>
-      <ItemsList title={title} items={data?.items} loading={isLoading} />
+      <ItemsList
+        title={
+          <>
+            <Text>{title}</Text>
+
+            <div className="flex">
+              {map(WATCHING_TYPES_MAP, (watchingTypeName, watchingTypeKey) => (
+                <Link
+                  key={watchingTypeKey}
+                  className="mr-2"
+                  replace
+                  active={watchingType === watchingTypeKey}
+                  href={generatePath(PATHS.Watching, { watchingType: watchingTypeKey })}
+                >
+                  {watchingTypeName}
+                </Link>
+              ))}
+            </div>
+          </>
+        }
+        items={data?.items}
+        loading={isLoading}
+      />
     </>
   );
 };

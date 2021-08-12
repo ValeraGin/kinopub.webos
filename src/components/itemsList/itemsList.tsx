@@ -8,7 +8,7 @@ import Title from 'components/title';
 import VideoItem from 'components/videoItem';
 
 type Props = {
-  title?: string;
+  title?: React.ReactNode;
   items?: Item[];
   loading?: boolean;
   onScrollToEnd?: () => void;
@@ -20,7 +20,9 @@ type Props = {
 const ItemsList: React.FC<Props> = ({ title, items, loading, onScrollToEnd, scrollable = true, className, titleClassName }) => {
   const content = (
     <div>
-      <Title title={title} className={titleClassName} />
+      <Title className={cx('flex justify-between items-center', titleClassName)} as="div">
+        {title}
+      </Title>
       <div className={cx('flex flex-wrap', className)}>
         {map(items, (item) => (
           <VideoItem key={item.id} item={item} />
