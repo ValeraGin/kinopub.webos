@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import cx from 'classnames';
 import HLS from 'hls.js';
-import find from 'lodash/find';
 import forEach from 'lodash/forEach';
 import uniqBy from 'lodash/uniqBy';
 
@@ -66,6 +65,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
   const hlsRef = useRef<HLS | null>(null);
   const startTimeRef = useRef(0);
   const isSettingsOpenRef = useRef(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [isHLSJSActive] = useStorageState<boolean>('is_hls.js_active');
   const [currentAudioTrack, setCurrentAudioTrack] = useState<AudioTrack>(
     () => (audioTracks?.find((audioTrack) => audioTrack.default) || audioTracks?.[0])!,
@@ -119,31 +119,8 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
 
   const handleMediaLoaded = useCallback(() => {
     if (videoRef.current) {
+      setIsLoaded(true);
       videoRef.current.removeEventListener('canplay', handleMediaLoaded);
-
-      // clear existing subtitles
-      while (videoRef.current.firstChild) {
-        // @ts-expect-error
-        videoRef.current.lastChild.track.mode = 'disabled';
-        videoRef.current.removeChild(videoRef.current.lastChild!);
-      }
-
-      if (hlsRef.current) {
-        const audioTrack = find(hlsRef.current.audioTracks, (audioTrack) => audioTrack.name === currentAudioTrack?.name);
-
-        if (audioTrack) {
-          hlsRef.current.audioTrack = audioTrack.id;
-        }
-      } else {
-        // Do not change audio if we don't have it (mostly on HLS)
-        // @ts-expect-error
-        if (videoRef.current.audioTracks?.[currentAudioTrackIndex]) {
-          // @ts-expect-error
-          forEach(videoRef.current.audioTracks, (audioTrack, idx: number) => {
-            audioTrack.enabled = idx === currentAudioTrackIndex;
-          });
-        }
-      }
 
       if (startTimeRef.current > 0) {
         videoRef.current.currentTime = startTimeRef.current;
@@ -156,31 +133,8 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
       } else if (autoPlay) {
         videoRef.current.play();
       }
-
-      if (currentSubtitleTrack) {
-        const addSubtitleTrack = (src: string) => {
-          if (videoRef.current) {
-            const track = document.createElement('track');
-            videoRef.current.appendChild(track);
-
-            track.src = src;
-            track.kind = 'captions';
-            track.id = currentSubtitleTrack.name;
-            track.label = currentSubtitleTrack.name;
-            track.srclang = currentSubtitleTrack.lang;
-
-            track.track.mode = 'showing';
-          }
-        };
-
-        if (currentSubtitleTrack.src.endsWith('.srt')) {
-          convertToVTT(currentSubtitleTrack.src).then(addSubtitleTrack);
-        } else {
-          addSubtitleTrack(currentSubtitleTrack.src);
-        }
-      }
     }
-  }, [autoPlay, currentAudioTrackIndex, currentAudioTrack?.name, currentSubtitleTrack]);
+  }, [autoPlay]);
 
   useEffect(() => {
     if (videoRef.current && currentSrc) {
@@ -197,6 +151,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
         videoRef.current.src = currentSrc;
       }
 
+      setIsLoaded(false);
       videoRef.current.addEventListener('canplay', handleMediaLoaded);
     }
 
@@ -214,19 +169,66 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
         hlsRef.current = null;
       }
     };
-  }, [
-    currentSrc,
-    videoRef,
-    startTimeRef,
-    handleMediaLoaded,
-    isHLSJSActive,
-    streamingType,
-    currentAudioTrack,
-    currentSourceTrack,
-    currentSubtitleTrack,
-    currentAudioTrackIndex,
-    audioTracks,
-  ]);
+  }, [currentSrc, isHLSJSActive, handleMediaLoaded]);
+
+  useEffect(() => {
+    if (isLoaded) {
+      if (hlsRef.current) {
+        const hlsAudioTrack = hlsRef.current.audioTracks?.[currentAudioTrackIndex];
+
+        if (hlsAudioTrack) {
+          hlsRef.current.audioTrack = hlsAudioTrack.id;
+        }
+      } else if (videoRef.current) {
+        // Do not change audio if we don't have it (mostly on HLS)
+        // @ts-expect-error
+        if (videoRef.current.audioTracks?.[currentAudioTrackIndex]) {
+          // @ts-expect-error
+          forEach(videoRef.current.audioTracks, (audioTrack, idx: number) => {
+            audioTrack.enabled = idx === currentAudioTrackIndex;
+          });
+
+          videoRef.current.currentTime -= 1;
+        }
+      }
+    }
+  }, [isLoaded, currentAudioTrackIndex]);
+
+  useEffect(() => {
+    if (isLoaded) {
+      if (videoRef.current) {
+        // clear existing subtitles
+        while (videoRef.current.firstChild) {
+          // @ts-expect-error
+          videoRef.current.lastChild.track.mode = 'disabled';
+          videoRef.current.removeChild(videoRef.current.lastChild!);
+        }
+
+        if (currentSubtitleTrack) {
+          const addSubtitleTrack = (src: string) => {
+            if (videoRef.current) {
+              const track = document.createElement('track');
+              videoRef.current.appendChild(track);
+
+              track.src = src;
+              track.kind = 'captions';
+              track.id = currentSubtitleTrack.name;
+              track.label = currentSubtitleTrack.name;
+              track.srclang = currentSubtitleTrack.lang;
+
+              track.track.mode = 'showing';
+            }
+          };
+
+          if (currentSubtitleTrack.src.endsWith('.srt')) {
+            convertToVTT(currentSubtitleTrack.src).then(addSubtitleTrack);
+          } else {
+            addSubtitleTrack(currentSubtitleTrack.src);
+          }
+        }
+      }
+    }
+  }, [isLoaded, currentSubtitleTrack]);
 
   useEffect(() => {
     isSettingsOpenRef.current = Boolean(isSettingsOpen);
@@ -234,7 +236,7 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
 
   return useMemo(
     () => ({
-      videoRef: videoRef,
+      videoRef,
       getAudioTracks,
       getAudioTrack,
       setAudioTrack,
