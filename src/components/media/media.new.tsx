@@ -12,6 +12,7 @@ import { convertToVTT } from 'utils/subtitles';
 export type AudioTrack = {
   name: string;
   lang: string;
+  default?: boolean;
 };
 
 export type SourceTrack = {
@@ -66,7 +67,9 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
   const startTimeRef = useRef(0);
   const isSettingsOpenRef = useRef(false);
   const [isHLSJSActive] = useStorageState<boolean>('is_hls.js_active');
-  const [currentAudioTrack, setCurrentAudioTrack] = useState<AudioTrack>(audioTracks?.[0]!);
+  const [currentAudioTrack, setCurrentAudioTrack] = useState<AudioTrack>(
+    () => (audioTracks?.find((audioTrack) => audioTrack.default) || audioTracks?.[0])!,
+  );
   const [currentSourceTrack, setCurrentSourceTrack] = useState<SourceTrack>(sourceTracks?.[0]!);
   const [currentSubtitleTrack, setCurrentSubtitleTrack] = useState<SubtitleTrack | null>(null);
 

@@ -8,7 +8,7 @@ import { AudioTrack, SourceTrack, SubtitleTrack } from 'components/media';
 
 const formatIdx = (idx: number) => (idx < 10 ? `0${idx}` : idx);
 
-export function mapAudios(audios: Audio[]): AudioTrack[] {
+export function mapAudios(audios: Audio[], ac3ByDefault?: boolean): AudioTrack[] {
   return map(audios, (audio, idx) => ({
     lang: audio.lang,
     name: filter([
@@ -16,8 +16,9 @@ export function mapAudios(audios: Audio[]): AudioTrack[] {
       audio.type?.title && audio.author?.title ? `${audio.type?.title}.` : audio.type?.title,
       audio.author?.title,
       audio.type?.title || audio.author?.title ? `(${toUpper(audio.lang)})` : toUpper(audio.lang),
-      audio.codec !== 'aac' && toUpper(audio.codec),
+      audio.codec === 'ac3' && toUpper(audio.codec),
     ]).join(' '),
+    default: ac3ByDefault && audio.codec === 'ac3',
   }));
 }
 

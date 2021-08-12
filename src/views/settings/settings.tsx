@@ -46,6 +46,7 @@ const SettingsView: React.FC = () => {
   const { deactivate } = useApiMutation('deactivate');
   const [newSettings, setNewSettings] = useState<DeviceSettingsParams>({});
   const [isHLSJSActive, setIsHLSJSActive] = useStorageState<boolean>('is_hls.js_active');
+  const [isAC2ByDefaultActive, setIsAC2ByDefaultActive] = useStorageState<boolean>('is_abc3_by_default_active');
   const { software, hardware } = useDeviceInfo();
 
   const boolSettings = useMemo(
@@ -70,6 +71,13 @@ const SettingsView: React.FC = () => {
       setIsHLSJSActive(checked);
     },
     [setIsHLSJSActive],
+  );
+
+  const handleAC2ByDefaultToogle = useCallback(
+    (checked: boolean) => {
+      setIsAC2ByDefaultActive(checked);
+    },
+    [setIsAC2ByDefaultActive],
   );
   const handleBoolSettingToggle = useCallback(
     (setting: typeof boolSettings[0]) => async (checked: boolean) => {
@@ -109,9 +117,16 @@ const SettingsView: React.FC = () => {
                       <SettingBool setting={setting} onChange={handleBoolSettingToggle(setting)} />
                     </div>
                   ))}
+                </div>
+                <div className="flex flex-wrap pb-4">
                   <div className="flex w-1/2 pr-4" key="use-hls.js">
                     <Checkbox className="w-full" defaultChecked={isHLSJSActive !== false} onChange={handleHLSJSToogle}>
                       Использовать HLS.js
+                    </Checkbox>
+                  </div>
+                  <div className="flex w-1/2 pr-4" key="use-ac3_by_default">
+                    <Checkbox className="w-full" defaultChecked={isAC2ByDefaultActive} onChange={handleAC2ByDefaultToogle}>
+                      AC3 аудио по умолчанию
                     </Checkbox>
                   </div>
                 </div>

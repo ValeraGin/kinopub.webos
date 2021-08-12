@@ -52,6 +52,7 @@ const VideoView: React.FC = () => {
   const location = useLocation<{ title: string; item: ItemDetails; video: Video; season: Season }>();
   const { watchingMarkTimeAsync } = useApiMutation('watchingMarkTime');
   const [streamingType] = useStorageState<Streaming>('streaming_type');
+  const [isAC2ByDefaultActive] = useStorageState<boolean>('is_abc3_by_default_active');
   const { item, video, season } = location.state || {};
 
   const [currentVideo, setCurrentVideo] = useState(video);
@@ -73,13 +74,13 @@ const VideoView: React.FC = () => {
             title: getItemTitle(item, currentVideo, season),
             description: getItemDescription(item, currentVideo, season),
             poster: item.posters.wide || item.posters.big,
-            audios: mapAudios(currentVideo.audios),
+            audios: mapAudios(currentVideo.audios, isAC2ByDefaultActive),
             sources: mapSources(currentVideoLinks.data.files, streamingType),
             subtitles: mapSubtitles(currentVideoLinks.data.subtitles),
             startTime: currentVideo.watching.status === WatchingStatus.Watching ? currentVideo.watching.time : 0,
           } as PlayerProps)
         : null,
-    [item, season, currentVideo, currentVideoLinks?.data, streamingType],
+    [item, season, currentVideo, currentVideoLinks?.data, streamingType, isAC2ByDefaultActive],
   );
 
   const handlePause = useCallback(
