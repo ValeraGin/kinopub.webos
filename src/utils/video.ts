@@ -8,32 +8,40 @@ import { AudioTrack, SourceTrack, SubtitleTrack } from 'components/media';
 
 const formatIdx = (idx: number) => (idx < 10 ? `0${idx}` : idx);
 
-export function mapAudios(audios: Audio[], ac3ByDefault?: boolean): AudioTrack[] {
-  return map(audios, (audio, idx) => ({
-    lang: audio.lang,
-    name: filter([
-      `${formatIdx(idx + 1)}.`,
+export function mapAudios(audios: Audio[], ac3ByDefault?: boolean, savedAudioName?: string): AudioTrack[] {
+  return map(audios, (audio, idx) => {
+    const name = filter([
       audio.type?.title && audio.author?.title ? `${audio.type?.title}.` : audio.type?.title,
       audio.author?.title,
       audio.type?.title || audio.author?.title ? `(${toUpper(audio.lang)})` : toUpper(audio.lang),
       audio.codec === 'ac3' && toUpper(audio.codec),
-    ]).join(' '),
-    default: ac3ByDefault && audio.codec === 'ac3',
-  }));
+    ]).join(' ');
+    const number = `${formatIdx(idx + 1)}.`;
+
+    return {
+      name,
+      number,
+      lang: audio.lang,
+      default: savedAudioName === name || (ac3ByDefault && audio.codec === 'ac3'),
+    };
+  });
 }
 
 export function mapSources(
   files: { url: string | { [key in Streaming]?: string }; quality?: string }[],
   streamingType?: Streaming,
+  savedSourceName?: string,
 ): SourceTrack[] {
   return orderBy(
     map(files, (file) => {
       const src = (typeof file.url === 'string' ? file.url : file.url[streamingType!] || file.url.http!) as string;
+      const name = file.quality!;
 
       return {
         src,
-        name: file.quality!,
+        name,
         type: src.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4',
+        default: savedSourceName === name,
       };
     }),
     ({ name }) => parseInt(name),
@@ -41,10 +49,15 @@ export function mapSources(
   );
 }
 
-export function mapSubtitles(subtitles: Subtitle[]): SubtitleTrack[] {
-  return map(subtitles, (subtitle, idx) => ({
-    src: subtitle.url,
-    lang: subtitle.lang,
-    name: `${toUpper(subtitle.lang)} #${formatIdx(idx + 1)}`,
-  }));
+export function mapSubtitles(subtitles: Subtitle[], savedSubtitleName?: string): SubtitleTrack[] {
+  return map(subtitles, (subtitle, idx) => {
+    const name = `${toUpper(subtitle.lang)} #${formatIdx(idx + 1)}`;
+
+    return {
+      name,
+      src: subtitle.url,
+      lang: subtitle.lang,
+      default: savedSubtitleName === name,
+    };
+  });
 }

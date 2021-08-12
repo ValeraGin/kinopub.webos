@@ -23,7 +23,7 @@ const Settings: React.FC<Props> = ({ visible, onClose, player }) => {
   const [subtitles, setSubtitles] = useState<SubtitleTrack[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState<string | null>(NONE);
 
-  const audioOptions = useMemo(() => map(audios, (audio) => ({ title: audio.name, value: audio.name })), [audios]);
+  const audioOptions = useMemo(() => map(audios, (audio) => ({ title: `${audio.number} ${audio.name}`, value: audio.name })), [audios]);
   const sourceOptions = useMemo(() => map(sources, (source) => ({ title: source.name, value: source.name })), [sources]);
   const subtitleOptions = useMemo(
     () => [{ title: 'Нет', value: NONE }, ...map(subtitles, (subtitle) => ({ title: subtitle.name, value: subtitle.name }))],

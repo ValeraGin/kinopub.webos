@@ -10,6 +10,7 @@ import { convertToVTT } from 'utils/subtitles';
 
 export type AudioTrack = {
   name: string;
+  number: string;
   lang: string;
   default?: boolean;
 };
@@ -18,12 +19,14 @@ export type SourceTrack = {
   src: string;
   type: string;
   name: string;
+  default?: boolean;
 };
 
 export type SubtitleTrack = {
   src: string;
   name: string;
   lang: string;
+  default?: boolean;
 };
 
 export type StreamingType = 'http' | 'hls' | 'hls2' | 'hls4';
@@ -35,8 +38,11 @@ type OwnProps = {
   subtitleTracks?: SubtitleTrack[];
   streamingType?: StreamingType;
   isSettingsOpen?: boolean;
-  onUpdate?: () => void;
   mediaComponent?: string;
+  onUpdate?: () => void;
+  onAudioChange?: (audioTrack: AudioTrack) => void;
+  onSourceChange?: (sourceTrack: SourceTrack) => void;
+  onSubtitleChange?: (subtitleTrack: SubtitleTrack | null) => void;
 };
 
 export type MediaRef = {
@@ -60,7 +66,17 @@ export type MediaRef = {
   readonly proportionPlayed: number;
 };
 
-function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType, isSettingsOpen }: OwnProps) {
+function useVideoPlayer({
+  autoPlay,
+  audioTracks,
+  sourceTracks,
+  subtitleTracks,
+  streamingType,
+  isSettingsOpen,
+  onAudioChange,
+  onSourceChange,
+  onSubtitleChange,
+}: OwnProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<HLS | null>(null);
   const startTimeRef = useRef(0);
@@ -70,39 +86,50 @@ function useVideoPlayer({ autoPlay, audioTracks, sourceTracks, subtitleTracks, s
   const [currentAudioTrack, setCurrentAudioTrack] = useState<AudioTrack>(
     () => (audioTracks?.find((audioTrack) => audioTrack.default) || audioTracks?.[0])!,
   );
-  const [currentSourceTrack, setCurrentSourceTrack] = useState<SourceTrack>(sourceTracks?.[0]!);
-  const [currentSubtitleTrack, setCurrentSubtitleTrack] = useState<SubtitleTrack | null>(null);
+  const [currentSourceTrack, setCurrentSourceTrack] = useState<SourceTrack>(
+    () => (sourceTracks?.find((sourceTrack) => sourceTrack.default) || sourceTracks?.[0])!,
+  );
+  const [currentSubtitleTrack, setCurrentSubtitleTrack] = useState<SubtitleTrack | null>(
+    () => subtitleTracks?.find((subtitleTrack) => subtitleTrack.default) || null,
+  );
 
   const getAudioTracks = useCallback(() => (streamingType === 'hls2' ? [] : audioTracks), [audioTracks, streamingType]);
   const getAudioTrack = useCallback(() => currentAudioTrack?.name, [currentAudioTrack]);
   const setAudioTrack = useCallback(
     (audioTrackName: string) => {
-      const audioTrack = audioTracks?.find((audioTrack) => audioTrack.name === audioTrackName);
-      if (audioTrack) {
+      const audioTrackIndex = audioTracks?.findIndex((audioTrack) => audioTrack.name === audioTrackName) ?? -1;
+      if (audioTrackIndex !== -1) {
+        const audioTrack = audioTracks![audioTrackIndex];
         setCurrentAudioTrack(audioTrack);
+        onAudioChange?.(audioTrack);
       }
     },
-    [audioTracks],
+    [audioTracks, onAudioChange],
   );
   const getSourceTracks = useCallback(() => uniqBy(sourceTracks, 'src'), [sourceTracks]);
   const getSourceTrack = useCallback(() => currentSourceTrack?.name, [currentSourceTrack]);
   const setSourceTrack = useCallback(
     (sourceTrackName: string) => {
-      const sourceTrack = sourceTracks?.find((sourceTrack) => sourceTrack.name === sourceTrackName);
-      if (sourceTrack) {
+      const sourceTrackIndex = sourceTracks?.findIndex((sourceTrack) => sourceTrack.name === sourceTrackName) ?? -1;
+      if (sourceTrackIndex !== -1) {
+        const sourceTrack = sourceTracks![sourceTrackIndex];
         setCurrentSourceTrack(sourceTrack);
+        onSourceChange?.(sourceTrack);
       }
     },
-    [sourceTracks],
+    [sourceTracks, onSourceChange],
   );
   const getSubtitleTracks = useCallback(() => subtitleTracks, [subtitleTracks]);
   const getSubtitleTrack = useCallback(() => currentSubtitleTrack?.name, [currentSubtitleTrack]);
   const setSubtitleTrack = useCallback(
     (subtitleTrackName?: string) => {
-      const subtitleTrack = subtitleTracks?.find((subtitleTrack) => subtitleTrack.name === subtitleTrackName);
-      setCurrentSubtitleTrack(subtitleTrack || null);
+      const subtitleTrackIndex = subtitleTracks?.findIndex((subtitleTrack) => subtitleTrack.name === subtitleTrackName) ?? -1;
+
+      const subtitleTrack = (subtitleTrackIndex !== -1 && subtitleTracks![subtitleTrackIndex]) || null;
+      setCurrentSubtitleTrack(subtitleTrack);
+      onSubtitleChange?.(subtitleTrack);
     },
-    [subtitleTracks],
+    [subtitleTracks, onSubtitleChange],
   );
 
   const currentAudioTrackIndex = useMemo(
@@ -475,7 +502,21 @@ export type MediaProps = OwnProps & React.HTMLAttributes<HTMLVideoElement>;
 
 const Media = React.forwardRef<MediaRef, MediaProps>(
   (
-    { autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType, isSettingsOpen, onUpdate, className, mediaComponent, ...props },
+    {
+      autoPlay,
+      audioTracks,
+      sourceTracks,
+      subtitleTracks,
+      streamingType,
+      isSettingsOpen,
+      onUpdate,
+      onAudioChange,
+      onSourceChange,
+      onSubtitleChange,
+      className,
+      mediaComponent,
+      ...props
+    },
     ref,
   ) => {
     const handleUpdate = useCallback(() => {
@@ -496,7 +537,17 @@ const Media = React.forwardRef<MediaRef, MediaProps>(
         ),
       [props, handleUpdate],
     );
-    const { player } = useVideoPlayerApi(ref, { autoPlay, audioTracks, sourceTracks, subtitleTracks, streamingType, isSettingsOpen });
+    const { player } = useVideoPlayerApi(ref, {
+      autoPlay,
+      audioTracks,
+      sourceTracks,
+      subtitleTracks,
+      streamingType,
+      isSettingsOpen,
+      onAudioChange,
+      onSourceChange,
+      onSubtitleChange,
+    });
 
     return <video {...props} {...eventProps} autoPlay={false} className={cx('w-screen h-screen', className)} ref={player.videoRef} />;
   },

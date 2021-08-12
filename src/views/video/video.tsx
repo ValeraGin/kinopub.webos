@@ -2,6 +2,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { ItemDetails, Season, Streaming, Video, WatchingStatus } from 'api';
+import { AudioTrack, SubtitleTrack } from 'components/media';
+import { SourceTrack } from 'components/media/media';
 import Player, { PlayerProps } from 'components/player';
 import Seo from 'components/seo';
 import useApi from 'hooks/useApi';
@@ -50,10 +52,14 @@ const usePrevNextVideos = (item: ItemDetails, season: Season, video: Video) => {
 const VideoView: React.FC = () => {
   const history = useHistory();
   const location = useLocation<{ title: string; item: ItemDetails; video: Video; season: Season }>();
+  const { item, video, season } = location.state || {};
+
   const { watchingMarkTimeAsync } = useApiMutation('watchingMarkTime');
   const [streamingType] = useStorageState<Streaming>('streaming_type');
   const [isAC2ByDefaultActive] = useStorageState<boolean>('is_abc3_by_default_active');
-  const { item, video, season } = location.state || {};
+  const [savedAudioName, setSavedAudioName] = useStorageState<string>(`item_${item.id}_saved_audio_name`);
+  const [savedSourceName, setSavedSourceName] = useStorageState<string>(`item_${item.id}_saved_source_name`);
+  const [savedSubtitleName, setSavedSubtitleName] = useStorageState<string>(`item_${item.id}_saved_subtitle_name`);
 
   const [currentVideo, setCurrentVideo] = useState(video);
   const [previousVideo, nextVideo] = usePrevNextVideos(item, season, currentVideo);
@@ -74,13 +80,23 @@ const VideoView: React.FC = () => {
             title: getItemTitle(item, currentVideo, season),
             description: getItemDescription(item, currentVideo, season),
             poster: item.posters.wide || item.posters.big,
-            audios: mapAudios(currentVideo.audios, isAC2ByDefaultActive),
-            sources: mapSources(currentVideoLinks.data.files, streamingType),
-            subtitles: mapSubtitles(currentVideoLinks.data.subtitles),
+            audios: mapAudios(currentVideo.audios, isAC2ByDefaultActive, savedAudioName),
+            sources: mapSources(currentVideoLinks.data.files, streamingType, savedSourceName),
+            subtitles: mapSubtitles(currentVideoLinks.data.subtitles, savedSubtitleName),
             startTime: currentVideo.watching.status === WatchingStatus.Watching ? currentVideo.watching.time : 0,
           } as PlayerProps)
         : null,
-    [item, season, currentVideo, currentVideoLinks?.data, streamingType, isAC2ByDefaultActive],
+    [
+      item,
+      season,
+      currentVideo,
+      currentVideoLinks?.data,
+      streamingType,
+      isAC2ByDefaultActive,
+      savedAudioName,
+      savedSourceName,
+      savedSubtitleName,
+    ],
   );
 
   const handlePause = useCallback(
@@ -133,6 +149,27 @@ const VideoView: React.FC = () => {
     [saveCurrentTime, currentVideo],
   );
 
+  const handleAudioChange = useCallback(
+    (audioTrack: AudioTrack) => {
+      setSavedAudioName(audioTrack?.name);
+    },
+    [setSavedAudioName],
+  );
+
+  const handleSourceChange = useCallback(
+    (sourceTrack: SourceTrack) => {
+      setSavedSourceName(sourceTrack?.name);
+    },
+    [setSavedSourceName],
+  );
+
+  const handleSubtitleChange = useCallback(
+    (subtitleTrack: SubtitleTrack) => {
+      setSavedSubtitleName(subtitleTrack?.name);
+    },
+    [setSavedSubtitleName],
+  );
+
   return (
     <>
       <Seo title={`Просмотр: ${item.title} - Видео`} />
@@ -146,6 +183,10 @@ const VideoView: React.FC = () => {
           onJumpBackward={handleJumpBackward}
           onJumpForward={handleJumpForward}
           onTimeSync={handleTimeSync}
+          // @ts-expect-error
+          onAudioChange={handleAudioChange}
+          onSourceChange={handleSourceChange}
+          onSubtitleChange={handleSubtitleChange}
         />
       )}
     </>
