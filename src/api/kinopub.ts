@@ -139,9 +139,13 @@ class KinopubApiClient extends BaseApiClient {
     const refreshToken = this.getRefreshToken();
 
     if (refreshToken) {
-      const response = await this.refreshTokens(refreshToken);
+      try {
+        const response = await this.refreshTokens(refreshToken);
 
-      await this.processTokensReponse(response);
+        await this.processTokensReponse(response);
+      } catch (ex) {
+        this.clearTokens();
+      }
     } else {
       const { interval, code, user_code, verification_uri } = await this.requestDeviceCode();
 
