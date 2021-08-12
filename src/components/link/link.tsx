@@ -6,21 +6,24 @@ import Icon from 'components/icon';
 import Spottable from 'components/spottable';
 
 type Props = {
-  href: string;
+  href?: string;
   icon?: string;
   iconOnly?: boolean;
+  replace?: boolean;
   active?: boolean;
   state?: any;
   className?: string;
   onClick?: () => void;
 };
 
-const Link: React.FC<Props> = ({ href, state, children, icon, iconOnly, active, className, onClick, ...props }) => {
+const Link: React.FC<Props> = ({ href, state, children, icon, iconOnly, replace, active, className, onClick, ...props }) => {
   const history = useHistory();
   const handleOnClick = useCallback(() => {
-    history.push(href, state);
+    if (href) {
+      (replace ? history.replace : history.push)(href, state);
+    }
     onClick?.();
-  }, [href, state, onClick, history]);
+  }, [href, state, replace, onClick, history]);
 
   return (
     <Spottable

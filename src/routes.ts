@@ -4,8 +4,8 @@ export const PATHS = {
   Index: '/',
   Home: '/home',
   Search: '/search',
-  Watching: '/watching',
-  Releases: '/releases/:releaseId?',
+  Watching: '/watching/:watchingType?',
+  Releases: '/releases/:releaseType?',
   Category: '/category/:categoryId',
   Genre: '/genres/:genreId',
   Channels: '/channels',
@@ -28,7 +28,6 @@ export type PathValuesType = typeof PATHS[keyof typeof PATHS];
 
 export type RouteParams = {
   categoryId?: string;
-  releaseId?: string;
   genreId?: string;
   channelId?: string;
   collectionId?: string;
@@ -36,6 +35,8 @@ export type RouteParams = {
   itemId?: string;
   videoId?: string;
   trailerId?: string;
+  releaseType?: string;
+  watchingType?: string;
 };
 
 export function generatePath(pattern: PathValuesType, params?: RouteParams, search?: Record<string, string | number>) {

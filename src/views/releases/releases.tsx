@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+import capitalize from 'lodash/capitalize';
 import map from 'lodash/map';
 
 import Link from 'components/link';
@@ -8,38 +9,39 @@ import ItemsListInfinite from 'containers/itemsListInfinite';
 import useApiInfinite from 'hooks/useApiInfinite';
 import { PATHS, RouteParams, generatePath } from 'routes';
 
-const RELEASES_MAP = {
-  itemsPopular: 'Популярные',
-  itemsFresh: 'Свежие',
-  itemsHot: 'Горячие',
+const RELEASE_TYPES_MAP = {
+  popular: 'Популярные',
+  fresh: 'Свежие',
+  hot: 'Горячие',
 } as const;
 
-type Releases = keyof typeof RELEASES_MAP;
+type ReleaseTypes = keyof typeof RELEASE_TYPES_MAP;
 
 const getReleaseById = (releaseId?: string) => {
   return releaseId
     ? // @ts-expect-error
-      RELEASES_MAP[releaseId]
-    : RELEASES_MAP.itemsPopular;
+      RELEASE_TYPES_MAP[releaseId]
+    : RELEASE_TYPES_MAP.fresh;
 };
 
 const ReleasesView: React.FC = () => {
-  const { releaseId = 'itemsPopular' } = useParams<RouteParams>();
-  const queryResult = useApiInfinite(releaseId as Releases, ['1']);
+  const { releaseType = 'popular' } = useParams<RouteParams>();
+  const queryResult = useApiInfinite(`items${capitalize(releaseType) as Capitalize<ReleaseTypes>}`, ['1']);
   const total = useMemo(() => queryResult.data?.pages?.[0]?.pagination?.total_items, [queryResult.data?.pages]);
-  const seoTitle = getReleaseById(releaseId);
+  const seoTitle = getReleaseById(releaseType);
   const title = total ? `${seoTitle} (${total})` : seoTitle;
 
   return (
     <>
       <Seo title={seoTitle} />
       <div className="flex">
-        {map(RELEASES_MAP, (releaseName, releaseKey) => (
+        {map(RELEASE_TYPES_MAP, (releaseName, releaseKey) => (
           <Link
             key={releaseKey}
             className="mr-2"
-            active={releaseId === releaseKey}
-            href={generatePath(PATHS.Releases, { releaseId: releaseKey })}
+            replace
+            active={releaseType === releaseKey}
+            href={generatePath(PATHS.Releases, { releaseType: releaseKey })}
           >
             {releaseName}
           </Link>

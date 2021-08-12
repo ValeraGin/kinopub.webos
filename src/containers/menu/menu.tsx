@@ -25,7 +25,7 @@ const menuItems: (MenuItem | null)[][] = [
     {
       name: 'Я смотрю',
       icon: 'notifications_active',
-      href: PATHS.Watching,
+      href: generatePath(PATHS.Watching),
     },
     {
       name: 'Закладки',
