@@ -7,7 +7,7 @@ import Scrollable from 'components/scrollable';
 import Title from 'components/title';
 
 type Props = {
-  title?: string;
+  title?: React.ReactNode;
   collections?: Collection[];
   loading?: boolean;
   onScrollToEnd?: () => void;

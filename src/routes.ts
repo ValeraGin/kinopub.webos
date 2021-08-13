@@ -1,3 +1,4 @@
+import { ExtractRouteParams } from 'react-router';
 import { generatePath as baseGeneratePath } from 'react-router-dom';
 
 export const PATHS = {
@@ -12,8 +13,8 @@ export const PATHS = {
   Channel: '/channels/:channelId',
   Bookmarks: '/bookmarks',
   Bookmark: '/bookmarks/:bookmarkId',
-  Collections: '/collections',
-  Collection: '/collections/:collectionId',
+  Collections: '/collections/:collectionType?',
+  Collection: '/collection/:collectionId',
   History: '/history',
   Item: '/item/:itemId',
   Video: '/video/:videoId',
@@ -27,20 +28,24 @@ export const PATHS = {
 export type PathValuesType = typeof PATHS[keyof typeof PATHS];
 
 export type RouteParams = {
-  categoryId?: string;
-  genreId?: string;
   channelId?: string;
   collectionId?: string;
   bookmarkId?: string;
   itemId?: string;
   videoId?: string;
   trailerId?: string;
+  genreType?: string;
   releaseType?: string;
+  categoryType?: string;
   watchingType?: string;
+  collectionType?: string;
 };
 
-export function generatePath(pattern: PathValuesType, params?: RouteParams, search?: Record<string, string | number>) {
-  // @ts-expect-error
+export function generatePath<S extends PathValuesType>(
+  pattern: S,
+  params?: ExtractRouteParams<S>,
+  search?: Record<string, string> | string,
+) {
   const query = search ? `?${new URLSearchParams(search)}` : '';
 
   return baseGeneratePath(pattern, params) + query;

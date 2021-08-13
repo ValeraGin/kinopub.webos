@@ -7,7 +7,7 @@ import useApiInfinite from 'hooks/useApiInfinite';
 import useSearchParams from 'hooks/useSearchParams';
 import { RouteParams } from 'routes';
 
-const CATEGORY_ID_MAP = {
+const CATEGORY_TYPES = {
   movie: 'Фильмы',
   serial: 'Сериалы',
   concert: 'Концерты',
@@ -16,26 +16,23 @@ const CATEGORY_ID_MAP = {
   tvshow: 'ТВ Шоу',
 } as const;
 
-const getCategoryById = (categoryId?: string) => {
-  return (
-    (categoryId
-      ? // @ts-expect-error
-        CATEGORY_ID_MAP[categoryId]
-      : categoryId) || ''
-  );
+type CategoryTypes = keyof typeof CATEGORY_TYPES;
+
+const getCategoryByType = (categoryType?: CategoryTypes) => {
+  return (categoryType ? CATEGORY_TYPES[categoryType] : categoryType) || '';
 };
 
 const CategoryView: React.FC = () => {
-  const { categoryId } = useParams<RouteParams>();
+  const { categoryType } = useParams<RouteParams>();
   const searchParams = useSearchParams();
   const location = useLocation<{ params?: ItemsParams; title?: string }>();
-  const { params, title = getCategoryById(categoryId) } = location.state || {};
+  const { params, title = getCategoryByType(categoryType as CategoryTypes) } = location.state || {};
 
   const queryResult = useApiInfinite('items', [
     {
       ...searchParams,
       ...params,
-      type: categoryId,
+      type: categoryType,
     },
   ]);
 

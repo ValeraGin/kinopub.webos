@@ -18,18 +18,15 @@ const RELEASE_TYPES_MAP = {
 
 type ReleaseTypes = keyof typeof RELEASE_TYPES_MAP;
 
-const getReleaseById = (releaseId?: string) => {
-  return releaseId
-    ? // @ts-expect-error
-      RELEASE_TYPES_MAP[releaseId]
-    : RELEASE_TYPES_MAP.fresh;
+const getReleaseByType = (releaseType?: ReleaseTypes) => {
+  return releaseType ? RELEASE_TYPES_MAP[releaseType] : RELEASE_TYPES_MAP.fresh;
 };
 
 const ReleasesView: React.FC = () => {
   const { releaseType = 'popular' } = useParams<RouteParams>();
   const queryResult = useApiInfinite(`items${capitalize(releaseType) as Capitalize<ReleaseTypes>}`, ['1']);
   const total = useMemo(() => queryResult.data?.pages?.[0]?.pagination?.total_items, [queryResult.data?.pages]);
-  const seoTitle = getReleaseById(releaseType);
+  const seoTitle = getReleaseByType(releaseType as ReleaseTypes);
   const title = total ? `${seoTitle} (${total})` : seoTitle;
 
   return (

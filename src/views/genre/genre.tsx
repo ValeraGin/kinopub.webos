@@ -6,29 +6,26 @@ import ItemsListInfinite from 'containers/itemsListInfinite';
 import useApiInfinite from 'hooks/useApiInfinite';
 import { RouteParams } from 'routes';
 
-const GENDER_ID_MAP = {
-  23: 'Мультфильмы',
-  25: 'Аниме',
+const GENDER_TYPES = {
+  '23': 'Мультфильмы',
+  '25': 'Аниме',
 } as const;
 
-const getGenreById = (genreId?: string) => {
-  return (
-    (genreId
-      ? // @ts-expect-error
-        GENDER_ID_MAP[genreId]
-      : genreId) || ''
-  );
+type GenderTypes = keyof typeof GENDER_TYPES;
+
+const getGenreByType = (genreType?: GenderTypes) => {
+  return (genreType ? GENDER_TYPES[genreType] : genreType) || '';
 };
 
 const GenreView: React.FC = () => {
-  const { genreId } = useParams<RouteParams>();
+  const { genreType } = useParams<RouteParams>();
   const location = useLocation<{ params?: ItemsParams; title?: string }>();
-  const { params, title = getGenreById(genreId) } = location.state || {};
+  const { params, title = getGenreByType(genreType as GenderTypes) } = location.state || {};
 
   const queryResult = useApiInfinite('items', [
     {
       ...params,
-      genre: genreId,
+      genre: genreType,
     },
   ]);
 

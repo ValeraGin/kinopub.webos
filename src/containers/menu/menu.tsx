@@ -35,7 +35,7 @@ const menuItems: (MenuItem | null)[][] = [
     {
       name: 'Подборки',
       icon: 'list',
-      href: PATHS.Collections,
+      href: generatePath(PATHS.Collections),
     },
   ].filter(Boolean),
   [

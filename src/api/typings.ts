@@ -870,7 +870,7 @@ export type WatchingToggleWatchlistResponse = {
 
 export type CollectionsResponse = {
   items: Collection[];
-} & Response;
+} & PaginationResponse;
 
 export type CollectionItemsResponse = {
   collection: Collection;
