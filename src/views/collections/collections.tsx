@@ -57,7 +57,7 @@ const CollectionsView: React.FC = () => {
                 ))}
               </div>
             </div>
-            <div className="-ml-1 mr-4">
+            <div className="mr-2">
               <Input placeholder="Название подборки..." value={query} onChange={handleQueryChange} />
             </div>
           </div>

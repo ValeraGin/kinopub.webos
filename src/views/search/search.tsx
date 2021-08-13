@@ -4,6 +4,7 @@ import orderBy from 'lodash/orderBy';
 import { Item } from 'api';
 import Input from 'components/input';
 import Seo from 'components/seo';
+import Text from 'components/text';
 import ItemsListInfinite from 'containers/itemsListInfinite';
 import useApiInfinite from 'hooks/useApiInfinite';
 import useRouteState from 'hooks/useRouteState';
@@ -32,10 +33,20 @@ const SearchView: React.FC = () => {
   return (
     <>
       <Seo title="Поиск" />
-      <div className="m-1 mb-3 mr-2">
-        <Input autoFocus placeholder="Название фильма или сериала..." value={query} onChange={handleQueryChange} />
-      </div>
-      {query.length >= 3 && <ItemsListInfinite queryResult={queryResult} processItems={orderItems} />}
+
+      <ItemsListInfinite
+        title={
+          <div className="w-full">
+            <div className="flex justify-between items-center mb-3 h-9">
+              <Text>Поиск</Text>
+            </div>
+            <Input autoFocus placeholder="Название фильма или сериала..." value={query} onChange={handleQueryChange} />
+          </div>
+        }
+        showResult={query.length > 3}
+        queryResult={queryResult}
+        processItems={orderItems}
+      />
     </>
   );
 };

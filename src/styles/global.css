@@ -40,3 +40,7 @@ video {
   font-size: 1.3rem !important;
   line-height: 1.75rem !important;
 }
+
+[class*='Input_decorator'] {
+  @apply m-0 !important;
+}

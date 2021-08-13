@@ -10,7 +10,7 @@ import { PATHS, generatePath } from 'routes';
 
 const ItemsSection: React.FC<{ title: string; params: ItemsParams }> = ({ title, params }) => {
   const { data, isLoading } = useApi('items', [params, 0, 10]);
-  const href = useMemo(() => generatePath(PATHS.Category, { categoryId: params.type }), [params]);
+  const href = useMemo(() => generatePath(PATHS.Category, { categoryType: params.type }), [params]);
 
   return (
     <div className="pb-2">

@@ -197,7 +197,7 @@ const ItemView: React.FC = () => {
                   {map(data?.item?.genres, (genre) => (
                     <Link
                       key={genre.id}
-                      href={generatePath(PATHS.Category, { categoryId: data?.item?.type }, { genre: genre.id })}
+                      href={generatePath(PATHS.Category, { categoryType: data?.item?.type }, { genre: genre.id })}
                       className="border-2 border-gray-200 rounded-xl px-2 mr-2"
                     >
                       {genre.title}

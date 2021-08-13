@@ -9,6 +9,7 @@ import Checkbox from 'components/checkbox';
 import Select from 'components/select';
 import Seo from 'components/seo';
 import Text from 'components/text';
+import Title from 'components/title';
 import useApi from 'hooks/useApi';
 import useApiMutation from 'hooks/useApiMutation';
 import useDeviceInfo from 'hooks/useDeviceInfo';
@@ -105,7 +106,7 @@ const SettingsView: React.FC = () => {
     <>
       <Seo title="Настройки устройства" />
       <div className="h-screen relative">
-        <Text className="m-1 mb-3">Настройки устройства</Text>
+        <Title>Настройки устройства</Title>
 
         <div className="flex flex-col">
           {deviceInfo?.device && (

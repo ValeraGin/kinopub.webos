@@ -47,42 +47,42 @@ const menuItems: (MenuItem | null)[][] = [
     {
       name: 'Фильмы',
       icon: 'movie',
-      href: generatePath(PATHS.Category, { categoryId: 'movie' }),
+      href: generatePath(PATHS.Category, { categoryType: 'movie' }),
     },
     {
       name: 'Сериалы',
       icon: 'tv',
-      href: generatePath(PATHS.Category, { categoryId: 'serial' }),
+      href: generatePath(PATHS.Category, { categoryType: 'serial' }),
     },
     {
       name: 'Мультфильмы',
       icon: 'toys',
-      href: generatePath(PATHS.Genre, { genreId: '23' }),
+      href: generatePath(PATHS.Genre, { genreType: '23' }),
     },
     {
       name: 'Аниме',
       icon: 'auto_awesome',
-      href: generatePath(PATHS.Genre, { genreId: '25' }),
+      href: generatePath(PATHS.Genre, { genreType: '25' }),
     },
     {
       name: 'Концерты',
       icon: 'library_music',
-      href: generatePath(PATHS.Category, { categoryId: 'concert' }),
+      href: generatePath(PATHS.Category, { categoryType: 'concert' }),
     },
     {
       name: 'Докуфильмы',
       icon: 'archive',
-      href: generatePath(PATHS.Category, { categoryId: 'documovie' }),
+      href: generatePath(PATHS.Category, { categoryType: 'documovie' }),
     },
     {
       name: 'Докусериалы',
       icon: 'description',
-      href: generatePath(PATHS.Category, { categoryId: 'docuserial' }),
+      href: generatePath(PATHS.Category, { categoryType: 'docuserial' }),
     },
     {
       name: 'ТВ Шоу',
       icon: 'live_tv',
-      href: generatePath(PATHS.Category, { categoryId: 'tvshow' }),
+      href: generatePath(PATHS.Category, { categoryType: 'tvshow' }),
     },
     {
       name: 'Спорт',

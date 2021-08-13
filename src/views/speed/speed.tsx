@@ -4,6 +4,7 @@ import map from 'lodash/map';
 import Button from 'components/button';
 import Seo from 'components/seo';
 import Text from 'components/text';
+import Title from 'components/title';
 import useApi from 'hooks/useApi';
 
 function updateSpeedReducer(state: { [location: string]: string }, action: { type: string; payload: string }) {
@@ -116,7 +117,7 @@ const SpeedView: React.FC = () => {
   return (
     <>
       <Seo title="Проверка скорости" />
-      <Text className="m-1 mb-10">Проверка скорости</Text>
+      <Title className="mb-10">Проверка скорости</Title>
 
       {error ? (
         <div className="m-1 mb-10">
