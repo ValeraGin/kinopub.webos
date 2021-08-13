@@ -38,28 +38,32 @@ const CollectionsView: React.FC = () => {
   return (
     <>
       <Seo title={`Подборки: ${title}`} />
-      <div className="mt-1">
-        <div className="flex justify-between items-center ml-1 mb-3">
-          <Text>{title}</Text>
-          <div className="flex">
-            {map(COLLECTION_TYPES, (collectionTypeName, collectionTypeKey) => (
-              <Link
-                key={collectionTypeKey}
-                className="mr-2"
-                replace
-                active={collectionType === collectionTypeKey}
-                href={generatePath(PATHS.Collections, { collectionType: collectionTypeKey })}
-              >
-                {collectionTypeName}
-              </Link>
-            ))}
+      <CollectionsListInfinite
+        title={
+          <div className="w-full">
+            <div className="flex justify-between items-center mb-3">
+              <Text>{title}</Text>
+              <div className="flex">
+                {map(COLLECTION_TYPES, (collectionTypeName, collectionTypeKey) => (
+                  <Link
+                    key={collectionTypeKey}
+                    className="mr-2"
+                    replace
+                    active={collectionType === collectionTypeKey}
+                    href={generatePath(PATHS.Collections, { collectionType: collectionTypeKey })}
+                  >
+                    {collectionTypeName}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <div className="-ml-1 mr-4">
+              <Input placeholder="Название подборки..." value={query} onChange={handleQueryChange} />
+            </div>
           </div>
-        </div>
-        <div className="mb-3 mr-4">
-          <Input placeholder="Название подборки..." value={query} onChange={handleQueryChange} />
-        </div>
-      </div>
-      <CollectionsListInfinite queryResult={queryResult} />
+        }
+        queryResult={queryResult}
+      />
     </>
   );
 };

@@ -10,7 +10,7 @@ const Title: React.FC<Props> = ({ children, className, ...props }) => {
   }
 
   return (
-    <Text {...props} className={cx('flex justify-between items-center m-1 mb-3 h-9', className)} as="div">
+    <Text {...props} className={cx('flex justify-between items-center m-1 mb-3 min-h-9', className)} as="div">
       {children}
     </Text>
   );
