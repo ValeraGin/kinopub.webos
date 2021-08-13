@@ -2,10 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { detect } from '@enact/core/platform';
 import { deviceinfo } from '@enact/webos/deviceinfo';
 
-const pkg = require('../../package.json');
-
-const APP_TITLE = pkg.description;
-const APP_INFO = `${pkg.name} ${pkg.version}`;
+import { APP_INFO, APP_TITLE } from 'utils/app';
 
 function useDeviceInfo() {
   const [software, setSoftware] = useState('');
