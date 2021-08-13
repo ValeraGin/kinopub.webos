@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { VideoPlayerBase } from '@enact/moonstone/VideoPlayer';
 
 import Button from 'components/button';
+import SpotlightContainer from 'components/spotlightContainer';
 
 import { secondsToDuration } from 'utils/date';
 
@@ -55,14 +56,14 @@ const StartFrom: React.FC<Props> = ({ startTime, startInDelay = 5, player }) => 
   }
 
   return (
-    <div className="flex justify-center absolute w-full z-101 bottom-32">
+    <SpotlightContainer spotlightRestrict="self-only" className="flex justify-center absolute w-full z-101 bottom-32">
       <Button onClick={handleStartFromClick}>
         Смотреть с {startFrom} через {startIn}
       </Button>
       <Button autoFocus onClick={handleStartFromBeginingClick}>
         Смотреть с начала
       </Button>
-    </div>
+    </SpotlightContainer>
   );
 };
 

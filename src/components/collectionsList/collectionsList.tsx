@@ -17,7 +17,7 @@ type Props = {
 const CollectionsList: React.FC<Props> = ({ title, collections, loading, onScrollToEnd, scrollable = true }) => {
   const content = (
     <div>
-      <Title title={title} />
+      <Title>{title}</Title>
       <div className="flex flex-wrap pr-2">
         {map(collections, (collection) => (
           <CollectionItem key={collection.id} collection={collection} />

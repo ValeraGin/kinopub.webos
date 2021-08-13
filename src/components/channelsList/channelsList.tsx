@@ -17,7 +17,7 @@ type Props = {
 const ChannelsList: React.FC<Props> = ({ title, channels, loading, onScrollToEnd, scrollable = true }) => {
   const content = (
     <div>
-      <Title title={title} />
+      <Title>{title}</Title>
       <div className="flex flex-wrap pr-2">
         {map(channels, (channel) => (
           <ChannelItem key={channel.id} channel={channel} />

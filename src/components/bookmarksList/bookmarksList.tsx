@@ -17,7 +17,7 @@ type Props = {
 const BookmarksList: React.FC<Props> = ({ title, bookmarks, loading, onScrollToEnd, scrollable = true }) => {
   const content = (
     <div>
-      <Title title={title} />
+      <Title>{title}</Title>
       <div className="flex flex-wrap pr-2">
         {map(bookmarks, (bookmark) => (
           <BookmarkItem key={bookmark.id} bookmark={bookmark} />

@@ -20,9 +20,7 @@ type Props = {
 const ItemsList: React.FC<Props> = ({ title, items, loading, onScrollToEnd, scrollable = true, className, titleClassName }) => {
   const content = (
     <div>
-      <Title className={cx('flex justify-between items-center', titleClassName)} as="div">
-        {title}
-      </Title>
+      <Title className={titleClassName}>{title}</Title>
       <div className={cx('flex flex-wrap', className)}>
         {map(items, (item) => (
           <VideoItem key={item.id} item={item} />
