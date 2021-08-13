@@ -10,7 +10,7 @@ const CollectionView: React.FC = () => {
   const { collectionId } = useParams<RouteParams>();
   const location = useLocation<{ title?: string }>();
   const { data, isLoading } = useApi('collectionItems', [collectionId!]);
-  const { title = data?.collection.title } = location.state || {};
+  const { title = data?.collection?.title } = location.state || {};
 
   return (
     <>
