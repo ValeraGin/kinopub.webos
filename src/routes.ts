@@ -43,10 +43,10 @@ export type RouteParams = {
 
 export function generatePath<S extends PathValuesType>(
   pattern: S,
-  params?: ExtractRouteParams<S>,
+  params?: ExtractRouteParams<S> | null,
   search?: Record<string, string> | string,
 ) {
   const query = search ? `?${new URLSearchParams(search)}` : '';
 
-  return baseGeneratePath(pattern, params) + query;
+  return baseGeneratePath(pattern, params ?? undefined) + query;
 }

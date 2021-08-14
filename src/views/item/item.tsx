@@ -290,7 +290,7 @@ const ItemView: React.FC = () => {
                 <div className="flex-shrink-0 w-58 pr-8">
                   <Text className="text-gray-500">Создатели</Text>
                   {map(data?.item?.director.split(', '), (director) => (
-                    <Link key={director} href={generatePath(PATHS.Search, {}, { q: director, mode: 'director' })}>
+                    <Link key={director} href={generatePath(PATHS.Search, null, { q: director, mode: 'director' })}>
                       {director}
                     </Link>
                   ))}
@@ -301,7 +301,7 @@ const ItemView: React.FC = () => {
                   <Text className="text-gray-500">В ролях</Text>
                   <div className="flex flex-wrap">
                     {map(data?.item?.cast.split(', '), (actor, idx, arr) => (
-                      <Link key={actor} href={generatePath(PATHS.Search, {}, { q: actor, mode: 'actor' })}>
+                      <Link key={actor} href={generatePath(PATHS.Search, null, { q: actor, mode: 'actor' })}>
                         {actor}
                         {idx !== arr.length - 1 && ', '}
                       </Link>

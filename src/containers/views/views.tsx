@@ -4,14 +4,14 @@ import { Switch, useHistory } from 'react-router-dom';
 import Spinner from 'components/spinner';
 import Text from 'components/text';
 import useButtonEffect from 'hooks/useButtonEffect';
-import useDeviceAuthorizationEffect from 'hooks/useDeviceAuthorizationEffect';
+import useDeviceAuthorizationEffect, { AuthorizationStep } from 'hooks/useDeviceAuthorizationEffect';
 import { PATHS } from 'routes';
 
 const Views: React.FC = ({ children, ...props }) => {
   const history = useHistory();
   const [showNotice, setShowNotice] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [authorizationStep, setAuthorizationStep] = useState<AuthorizationStep>();
 
   const handleBackButtonClick = useCallback(() => {
     if (history.location.pathname !== PATHS.Home) {
@@ -28,11 +28,11 @@ const Views: React.FC = ({ children, ...props }) => {
   }, [history, showNotice]);
 
   const handleAuthorization = useCallback(
-    (isAuthorized: boolean) => {
-      setIsAuthorized(isAuthorized);
+    (authorizationStep: AuthorizationStep) => {
+      setAuthorizationStep(authorizationStep);
 
       const path = history.location.pathname;
-      if (isAuthorized) {
+      if (authorizationStep === 'authorized') {
         if (path === PATHS.Pair || path === PATHS.Index) {
           history.replace(PATHS.Home);
         }
@@ -43,13 +43,13 @@ const Views: React.FC = ({ children, ...props }) => {
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setShowSpinner(!isAuthorized && history.location.pathname !== PATHS.Pair);
+      setShowSpinner(authorizationStep === 'processing');
     }, 1000);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [isAuthorized, history.location.pathname]);
+  }, [authorizationStep]);
 
   useButtonEffect('Back', handleBackButtonClick);
   useDeviceAuthorizationEffect(handleAuthorization);

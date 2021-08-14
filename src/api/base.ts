@@ -46,7 +46,7 @@ class BaseApiClient {
   private async request<T>(method: 'GET' | 'POST', url: string, params?: Params, data?: Params) {
     const accessToken = this.getAccessToken();
 
-    if (accessToken) {
+    if (accessToken && !params?.['grant_type']) {
       params = {
         ...params,
         access_token: accessToken,

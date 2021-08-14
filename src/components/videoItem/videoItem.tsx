@@ -64,21 +64,21 @@ const VideoItem: React.FC<Props> = ({ item, className, wrapperClassName, showVie
           {item?.advert && <Icon name="report" />}
         </div>
       )}
-      {(item?.rating || item?.imdb_rating || item?.kinopoisk_rating) && (
+      {(item?.rating! > 0 || item?.imdb_rating! > 0 || item?.kinopoisk_rating! > 0) && (
         <div className="absolute bottom-2 left-2 right-2 h-6 px-2 text-xs text-gray-200 bg-black bg-opacity-50 rounded flex justify-between items-center">
           <div className="flex items-center justify-start w-1/3">
             <Imdb className="h-3 w-3 mr-1" />
-            <span>{(item.imdb_rating || 0).toFixed(1)}</span>
+            <span>{(item?.imdb_rating || 0).toFixed(1)}</span>
           </div>
 
           <div className="flex items-center justify-center w-1/3">
             <Kinopoisk className="h-3 w-3 mr-1" />
-            <span>{(item.kinopoisk_rating || 0).toFixed(1)}</span>
+            <span>{(item?.kinopoisk_rating || 0).toFixed(1)}</span>
           </div>
 
           <div className="flex items-center justify-end w-1/3">
             <Icon name="thumb_up" />
-            <span>{item.rating_percentage || 0}%</span>
+            <span>{item?.rating_percentage || 0}%</span>
           </div>
         </div>
       )}

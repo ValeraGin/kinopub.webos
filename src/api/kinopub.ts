@@ -69,7 +69,7 @@ class KinopubApiClient extends BaseApiClient {
     this.accessTokenCheckIntervaId = null;
   }
 
-  private async processTokensReponse(response: TokensResponse, onSuccess?: Function) {
+  private async processTokensReponse(response: TokensResponse, deviceInfo: DeviceInfo, onSuccess?: Function) {
     await this.clearTokens();
 
     switch (response.error) {
@@ -80,6 +80,7 @@ class KinopubApiClient extends BaseApiClient {
         this.clearTimers();
 
         await this.saveTokens(response);
+        await this.deviceNotify(deviceInfo);
         onSuccess?.();
         return;
 
@@ -87,6 +88,27 @@ class KinopubApiClient extends BaseApiClient {
         this.clearTimers();
         throw response.error;
     }
+  }
+
+  private async requestUserCode(deviceInfo: DeviceInfo, onConfirm?: OnConfirm) {
+    this.clearTokens();
+
+    const { interval, code, user_code, verification_uri } = await this.requestDeviceCode();
+
+    await onConfirm?.(user_code, verification_uri);
+
+    return new Promise<void>((resolve, reject) => {
+      this.clearTimers();
+      this.accessTokenCheckIntervaId = setInterval(async () => {
+        const response = await this.requestTokens(code);
+
+        try {
+          await this.processTokensReponse(response, deviceInfo, resolve);
+        } catch (ex) {
+          reject(ex);
+        }
+      }, (interval || 10) * 1000);
+    });
   }
 
   /**
@@ -135,34 +157,21 @@ class KinopubApiClient extends BaseApiClient {
   /**
    * Авторизация устройства
    */
-  async deviceAuthorization(onConfirm?: OnConfirm) {
+  async deviceAuthorization(deviceInfo: DeviceInfo, onConfirm?: OnConfirm): Promise<void> {
+    this.clearTimers();
+
     const refreshToken = this.getRefreshToken();
 
     if (refreshToken) {
-      try {
-        const response = await this.refreshTokens(refreshToken);
+      const response = await this.refreshTokens(refreshToken);
 
-        await this.processTokensReponse(response);
-      } catch (ex) {
-        this.clearTokens();
-      }
+      return this.processTokensReponse(response, deviceInfo);
     } else {
-      const { interval, code, user_code, verification_uri } = await this.requestDeviceCode();
-
-      onConfirm?.(user_code, verification_uri);
-
-      await new Promise<void>((resolve, reject) => {
-        this.clearTimers();
-        this.accessTokenCheckIntervaId = setInterval(async () => {
-          const response = await this.requestTokens(code);
-
-          try {
-            await this.processTokensReponse(response, resolve);
-          } catch (ex) {
-            reject(ex);
-          }
-        }, (interval || 10) * 1000);
-      });
+      try {
+        return await this.requestUserCode(deviceInfo, onConfirm);
+      } catch (ex) {
+        return this.deviceAuthorization(deviceInfo, onConfirm);
+      }
     }
   }
 

@@ -1,15 +1,9 @@
-import { useLocation } from 'react-router-dom';
-
 import Seo from 'components/seo';
-
-type LocationState = {
-  userCode: string;
-  verificationUri: string;
-};
+import useSearchParam from 'hooks/useSearchParam';
 
 const PairView: React.FC = () => {
-  const location = useLocation<LocationState>();
-  const { userCode, verificationUri } = location.state || {};
+  const userCode = useSearchParam('userCode');
+  const verificationUri = useSearchParam('verificationUri');
 
   return (
     <>
