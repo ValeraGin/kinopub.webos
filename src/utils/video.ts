@@ -22,7 +22,7 @@ export function mapAudios(audios: Audio[], ac3ByDefault?: boolean, savedAudioNam
       name,
       number,
       lang: audio.lang,
-      default: savedAudioName === name || (ac3ByDefault && audio.codec === 'ac3'),
+      default: (savedAudioName && savedAudioName === name) || (!savedAudioName && ac3ByDefault && audio.codec === 'ac3'),
     };
   });
 }
@@ -49,15 +49,19 @@ export function mapSources(
   );
 }
 
-export function mapSubtitles(subtitles: Subtitle[], savedSubtitleName?: string): SubtitleTrack[] {
+export function mapSubtitles(subtitles: Subtitle[], forcedByDefault?: boolean, savedSubtitleName?: string): SubtitleTrack[] {
   return map(subtitles, (subtitle, idx) => {
-    const name = `${toUpper(subtitle.lang)} #${formatIdx(idx + 1)}`;
+    const name = `${toUpper(subtitle.lang)}${subtitle.forced ? ' Forced' : ''}`;
+    const number = `${formatIdx(idx + 1)}.`;
 
     return {
       name,
+      number,
       src: subtitle.url,
       lang: subtitle.lang,
-      default: savedSubtitleName === name,
+      default:
+        (savedSubtitleName && savedSubtitleName === name) ||
+        (!savedSubtitleName && forcedByDefault && subtitle.forced && subtitle.lang === 'rus'),
     };
   });
 }

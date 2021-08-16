@@ -26,7 +26,10 @@ const Settings: React.FC<Props> = ({ visible, onClose, player }) => {
   const audioOptions = useMemo(() => map(audios, (audio) => ({ title: `${audio.number} ${audio.name}`, value: audio.name })), [audios]);
   const sourceOptions = useMemo(() => map(sources, (source) => ({ title: source.name, value: source.name })), [sources]);
   const subtitleOptions = useMemo(
-    () => [{ title: 'Нет', value: NONE }, ...map(subtitles, (subtitle) => ({ title: subtitle.name, value: subtitle.name }))],
+    () => [
+      { title: 'Нет', value: NONE },
+      ...map(subtitles, (subtitle) => ({ title: `${subtitle.number} ${subtitle.name}`, value: subtitle.name })),
+    ],
     [subtitles],
   );
 
@@ -123,7 +126,7 @@ const Settings: React.FC<Props> = ({ visible, onClose, player }) => {
           value={currentSource}
           options={sourceOptions}
           onChange={handleSourceChange}
-          splitIn={5}
+          splitIn={4}
           closeOnChange
         />
       )}
@@ -134,7 +137,7 @@ const Settings: React.FC<Props> = ({ visible, onClose, player }) => {
           value={currentSubtitle}
           options={subtitleOptions}
           onChange={handleSubtitleChange}
-          splitIn={5}
+          splitIn={4}
           closeOnChange
         />
       )}

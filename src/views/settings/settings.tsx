@@ -47,7 +47,8 @@ const SettingsView: React.FC = () => {
   const { deactivate } = useApiMutation('deactivate');
   const [newSettings, setNewSettings] = useState<DeviceSettingsParams>({});
   const [isHLSJSActive, setIsHLSJSActive] = useStorageState<boolean>('is_hls.js_active');
-  const [isAC2ByDefaultActive, setIsAC2ByDefaultActive] = useStorageState<boolean>('is_abc3_by_default_active');
+  const [isAC3ByDefaultActive, setIsAC3ByDefaultActive] = useStorageState<boolean>('is_ac3_by_default_active');
+  const [isForcedByDefaultActive, setIsForcedByDefaultActive] = useStorageState<boolean>('is_forced_by_default_active');
   const { software, hardware } = useDeviceInfo();
 
   const boolSettings = useMemo(
@@ -74,12 +75,20 @@ const SettingsView: React.FC = () => {
     [setIsHLSJSActive],
   );
 
-  const handleAC2ByDefaultToogle = useCallback(
+  const handleAC3ByDefaultToogle = useCallback(
     (checked: boolean) => {
-      setIsAC2ByDefaultActive(checked);
+      setIsAC3ByDefaultActive(checked);
     },
-    [setIsAC2ByDefaultActive],
+    [setIsAC3ByDefaultActive],
   );
+
+  const handleForcedByDefaultToogle = useCallback(
+    (checked: boolean) => {
+      setIsForcedByDefaultActive(checked);
+    },
+    [setIsForcedByDefaultActive],
+  );
+
   const handleBoolSettingToggle = useCallback(
     (setting: typeof boolSettings[0]) => async (checked: boolean) => {
       setNewSettings({ ...newSettings, [setting['key']]: checked ? Bool.True : Bool.False });
@@ -126,8 +135,14 @@ const SettingsView: React.FC = () => {
                     </Checkbox>
                   </div>
                   <div className="flex w-1/2 pr-4" key="use-ac3_by_default">
-                    <Checkbox className="w-full" defaultChecked={isAC2ByDefaultActive} onChange={handleAC2ByDefaultToogle}>
+                    <Checkbox className="w-full" defaultChecked={isAC3ByDefaultActive} onChange={handleAC3ByDefaultToogle}>
                       AC3 аудио по умолчанию
+                    </Checkbox>
+                  </div>
+                  <div className="flex w-1/2 pr-4" />
+                  <div className="flex w-1/2 pr-4" key="use-forced_by_default">
+                    <Checkbox className="w-full" defaultChecked={isForcedByDefaultActive} onChange={handleForcedByDefaultToogle}>
+                      Forced субтитры по умолчанию
                     </Checkbox>
                   </div>
                 </div>

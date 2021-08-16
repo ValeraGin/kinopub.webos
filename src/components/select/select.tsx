@@ -18,7 +18,7 @@ type Props<T = any> = {
   onChange?: (value: T) => void;
   closeOnChange?: boolean;
   className?: string;
-  splitIn?: number;
+  splitIn?: 2 | 3 | 4 | 5 | 6;
 };
 
 const Select: React.FC<Props> = ({ label, options, defaultValue, value, onChange, closeOnChange, className, splitIn }) => {

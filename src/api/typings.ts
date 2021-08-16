@@ -170,6 +170,7 @@ export type Tracklist = {
 
 export type Subtitle = {
   lang: string;
+
   /**
    * Смещение относительно видео-потока
    */
@@ -179,6 +180,11 @@ export type Subtitle = {
    * Доступно в файле-исходнике, вшиты в него отдельным стримом
    */
   embed: boolean;
+
+  /**
+   * Форсированные субтитры (перевод вывисок, других языков и тд)
+   */
+  forced: boolean;
 
   file: string;
 

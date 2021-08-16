@@ -25,6 +25,7 @@ export type SourceTrack = {
 export type SubtitleTrack = {
   src: string;
   name: string;
+  number: string;
   lang: string;
   default?: boolean;
 };
@@ -157,7 +158,7 @@ function useVideoPlayer({
         } else {
           videoRef.current.play();
         }
-      } else if (autoPlay) {
+      } else if (autoPlay && !isSettingsOpenRef.current) {
         videoRef.current.play();
       }
     }
