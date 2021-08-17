@@ -22,12 +22,7 @@ const View: React.FC<ViewProps> = ({ component, layout, ...props }) => {
     () => (routeProps) =>
       (
         <Layout>
-          <Suspense fallback={<Spinner />}>
-            {
-              // @ts-expect-error
-              createElement(component!, routeProps)
-            }
-          </Suspense>
+          <Suspense fallback={<Spinner />}>{createElement(component!, routeProps)}</Suspense>
         </Layout>
       ),
     [component, Layout],
