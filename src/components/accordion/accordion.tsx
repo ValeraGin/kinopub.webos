@@ -5,6 +5,7 @@ import Icon from 'components/icon';
 import Spottable from 'components/spottable';
 import Text from 'components/text';
 import useChangebleState from 'hooks/useChangebleState';
+import useThrottledCallback from 'hooks/useThrottledCallback';
 
 type Props = {
   title: string;
@@ -23,9 +24,11 @@ const Accordion: React.FC<Props> = ({ open, onToggle, title, subtitle, className
     setVisible(newVisible);
   }, [visible, setVisible, onToggle]);
 
+  const handleClickThrottled = useThrottledCallback(handleClick);
+
   return (
     <div className="flex flex-col w-full">
-      <Spottable onClick={handleClick} className={cx('p-1 cursor-pointer', className)}>
+      <Spottable onClick={handleClickThrottled} className={cx('p-1 cursor-pointer', className)}>
         <div className="flex flex-col">
           <div className="flex items-center">
             <Text>{title}</Text>
