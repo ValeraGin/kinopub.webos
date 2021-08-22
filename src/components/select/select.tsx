@@ -19,14 +19,15 @@ type Props<T = any> = {
   closeOnChange?: boolean;
   className?: string;
   splitIn?: 2 | 3 | 4 | 5 | 6;
+  disabled?: boolean;
 };
 
-const Select: React.FC<Props> = ({ label, options, defaultValue, value, onChange, closeOnChange, className, splitIn }) => {
+const Select: React.FC<Props> = ({ label, options, defaultValue, value, onChange, closeOnChange = true, className, splitIn, disabled }) => {
   const [open, setOpen] = useState(false);
   const [val, setVal] = useChangebleState(value || defaultValue);
   const opts = useMemo(
     () =>
-      Array.isArray(options) ? options.map((option, idx) => (typeof option === 'string' ? { title: option, value: idx } : option)) : [],
+      Array.isArray(options) ? options.map((option, idx) => (typeof option === 'object' ? option : { title: option, value: idx })) : [],
     [options],
   );
   const selectedOption = useMemo(() => opts.find((o) => o.value === val), [opts, val]);
@@ -52,7 +53,7 @@ const Select: React.FC<Props> = ({ label, options, defaultValue, value, onChange
   );
 
   return (
-    <Accordion open={open} onToggle={setOpen} title={label} subtitle={selectedOption?.title} className={className}>
+    <Accordion open={open} onToggle={setOpen} title={label} subtitle={selectedOption?.title} className={className} disabled={disabled}>
       <div className="flex flex-wrap">
         {map(opts, (opt) => (
           <Radio

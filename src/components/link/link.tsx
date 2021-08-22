@@ -16,7 +16,7 @@ type Props = {
   onClick?: () => void;
 };
 
-const Link: React.FC<Props> = ({ href, state, children, icon, iconOnly, replace, active, className, onClick, ...props }) => {
+const Link: React.FC<Props> = ({ href, state, children, icon, iconOnly = !children, replace, active, className, onClick, ...props }) => {
   const history = useHistory();
   const handleOnClick = useCallback(() => {
     if (href) {

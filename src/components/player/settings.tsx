@@ -109,36 +109,19 @@ const Settings: React.FC<Props> = ({ visible, onClose, player }) => {
   return (
     <Popup visible={isOpen} onClose={handleClose}>
       {audioOptions.length > 1 && (
-        <Select
-          className="my-4"
-          label="Звук"
-          value={currentAudio}
-          options={audioOptions}
-          onChange={handleAudioChange}
-          splitIn={2}
-          closeOnChange
-        />
+        <Select className="my-1" label="Звук" value={currentAudio} options={audioOptions} onChange={handleAudioChange} splitIn={2} />
       )}
       {sourceOptions.length > 1 && (
-        <Select
-          className="my-4"
-          label="Качество"
-          value={currentSource}
-          options={sourceOptions}
-          onChange={handleSourceChange}
-          splitIn={4}
-          closeOnChange
-        />
+        <Select className="my-1" label="Качество" value={currentSource} options={sourceOptions} onChange={handleSourceChange} splitIn={4} />
       )}
       {subtitleOptions.length > 1 && (
         <Select
-          className="my-4"
+          className="my-1"
           label="Субтитры"
           value={currentSubtitle}
           options={subtitleOptions}
           onChange={handleSubtitleChange}
           splitIn={4}
-          closeOnChange
         />
       )}
     </Popup>

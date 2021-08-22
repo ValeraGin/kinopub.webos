@@ -29,6 +29,7 @@ import {
   OnConfirm,
   ServerLocationsReponse,
   StreamingTypesReponse,
+  SubtitlesResponse,
   TokensResponse,
   TypesResponse,
   UserReponse,
@@ -332,6 +333,13 @@ class KinopubApiClient extends BaseApiClient {
    */
   countries() {
     return this.get<CountriesResponse>(`/v1/countries`);
+  }
+
+  /**
+   * Спиоск субтитров
+   */
+  subtitles() {
+    return this.get<SubtitlesResponse>(`/v1/subtitles`);
   }
 
   /**

@@ -1,4 +1,4 @@
-export type Value = string | number | boolean | null;
+export type Value = object | string | number | boolean | null;
 
 export type Key =
   | 'is_logged'
@@ -12,8 +12,8 @@ export type Key =
   | `item_${string}_saved_source_name`
   | `item_${string}_saved_subtitle_name`;
 
-function getItem(prefix: string, key: string) {
-  const data = JSON.parse(window.localStorage.getItem(prefix) || '{}') || {};
+function getItem(storage: Storage, prefix: string, key: string) {
+  const data = JSON.parse(storage.getItem(prefix) || '{}') || {};
 
   const { value, expire } = data[key] || {};
 
@@ -24,10 +24,10 @@ function getItem(prefix: string, key: string) {
   return value;
 }
 
-function setItem(prefix: string, key: string, value?: Value, expire?: number) {
-  const data = JSON.parse(window.localStorage.getItem(prefix) || '{}') || {};
+function setItem(storage: Storage, prefix: string, key: string, value?: Value, expire?: number) {
+  const data = JSON.parse(storage.getItem(prefix) || '{}') || {};
 
-  window.localStorage.setItem(
+  storage.setItem(
     prefix,
     JSON.stringify({
       ...data,
@@ -35,24 +35,26 @@ function setItem(prefix: string, key: string, value?: Value, expire?: number) {
         typeof value !== 'undefined'
           ? {
               value,
-              expire: expire ? Date.now() + expire * 1000 : undefined,
+              expire: typeof expire === 'number' ? Date.now() + expire * 1000 : undefined,
             }
           : undefined,
     }),
   );
 }
 
-function removeItem(prefix: string, key: string) {
-  return setItem(prefix, key);
+function removeItem(storage: Storage, prefix: string, key: string) {
+  return setItem(storage, prefix, key);
 }
 
-export class Storage<TKeys extends string = string> {
+export class MyStorage<TKeys extends string = string> {
   private prefix: string;
   private listeners: (() => void)[];
+  private storage: Storage;
 
-  constructor(prefix: string) {
+  constructor(prefix: string, storage: Storage = window.localStorage) {
     this.prefix = prefix;
     this.listeners = [];
+    this.storage = storage;
   }
 
   private emit() {
@@ -70,11 +72,11 @@ export class Storage<TKeys extends string = string> {
   };
 
   getItem = <T extends Value>(key: TKeys): T => {
-    return getItem(this.prefix, key);
+    return getItem(this.storage, this.prefix, key);
   };
 
   setItem = <T extends Value>(key: TKeys, value: T, expire?: number) => {
-    const item = setItem(this.prefix, key, value, expire);
+    const item = setItem(this.storage, this.prefix, key, value, expire);
 
     this.emit();
 
@@ -82,10 +84,12 @@ export class Storage<TKeys extends string = string> {
   };
 
   removeItem = (key: TKeys) => {
-    removeItem(this.prefix, key);
+    removeItem(this.storage, this.prefix, key);
 
     this.emit();
   };
 }
 
-export default new Storage<Key>('kinopub');
+export default new MyStorage<Key>('kinopub');
+
+export const createSessionStorage = <Key extends string>(prefix: string = 'kinopub') => new MyStorage<Key>(prefix, window.sessionStorage);

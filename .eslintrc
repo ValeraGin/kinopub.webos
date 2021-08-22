@@ -9,6 +9,6 @@
       }
     ],
     "max-len": "off",
-    "complexity": ["error", 20]
+    "complexity": "off"
   }
 }

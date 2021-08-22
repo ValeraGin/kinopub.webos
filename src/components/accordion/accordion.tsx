@@ -12,17 +12,20 @@ type Props = {
   subtitle?: string;
   className?: string;
   open?: boolean;
+  disabled?: boolean;
   onToggle?: (open: boolean) => void;
 };
 
-const Accordion: React.FC<Props> = ({ open, onToggle, title, subtitle, className, children }) => {
+const Accordion: React.FC<Props> = ({ open, onToggle, title, subtitle, className, children, disabled }) => {
   const [visible, setVisible] = useChangebleState(open);
 
   const handleClick = useCallback(() => {
-    const newVisible = !visible;
-    onToggle?.(newVisible);
-    setVisible(newVisible);
-  }, [visible, setVisible, onToggle]);
+    if (!disabled) {
+      const newVisible = !visible;
+      onToggle?.(newVisible);
+      setVisible(newVisible);
+    }
+  }, [disabled, visible, setVisible, onToggle]);
 
   const handleClickThrottled = useThrottledCallback(handleClick);
 

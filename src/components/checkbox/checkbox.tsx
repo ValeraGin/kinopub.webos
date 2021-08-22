@@ -12,6 +12,7 @@ export type CheckboxProps = {
   onChange?: (checked: boolean, e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   type?: string;
+  disabled?: boolean;
 } & Omit<React.HTMLAttributes<HTMLInputElement>, 'onChange'>;
 
 const Checkbox: React.FC<CheckboxProps> = ({ defaultChecked, checked, onChange, className, children, ...props }) => {

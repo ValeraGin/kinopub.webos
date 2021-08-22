@@ -35,7 +35,6 @@ const SettingList: React.FC<{ setting: DeviceSettingList; onChange?: (value: num
       label={setting.label}
       onChange={onChange}
       options={options}
-      closeOnChange
     />
   );
 };

@@ -11,7 +11,7 @@ type Props = {
   className?: string;
 } & React.ComponentProps<typeof Spottable>;
 
-const Button: React.FC<Props> = ({ icon, iconOnly, children, autoFocus, className, ...props }) => {
+const Button: React.FC<Props> = ({ children, icon, iconOnly = !children, autoFocus, className, ...props }) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import dayjs from 'dayjs';
 
 import { ItemsParams } from 'api';
 import ItemsList from 'components/itemsList';
@@ -29,11 +30,10 @@ const ItemsSection: React.FC<{ title: string; params: ItemsParams }> = ({ title,
   );
 };
 
-const now = new Date();
-const lastMonth = now.setMonth(now.getMonth() - 1) / 1000;
+const lastMonth = dayjs().add(-1, 'month').unix();
 
 const PopularMovies: React.FC = () => {
-  return <ItemsSection title="Популярные фильмы" params={{ type: 'movie', sort: 'views-', conditions: [`created>${lastMonth}`] }} />;
+  return <ItemsSection title="Популярные фильмы" params={{ type: 'movie', sort: 'views-', conditions: [`created>=${lastMonth}`] }} />;
 };
 
 const NewMovies: React.FC = () => {

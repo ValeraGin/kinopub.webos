@@ -638,37 +638,56 @@ export type DeviceSettingsParams = {
   [key in keyof DeviceSettings]?: DeviceSettings[key] extends DeviceSettingBoolean ? boolean : number;
 };
 
-export type TypesResponse = Type[];
+export type TypesResponse = {
+  items: Type[];
+} & Response;
 
-export type GendersResponse = Gender[];
+export type GendersResponse = {
+  items: Gender[];
+} & Response;
 
-export type CountriesResponse = Country[];
+export type CountriesResponse = {
+  items: Country[];
+} & Response;
+
+export type SubtitlesResponse = {
+  items: { id: string; title: string }[];
+} & Response;
+
+export type ItemType = 'movie' | 'serial' | 'tvshow' | 'concert' | 'documovie' | 'docuserial';
+
+export type GenderType = 'movie' | 'music' | 'docu' | 'tvshow';
 
 export type ItemsParams = {
   /**
    * Тип видео контента
    */
-  type?: string;
+  type?: ItemType;
 
   /**
    * Поиск по заголовку, минимум 3 символа. Выборка по типу LIKE ‘$ASD’
    */
-  title?: string;
+  title?: string | null;
 
   /**
    * id жанра. Для множественного поиска список через запятую.
    */
-  genre?: string;
+  genre?: string | null;
 
   /**
    * id страны. Для множественного поиска список через запятую.
    */
-  country?: string;
+  country?: string | null;
 
   /**
    * Год. Для поиска в промежутке year1-year2
    */
-  year?: string;
+  year?: string | null;
+
+  /**
+   * Субититы
+   */
+  subtitles?: string | null;
 
   /**
    * Статус сериала, завершен/снимается
@@ -718,9 +737,9 @@ export type ItemsParams = {
    * * views
    * * watchers
    */
-  sort?: string;
+  sort?: string | null;
 
-  period?: string;
+  period?: string | null;
 
   /**
    * Массив идентификаторов качеств

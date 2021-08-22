@@ -139,9 +139,7 @@ const Player: React.FC<PlayerProps> = ({
     <>
       <Settings visible={isSettingsOpen} onClose={handleSettingsClose} player={playerRef} />
       {isPaused && <Text className="absolute z-10 top-0 p-4">{title}</Text>}
-      {isPaused && (
-        <Button className="absolute z-101 bottom-8 right-10 text-blue-600" icon="settings" iconOnly onClick={handleSettingsOpen} />
-      )}
+      {isPaused && <Button className="absolute z-101 bottom-8 right-10 text-blue-600" icon="settings" onClick={handleSettingsOpen} />}
       {isLoaded && startTime! > 0 && <StartFrom startTime={startTime} player={playerRef} />}
 
       <VideoPlayer
