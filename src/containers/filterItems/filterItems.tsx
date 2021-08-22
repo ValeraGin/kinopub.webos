@@ -62,29 +62,31 @@ const PERIOD_OPTIONS = [
 
 type FilterItemsProps = {
   type: ItemType;
+  defaultGenre?: string;
+  storageKey: string;
   onFilter?: (params: ItemsParams | null) => void;
 };
 
-const FilterItems: React.FC<FilterItemsProps> = ({ type, onFilter }) => {
+const FilterItems: React.FC<FilterItemsProps> = ({ type, defaultGenre, storageKey, onFilter }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: genders } = useApi('genders');
   const { data: countries } = useApi('countries');
   const { data: subtitles } = useApi('subtitles');
-  const [genre, setGenre] = useSessionState<string | null>(`${type}:filter:genre`, null);
-  const [country, setCountry] = useSessionState<string | null>(`${type}:filter:country`, null);
-  const [subtitle, setSubtitle] = useSessionState<string | null>(`${type}:filter:subtitle`, null);
-  const [yearFrom, setYearFrom] = useSessionState<number | null>(`${type}:filter:yearFrom`, null);
-  const [yearTo, setYearTo] = useSessionState<number | null>(`${type}:filter:yearTo`, null);
-  const [ratingKinopoisk, setRatingKinopoisk] = useSessionState<number | null>(`${type}:filter:ratingKinopoisk`, null);
-  const [ratingIMDB, setRatingIMDB] = useSessionState<number | null>(`${type}:filter:ratingIMDB`, null);
-  const [age, setAge] = useSessionState<string | null>(`${type}:filter:age`, null);
-  const [sorting, setSorting] = useSessionState<string>(`${type}:filter:sorting`, SORTING_OPTIONS[0].value);
-  const [period, setPeriod] = useSessionState<number | null>(`${type}:filter:period`, PERIOD_OPTIONS[0].value);
-  const [sortingAsc, setSortingAsc] = useSessionState<boolean>(`${type}:filter:sortingAsc`, false);
-  const [only4K, setOnly4K] = useSessionState<boolean>(`${type}:filter:only4K`, false);
-  const [onlyAC3, setOnlyAC3] = useSessionState<boolean>(`${type}:filter:onlyAC3`, false);
-  const [skipAds, setSkipAds] = useSessionState<boolean>(`${type}:filter:skipAds`, false);
-  const [skipErotic, setSkipErotic] = useSessionState<boolean>(`${type}:filter:skipErotic`, false);
+  const [genre, setGenre] = useSessionState<string | null>(`${storageKey}:filter:genre`, null);
+  const [country, setCountry] = useSessionState<string | null>(`${storageKey}:filter:country`, null);
+  const [subtitle, setSubtitle] = useSessionState<string | null>(`${storageKey}:filter:subtitle`, null);
+  const [yearFrom, setYearFrom] = useSessionState<number | null>(`${storageKey}:filter:yearFrom`, null);
+  const [yearTo, setYearTo] = useSessionState<number | null>(`${storageKey}:filter:yearTo`, null);
+  const [ratingKinopoisk, setRatingKinopoisk] = useSessionState<number | null>(`${storageKey}:filter:ratingKinopoisk`, null);
+  const [ratingIMDB, setRatingIMDB] = useSessionState<number | null>(`${storageKey}:filter:ratingIMDB`, null);
+  const [age, setAge] = useSessionState<string | null>(`${storageKey}:filter:age`, null);
+  const [sorting, setSorting] = useSessionState<string>(`${storageKey}:filter:sorting`, SORTING_OPTIONS[0].value);
+  const [period, setPeriod] = useSessionState<number | null>(`${storageKey}:filter:period`, PERIOD_OPTIONS[0].value);
+  const [sortingAsc, setSortingAsc] = useSessionState<boolean>(`${storageKey}:filter:sortingAsc`, false);
+  const [only4K, setOnly4K] = useSessionState<boolean>(`${storageKey}:filter:only4K`, false);
+  const [onlyAC3, setOnlyAC3] = useSessionState<boolean>(`${storageKey}:filter:onlyAC3`, false);
+  const [skipAds, setSkipAds] = useSessionState<boolean>(`${storageKey}:filter:skipAds`, false);
+  const [skipErotic, setSkipErotic] = useSessionState<boolean>(`${storageKey}:filter:skipErotic`, false);
 
   const gendersForType = useMemo(() => genders?.items?.filter?.((gender) => gender.type === GENDER_TYPES_MAP[type]), [genders, type]);
 
@@ -93,7 +95,7 @@ const FilterItems: React.FC<FilterItemsProps> = ({ type, onFilter }) => {
       DEFAULT_ITEM,
       ...(gendersForType?.map?.((gender) => ({
         title: gender.title,
-        value: gender.id,
+        value: `${gender.id}`,
       })) || []),
     ],
     [gendersForType],
@@ -103,7 +105,7 @@ const FilterItems: React.FC<FilterItemsProps> = ({ type, onFilter }) => {
       DEFAULT_ITEM,
       ...(countries?.items?.map?.((country) => ({
         title: country.title,
-        value: country.id,
+        value: `${country.id}`,
       })) || []),
     ],
     [countries],
@@ -245,11 +247,12 @@ const FilterItems: React.FC<FilterItemsProps> = ({ type, onFilter }) => {
           <Select
             className="my-1"
             label="Жанр"
-            value={genre}
+            value={defaultGenre || genre}
             defaultValue={DEFAULT_ITEM.value}
             onChange={setGenre}
             options={genderOptions}
             splitIn={2}
+            disabled={!!defaultGenre}
           />
           <Select
             className="my-1"

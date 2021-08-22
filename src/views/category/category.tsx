@@ -45,7 +45,7 @@ const CategoryView: React.FC = () => {
         title={
           <>
             <Text>{title}</Text>
-            <FilterItems type={categoryType} onFilter={setFilterParams} />
+            <FilterItems type={categoryType} storageKey={categoryType} onFilter={setFilterParams} />
           </>
         }
         queryResult={queryResult}
