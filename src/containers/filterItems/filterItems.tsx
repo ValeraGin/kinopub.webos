@@ -22,7 +22,7 @@ const GENDER_TYPES_MAP: Record<ItemType, GenderType> = {
   tvshow: 'tvshow',
 } as const;
 
-const DEFAULT_ITEM = { title: 'N/A', value: null };
+const DEFAULT_ITEM = { title: '—', value: null };
 
 const YEAR_OPTIONS = range(1912, new Date().getFullYear() + 1)
   .reverse()
@@ -226,23 +226,10 @@ const FilterItems: React.FC<FilterItemsProps> = ({ type, defaultGenre, storageKe
   useButtonEffect('Green', handleApply);
   useButtonEffect('Blue', handleOpen);
 
-  const actions = (
-    <div className="flex justify-end">
-      <Button className="text-green-600" icon="done" onClick={handleApply}>
-        Применить
-      </Button>
-      <Button className="text-red-600" icon="clear" onClick={handleReset}>
-        Сбросить
-      </Button>
-    </div>
-  );
-
   return (
     <>
       <Button icon="filter_list" className="text-blue-600" onClick={handleOpen} />
       <Popup visible={isOpen} onClose={handleClose}>
-        {actions}
-
         <div className="flex justify-between">
           <Select
             className="my-1"
@@ -375,7 +362,14 @@ const FilterItems: React.FC<FilterItemsProps> = ({ type, defaultGenre, storageKe
           </div>
         </div>
 
-        {actions}
+        <div className="flex justify-end">
+          <Button className="text-red-600" icon="clear" onClick={handleReset}>
+            Сбросить
+          </Button>
+          <Button className="text-green-600" icon="done" onClick={handleApply}>
+            Применить
+          </Button>
+        </div>
       </Popup>
     </>
   );
