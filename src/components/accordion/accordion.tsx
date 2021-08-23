@@ -31,12 +31,12 @@ const Accordion: React.FC<Props> = ({ open, onToggle, title, subtitle, className
 
   return (
     <div className="flex flex-col w-full">
-      <Spottable onClick={handleClickThrottled} className={cx('p-1 cursor-pointer', className)}>
+      <Spottable onClick={handleClickThrottled} className={cx('p-1 cursor-pointer', className)} disabled={disabled}>
         <div className="flex flex-col">
           <div className="flex items-center">
             <Text>{title}</Text>
 
-            <Icon name={visible ? 'expand_less' : 'expand_more'} />
+            {!disabled && <Icon name={visible ? 'expand_less' : 'expand_more'} />}
           </div>
           {!visible && subtitle && <Text className="mt-2">{subtitle}</Text>}
         </div>

@@ -47,7 +47,18 @@ const Popup: React.FC<Props> = ({ visible, onClose, children, className, closeBu
     }
   }, [containerId]);
 
+  const scrollActiveElementIntoView = useCallback(() => {
+    const current = Spotlight.getCurrent();
+
+    requestAnimationFrame(() => {
+      // @ts-expect-error
+      current?.scrollIntoViewIfNeeded();
+    });
+  }, []);
+
   useButtonEffect('Back', handleCloseIfVisible);
+  useButtonEffect('ArrowUp', scrollActiveElementIntoView);
+  useButtonEffect('ArrowDown', scrollActiveElementIntoView);
   useButtonEffect(closeButton, handleCloseIfVisible);
   const hashTrigger = useHashTrigger('popup', handleCloseIfVisible);
 

@@ -15,7 +15,7 @@ export type CheckboxProps = {
   disabled?: boolean;
 } & Omit<React.HTMLAttributes<HTMLInputElement>, 'onChange'>;
 
-const Checkbox: React.FC<CheckboxProps> = ({ defaultChecked, checked, onChange, className, children, ...props }) => {
+const Checkbox: React.FC<CheckboxProps> = ({ defaultChecked, checked, onChange, className, children, disabled, ...props }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
     (e) => {
@@ -36,6 +36,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ defaultChecked, checked, onChange, 
       // @ts-expect-error
       onKeyPress={handleKeyPress}
       role="button"
+      disabled={disabled}
     >
       <div className="inline-flex items-center cursor-pointer">
         <input
@@ -46,6 +47,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ defaultChecked, checked, onChange, 
           defaultChecked={defaultChecked}
           checked={checked}
           onChange={handleChange}
+          disabled={disabled}
         />
         <span className="inline-block ml-2 whitespace-nowrap">{children}</span>
       </div>
