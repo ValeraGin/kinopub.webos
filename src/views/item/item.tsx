@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import map from 'lodash/map';
 
@@ -40,6 +40,7 @@ const SimilarItems: React.FC<{ itemId: string; className?: string }> = ({ itemId
 const ItemView: React.FC = () => {
   const history = useHistory();
   const { itemId } = useParams<RouteParams>();
+  const posterRef = useRef<HTMLImageElement>(null);
   const [bookmarksPopupVisible, setBookmarksPopupVisible] = useState(false);
   const { data, refetch } = useApi('itemMedia', [itemId!], { staleTime: 0 });
 
@@ -122,6 +123,12 @@ const ItemView: React.FC = () => {
     refetch();
   }, [itemId, watchingToggleWatchlistAsync, refetch]);
 
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      posterRef.current?.scrollIntoView();
+    });
+  }, [history.location.pathname]);
+
   useStreamingTypeEffect();
   useButtonEffect(['Play', 'Red'], handleOnPlayClick);
   useButtonEffect('Green', handleOnTrailerClick);
@@ -134,6 +141,7 @@ const ItemView: React.FC = () => {
       <Scrollable>
         <div className="relative w-screen h-screen">
           <img
+            ref={posterRef}
             className="absolute w-screen h-screen object-cover -z-1"
             src={(data?.item?.posters.wide || data?.item?.posters.big)!}
             alt={title}
