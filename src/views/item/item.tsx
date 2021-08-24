@@ -183,14 +183,17 @@ const ItemView: React.FC = () => {
 
             <div className="flex flex-col">
               <Text className="text-2xl">{data?.item?.title}</Text>
-              <Text className="text-gray-500">
-                {data?.item?.year}
-                {map(data?.item?.countries, (country) => (
-                  <span key={country.id} className="ml-2">
-                    {country.title}
-                  </span>
-                ))}
-              </Text>
+              <div className="flex items-center">
+                <Text className="text-gray-500">
+                  {data?.item?.year}
+                  {map(data?.item?.countries, (country) => (
+                    <span key={country.id} className="ml-2">
+                      {country.title}
+                    </span>
+                  ))}
+                </Text>
+                {!data?.item?.finished && <Text className="ml-2 px-3 text-xs rounded-xl border-gray-200 border-2 bg-red-700">ON AIR</Text>}
+              </div>
 
               {!!data?.item?.genres?.length && (
                 <div className="flex py-2">
