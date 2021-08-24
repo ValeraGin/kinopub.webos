@@ -5,7 +5,7 @@ import { Value, createSessionStorage } from 'storage';
 const sessionStorage = createSessionStorage();
 
 function useSessionState<T extends Value>(key: string, defaultValue?: T) {
-  const [value, _setValue] = useState<T>(sessionStorage.getItem<T>(key) || (defaultValue as T));
+  const [value, _setValue] = useState<T>(sessionStorage.getItem<T>(key) ?? (defaultValue as T));
   const setValue = useCallback(
     (newValue: any, expire?: number) => {
       sessionStorage.setItem(key, newValue, expire);
@@ -15,7 +15,7 @@ function useSessionState<T extends Value>(key: string, defaultValue?: T) {
 
   useEffect(() => {
     const listener = () => {
-      _setValue(sessionStorage.getItem<T>(key) || (defaultValue as T));
+      _setValue(sessionStorage.getItem<T>(key) ?? (defaultValue as T));
     };
 
     const unsubscribe = sessionStorage.subscribe(listener);

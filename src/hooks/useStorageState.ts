@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import storage, { Key, Value } from 'storage';
 
 function useStorageState<T extends Value = Value>(key: Key, defaultValue?: T) {
-  const [value, _setValue] = useState<T>(storage.getItem<T>(key) || (defaultValue as T));
+  const [value, _setValue] = useState<T>(storage.getItem<T>(key) ?? (defaultValue as T));
   const setValue = useCallback(
     (newValue: Value, expire?: number) => {
       storage.setItem(key, newValue, expire);
@@ -13,7 +13,7 @@ function useStorageState<T extends Value = Value>(key: Key, defaultValue?: T) {
 
   useEffect(() => {
     const listener = () => {
-      _setValue(storage.getItem<T>(key) || (defaultValue as T));
+      _setValue(storage.getItem<T>(key) ?? (defaultValue as T));
     };
 
     const unsubscribe = storage.subscribe(listener);
