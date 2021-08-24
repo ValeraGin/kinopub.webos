@@ -65,6 +65,7 @@ const ItemView: React.FC = () => {
   const durationTotal = useMemo(() => secondsToDuration(data?.item?.duration?.total), [data?.item]);
   const audios = useMemo(() => mapAudios((video || episode)?.audios || []), [video, episode]);
   const subtitles = useMemo(() => mapSubtitles((video || episode)?.subtitles || []), [video, episode]);
+  const isSerial = useMemo(() => Boolean(data?.item?.seasons), [data?.item]);
 
   const handleOnPlayClick = useCallback(() => {
     if (videoToPlay?.id) {
@@ -192,7 +193,9 @@ const ItemView: React.FC = () => {
                     </span>
                   ))}
                 </Text>
-                {!data?.item?.finished && <Text className="ml-2 px-3 text-xs rounded-xl border-gray-200 border-2 bg-red-700">ON AIR</Text>}
+                {isSerial && !data?.item?.finished && (
+                  <Text className="ml-2 px-3 text-xs rounded-xl border-gray-200 border-2 bg-red-700">ON AIR</Text>
+                )}
               </div>
 
               {!!data?.item?.genres?.length && (
