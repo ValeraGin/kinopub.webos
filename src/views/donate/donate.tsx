@@ -41,11 +41,19 @@ const DonateView: React.FC = () => {
       <div className="flex justify-around py-10">
         {map(DONATE_TYPES, ({ key, link, icon: Icon }) => (
           <div key={key} className="flex flex-col items-center w-1/4">
-            <Icon />
+            <Icon className="h-40" />
             <Text className="pt-2">{link}</Text>
           </div>
         ))}
       </div>
+
+      <Text>Так же можно сделать перевод на кошельки:</Text>
+      <Text>
+        Payeer - <b>P11710891</b>
+      </Text>
+      <Text>
+        FKWallet - <b>F100864127</b>
+      </Text>
 
       <div className="absolute bottom-4">
         <Text>Приложение не является официальным клиентом и разрабатывается силами одного человека для личного использования</Text>
