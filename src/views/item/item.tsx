@@ -10,6 +10,7 @@ import Popup from 'components/popup';
 import Scrollable from 'components/scrollable';
 import SeasonsList from 'components/seasonsList';
 import Seo from 'components/seo';
+import Spottable from 'components/spottable';
 import Text from 'components/text';
 import VideoItem from 'components/videoItem';
 import Bookmarks from 'containers/bookmarks';
@@ -140,6 +141,7 @@ const ItemView: React.FC = () => {
       <Seo title={`Просмотр: ${title}`} />
       <Scrollable>
         <div className="relative w-screen h-screen">
+          <Spottable />
           <img
             ref={posterRef}
             className="absolute w-screen h-screen object-cover -z-1"
