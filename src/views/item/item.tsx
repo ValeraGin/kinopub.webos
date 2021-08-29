@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom';
 import map from 'lodash/map';
 
-import { Season, Video, WatchingStatus } from 'api';
+import { Season, Video } from 'api';
 import Button from 'components/button';
 import ItemsList from 'components/itemsList';
 import Link from 'components/link';
@@ -21,7 +21,7 @@ import useStreamingTypeEffect from 'hooks/useStreamingTypeEffect';
 import { PATHS, RouteParams, generatePath } from 'routes';
 
 import { secondsToDuration } from 'utils/date';
-import { getItemTitle } from 'utils/item';
+import { getItemTitle, getItemVideoToPlay } from 'utils/item';
 import { mapAudios, mapSubtitles } from 'utils/video';
 
 const SimilarItems: React.FC<{ itemId: string; className?: string }> = ({ itemId, className }) => {
@@ -48,41 +48,27 @@ const ItemView: React.FC = () => {
   const { watchingToggleAsync } = useApiMutation('watchingToggle');
   const { watchingToggleWatchlistAsync } = useApiMutation('watchingToggleWatchlist');
 
-  const video = useMemo(
-    () => data?.item.videos?.find(({ watching }) => watching.status !== WatchingStatus.Watched) || data?.item.videos?.[0],
-    [data?.item],
-  );
-  const season = useMemo(
-    () => data?.item.seasons?.find(({ watching }) => watching.status !== WatchingStatus.Watched) || data?.item.seasons?.[0],
-    [data?.item],
-  );
-  const episode = useMemo(
-    () => season?.episodes.find(({ watching }) => watching.status !== WatchingStatus.Watched) || season?.episodes[0],
-    [season],
-  );
   const trailer = useMemo(() => data?.item.trailer, [data?.item]);
-  const videoToPlay = video || episode;
+  const [videoToPlay, season] = useMemo(() => getItemVideoToPlay(data?.item), [data?.item]);
   const title = useMemo(() => getItemTitle(data?.item, videoToPlay, season), [data?.item, season, videoToPlay]);
   const durationAverage = useMemo(() => secondsToDuration(data?.item?.duration?.average), [data?.item]);
   const durationTotal = useMemo(() => secondsToDuration(data?.item?.duration?.total), [data?.item]);
-  const audios = useMemo(() => mapAudios((video || episode)?.audios || []), [video, episode]);
-  const subtitles = useMemo(() => mapSubtitles((video || episode)?.subtitles || []), [video, episode]);
+  const audios = useMemo(() => mapAudios(videoToPlay?.audios || []), [videoToPlay]);
+  const subtitles = useMemo(() => mapSubtitles(videoToPlay?.subtitles || []), [videoToPlay]);
   const isSerial = useMemo(() => Boolean(data?.item?.seasons), [data?.item]);
 
   const handleOnPlayClick = useCallback(() => {
-    if (videoToPlay?.id) {
+    if (data?.item) {
       history.push(
         generatePath(PATHS.Video, {
-          videoId: videoToPlay.id,
+          itemId: data?.item.id,
         }),
         {
           item: data?.item,
-          video: videoToPlay,
-          season,
         },
       );
     }
-  }, [history, data?.item, season, videoToPlay]);
+  }, [history, data?.item]);
 
   const handleOnTrailerClick = useCallback(() => {
     if (trailer?.id) {

@@ -17,7 +17,7 @@ export const PATHS = {
   Collection: '/collections/id:collectionId',
   History: '/history',
   Item: '/item/id:itemId',
-  Video: '/video/id:videoId',
+  Video: '/video/id:itemId',
   Trailer: '/trailer/id:trailerId',
   Pair: '/pair',
   Donate: '/donate',
@@ -32,7 +32,6 @@ export type RouteParams = {
   collectionId?: string;
   bookmarkId?: string;
   itemId?: string;
-  videoId?: string;
   trailerId?: string;
   genreType?: string;
   releaseType?: string;

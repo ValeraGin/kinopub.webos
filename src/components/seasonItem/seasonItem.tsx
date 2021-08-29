@@ -20,13 +20,15 @@ const SeasonItem: React.FC<Props> = ({ item, season, onEpisodeFocus, onEpisodeBl
     (episode: Video) => () => {
       if (episode?.id) {
         history.push(
-          generatePath(PATHS.Video, {
-            videoId: episode.id,
-          }),
+          generatePath(
+            PATHS.Video,
+            {
+              itemId: item.id,
+            },
+            { videoId: episode.id, seasonId: season.id },
+          ),
           {
             item,
-            video: episode,
-            season,
           },
         );
       }

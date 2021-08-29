@@ -1,10 +1,12 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import cx from 'classnames';
 
 import { Bool, Item } from 'api';
 import Icon from 'components/icon';
 import ImageItem from 'components/imageItem';
+import useApiMutation from 'hooks/useApiMutation';
+import useButtonEffect from 'hooks/useButtonEffect';
 import { PATHS, generatePath } from 'routes';
 
 import { ReactComponent as Imdb } from './assets/imdb.svg';
@@ -24,8 +26,11 @@ type Props = {
 
 const VideoItem: React.FC<Props> = ({ item, className, wrapperClassName, showViews, noCaption, disableNavigation }) => {
   const history = useHistory();
+  const [isFocused, setIsFocused] = useState(false);
+  const qualityIcon = getItemQualityIcon(item);
   const title = useMemo(() => item?.title?.split('/')[0], [item?.title]);
   const views = useMemo(() => (showViews && item?.views && numberToHuman(item?.views)) || '', [showViews, item?.views]);
+  const { itemMediaAsync } = useApiMutation('itemMedia');
 
   const handleOnClick = useCallback(() => {
     if (item?.id && !disableNavigation) {
@@ -36,11 +41,28 @@ const VideoItem: React.FC<Props> = ({ item, className, wrapperClassName, showVie
       );
     }
   }, [item?.id, disableNavigation, history]);
-  const qualityIcon = getItemQualityIcon(item);
+  const handleOnPlayClick = useCallback(async () => {
+    if (item?.id && !disableNavigation && isFocused) {
+      const data = (await itemMediaAsync([item.id])) as any;
+
+      history.push(
+        generatePath(PATHS.Video, {
+          itemId: data?.item.id,
+        }),
+        {
+          item: data?.item,
+        },
+      );
+    }
+  }, [item?.id, disableNavigation, isFocused, history, itemMediaAsync]);
+
+  useButtonEffect(['Play', 'Red'], handleOnPlayClick);
 
   return (
     <ImageItem
       onClick={handleOnClick}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
       source={item?.posters.medium}
       caption={noCaption ? '' : title}
       className={cx('h-72', className)}
