@@ -8,6 +8,7 @@ export type Key =
   | 'is_hls.js_active'
   | 'is_ac3_by_default_active'
   | 'is_forced_by_default_active'
+  | 'is_pause_by_ok_click_active'
   | `item_${string}_saved_audio_name`
   | `item_${string}_saved_source_name`
   | `item_${string}_saved_subtitle_name`;

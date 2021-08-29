@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import VideoPlayer, { VideoPlayerBase, VideoPlayerBaseProps } from '@enact/moonstone/VideoPlayer';
+import Spotlight from '@enact/spotlight';
 
 import Button from 'components/button';
 import Media, { AudioTrack, SourceTrack, StreamingType, SubtitleTrack } from 'components/media';
 import Text from 'components/text';
 import useButtonEffect from 'hooks/useButtonEffect';
+import useStorageState from 'hooks/useStorageState';
 
 import Settings from './settings';
 import StartFrom from './startFrom';
@@ -45,6 +47,7 @@ const Player: React.FC<PlayerProps> = ({
   const [isPaused, setIsPaused] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isPauseByOKClickActive] = useStorageState<boolean>('is_pause_by_ok_click_active');
 
   const handlePlay = useCallback(() => {
     setIsPaused(false);
@@ -57,6 +60,17 @@ const Player: React.FC<PlayerProps> = ({
       onPause?.(e.currentTime);
     },
     [onPause],
+  );
+  const handlePlayPause = useCallback(
+    (e: KeyboardEvent) => {
+      const current: any = Spotlight.getCurrent();
+      if ((!current || !current.offsetHeight || !current.offsetWidth) && playerRef.current && isPauseByOKClickActive) {
+        const video: any = playerRef.current.getVideoNode();
+        video.playPause();
+        return false;
+      }
+    },
+    [playerRef, isPauseByOKClickActive],
   );
   const handleEnded = useCallback(
     (e) => {
@@ -133,6 +147,7 @@ const Player: React.FC<PlayerProps> = ({
   useButtonEffect('Blue', handleSettingsOpen);
   useButtonEffect('Play', handleSettingsClose);
   useButtonEffect('Pause', handlePauseButton);
+  useButtonEffect('Enter', handlePlayPause);
   useButtonEffect('ArrowUp', handleSettingsOpen);
 
   return (

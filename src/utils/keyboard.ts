@@ -53,6 +53,8 @@ function listenButton() {
         const result = await handler(e);
 
         if (result === false) {
+          e.preventDefault();
+          e.stopPropagation();
           break;
         }
       }

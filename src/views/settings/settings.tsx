@@ -48,6 +48,7 @@ const SettingsView: React.FC = () => {
   const [isHLSJSActive, setIsHLSJSActive] = useStorageState<boolean>('is_hls.js_active');
   const [isAC3ByDefaultActive, setIsAC3ByDefaultActive] = useStorageState<boolean>('is_ac3_by_default_active');
   const [isForcedByDefaultActive, setIsForcedByDefaultActive] = useStorageState<boolean>('is_forced_by_default_active');
+  const [isPauseByOKClickActive, setIsPauseByOKClickActive] = useStorageState<boolean>('is_pause_by_ok_click_active');
   const { software, hardware } = useDeviceInfo();
 
   const boolSettings = useMemo(
@@ -86,6 +87,13 @@ const SettingsView: React.FC = () => {
       setIsForcedByDefaultActive(checked);
     },
     [setIsForcedByDefaultActive],
+  );
+
+  const handlePauseByOKClickToogle = useCallback(
+    (checked: boolean) => {
+      setIsPauseByOKClickActive(checked);
+    },
+    [setIsPauseByOKClickActive],
   );
 
   const handleBoolSettingToggle = useCallback(
@@ -138,7 +146,11 @@ const SettingsView: React.FC = () => {
                       AC3 аудио по умолчанию
                     </Checkbox>
                   </div>
-                  <div className="flex w-1/2 pr-4" />
+                  <div className="flex w-1/2 pr-4">
+                    <Checkbox className="w-full" defaultChecked={isPauseByOKClickActive} onChange={handlePauseByOKClickToogle}>
+                      Пауза по клику на ОК
+                    </Checkbox>
+                  </div>
                   <div className="flex w-1/2 pr-4" key="use-forced_by_default">
                     <Checkbox className="w-full" defaultChecked={isForcedByDefaultActive} onChange={handleForcedByDefaultToogle}>
                       Forced субтитры по умолчанию
