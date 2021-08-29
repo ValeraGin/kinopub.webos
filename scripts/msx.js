@@ -8,7 +8,7 @@ const createMSXConfig = (url) => ({
   version: `${version}`,
   parameter: 'content:{PREFIX}{SERVER}/msx/start.json',
   action: '[settings:validate_links:0|home]',
-  dictionary: 'http://fxml.ru/msx/lang/ru.json',
+  dictionary: 'http://msxplayer.ru/plugins/assets/ru.json',
   pages: [
     {
       items: [
