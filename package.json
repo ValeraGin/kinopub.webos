@@ -6,6 +6,7 @@
   "repository": "https://github.com/adascal/kinopub.webos",
   "main": "src/index.tsx",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "start": "craco start",
     "build": "craco build",
@@ -16,7 +17,7 @@
     "lint:fix": "concurrently \"yarn run eslint:fix\"",
     "eslint": "eslint 'src/**/*.ts' 'src/**/*.tsx'",
     "eslint:fix": "yarn run eslint --fix",
-    "postinstall": "husky install"
+    "prepare": "husky install"
   },
   "dependencies": {
     "@babel/runtime": "7.15.3",
@@ -66,8 +67,8 @@
     "@types/react-helmet": "6.1.2",
     "@types/react-lazyload": "3.1.1",
     "@types/react-router-dom": "5.1.8",
-    "@typescript-eslint/eslint-plugin": "4.29.3",
-    "@typescript-eslint/parser": "4.29.3",
+    "@typescript-eslint/eslint-plugin": "4.30.0",
+    "@typescript-eslint/parser": "4.30.0",
     "@webosose/ares-cli": "2.2.0",
     "babel-eslint": "10.1.0",
     "concurrently": "6.2.1",

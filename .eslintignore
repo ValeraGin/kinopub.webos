@@ -1,7 +1,4 @@
-build/*
-config/*
-public/*
-dist/*
-out/*
-node_modules/*
-scripts/*
+node_modules/
+public/
+dist/
+out/

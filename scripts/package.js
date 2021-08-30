@@ -48,8 +48,8 @@ async function generatePackage(appIdIndex = 0) {
     return new Promise((resolve, reject) => {
       const packager = new Packager(options);
 
-      packager.generatePackage([buildDir], outDir, options, async (err) => {
-        if (err) {
+      packager.generatePackage([buildDir], outDir, options, async (error) => {
+        if (error) {
           console.error(error);
           reject(error);
           return;
