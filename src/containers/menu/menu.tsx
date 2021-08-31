@@ -33,6 +33,11 @@ const menuItems: (MenuItem | null)[][] = [
       href: PATHS.Bookmarks,
     },
     {
+      name: 'История',
+      icon: 'history',
+      href: PATHS.History,
+    },
+    {
       name: 'Подборки',
       icon: 'list',
       href: generatePath(PATHS.Collections),

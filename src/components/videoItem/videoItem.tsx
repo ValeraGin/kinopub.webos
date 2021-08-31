@@ -24,7 +24,7 @@ type Props = {
   disableNavigation?: boolean;
 };
 
-const VideoItem: React.FC<Props> = ({ item, className, wrapperClassName, showViews, noCaption, disableNavigation }) => {
+const VideoItem: React.FC<Props> = ({ item, className, wrapperClassName, showViews, noCaption, disableNavigation, children }) => {
   const history = useHistory();
   const [isFocused, setIsFocused] = useState(false);
   const qualityIcon = getItemQualityIcon(item);
@@ -68,6 +68,7 @@ const VideoItem: React.FC<Props> = ({ item, className, wrapperClassName, showVie
       className={cx('h-72', className)}
       wrapperClassName={wrapperClassName}
     >
+      {children}
       {item?.new && (
         <div className="absolute bg-red-600 border-gray-300 border-t-2 border-r-2 text-gray-200 px-2 py-1 rounded-bl rounded-tr-xl top-0 right-0">
           {item?.new}

@@ -250,6 +250,7 @@ export type Video = {
   thumbnail: string;
 
   number: number;
+  snumber: number;
 
   /**
    * Время в секундах
@@ -490,7 +491,7 @@ export type Collection = {
   posters: Posters;
 };
 
-export type History = {
+export type HistoryItem = {
   /**
    * Время где остановились
    */
@@ -903,5 +904,5 @@ export type CollectionItemsResponse = {
 };
 
 export type HistoryResponse = {
-  history: History[];
+  history: HistoryItem[];
 } & PaginationResponse;
