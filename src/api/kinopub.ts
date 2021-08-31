@@ -96,7 +96,11 @@ class KinopubApiClient extends BaseApiClient {
 
     const { interval, code, user_code, verification_uri } = await this.requestDeviceCode();
 
-    await onConfirm?.(user_code, verification_uri);
+    if (user_code) {
+      await onConfirm?.(user_code, verification_uri);
+    } else {
+      throw new Error(`Did't received user_code`);
+    }
 
     return new Promise<void>((resolve, reject) => {
       this.clearTimers();

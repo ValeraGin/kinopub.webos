@@ -11,7 +11,7 @@ const PairView: React.FC = () => {
       <div className="w-screen h-screen flex justify-center items-center text-gray-200 text-center">
         Подтвердите устройство перейдя по ссылке:
         <br />
-        {verificationUri}
+        {verificationUri || 'https://kino.pub/device'}
         <br />
         и введите код:
         <br />
