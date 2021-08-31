@@ -21,7 +21,7 @@ export const KeyboardCodes = {
 
 export type KeyboardCodesKeys = keyof typeof KeyboardCodes;
 
-export function isKey(e: KeyboardEvent, key: KeyboardCodesKeys | KeyboardCodesKeys[]) {
+export function isKey(e: KeyboardEvent | React.KeyboardEvent, key: KeyboardCodesKeys | KeyboardCodesKeys[]) {
   const keys = castArray(key);
   const keyCode = e.keyCode || e.which;
 
