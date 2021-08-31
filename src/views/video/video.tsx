@@ -52,12 +52,12 @@ const usePrevNextVideos = (item: ItemDetails, video: Video, season?: Season) => 
 
 const VideoView: React.FC = () => {
   const history = useHistory();
-  const videoId = useSearchParam('videoId');
+  const episodeId = useSearchParam('episodeId');
   const seasonId = useSearchParam('seasonId');
   const location = useLocation<{ title: string; item: ItemDetails; video: Video; season: Season }>();
   const { item } = location.state || {};
 
-  const [video, season] = useMemo(() => getItemVideoToPlay(item, videoId, seasonId), [item, videoId, seasonId]);
+  const [video, season] = useMemo(() => getItemVideoToPlay(item, episodeId, seasonId), [item, episodeId, seasonId]);
   const { watchingMarkTimeAsync } = useApiMutation('watchingMarkTime');
   const [streamingType] = useStorageState<Streaming>('streaming_type');
   const [isAC3ByDefaultActive] = useStorageState<boolean>('is_ac3_by_default_active');

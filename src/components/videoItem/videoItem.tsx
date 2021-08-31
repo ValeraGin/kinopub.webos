@@ -22,9 +22,23 @@ type Props = {
   showViews?: boolean;
   noCaption?: boolean;
   disableNavigation?: boolean;
+  episodeId?: string;
+  seasonId?: string;
+  playOnClick?: boolean;
 };
 
-const VideoItem: React.FC<Props> = ({ item, className, wrapperClassName, showViews, noCaption, disableNavigation, children }) => {
+const VideoItem: React.FC<Props> = ({
+  item,
+  className,
+  wrapperClassName,
+  showViews,
+  noCaption,
+  disableNavigation,
+  episodeId,
+  seasonId,
+  playOnClick,
+  children,
+}) => {
   const history = useHistory();
   const [isFocused, setIsFocused] = useState(false);
   const qualityIcon = getItemQualityIcon(item);
@@ -32,29 +46,35 @@ const VideoItem: React.FC<Props> = ({ item, className, wrapperClassName, showVie
   const views = useMemo(() => (showViews && item?.views && numberToHuman(item?.views)) || '', [showViews, item?.views]);
   const { itemMediaAsync } = useApiMutation('itemMedia');
 
+  const handleOnPlayClick = useCallback(async () => {
+    if (item?.id && !disableNavigation && isFocused) {
+      const data = (await itemMediaAsync([item.id])) as any;
+
+      history.push(
+        generatePath(
+          PATHS.Video,
+          {
+            itemId: data?.item.id,
+          },
+          episodeId && seasonId ? { episodeId, seasonId } : {},
+        ),
+        {
+          item: data?.item,
+        },
+      );
+    }
+  }, [item?.id, disableNavigation, episodeId, seasonId, isFocused, history, itemMediaAsync]);
   const handleOnClick = useCallback(() => {
-    if (item?.id && !disableNavigation) {
+    if (playOnClick) {
+      handleOnPlayClick();
+    } else if (item?.id && !disableNavigation) {
       history.push(
         generatePath(PATHS.Item, {
           itemId: item.id,
         }),
       );
     }
-  }, [item?.id, disableNavigation, history]);
-  const handleOnPlayClick = useCallback(async () => {
-    if (item?.id && !disableNavigation && isFocused) {
-      const data = (await itemMediaAsync([item.id])) as any;
-
-      history.push(
-        generatePath(PATHS.Video, {
-          itemId: data?.item.id,
-        }),
-        {
-          item: data?.item,
-        },
-      );
-    }
-  }, [item?.id, disableNavigation, isFocused, history, itemMediaAsync]);
+  }, [item?.id, disableNavigation, playOnClick, handleOnPlayClick, history]);
 
   useButtonEffect(['Play', 'Red'], handleOnPlayClick);
 
@@ -78,6 +98,11 @@ const VideoItem: React.FC<Props> = ({ item, className, wrapperClassName, showVie
         <div className="absolute top-2 right-2 h-6 pr-2 text-xs text-gray-200 bg-black bg-opacity-50 rounded flex items-center">
           <Icon name="visibility" />
           {views}
+        </div>
+      )}
+      {seasonId && episodeId && (
+        <div className="absolute top-2 right-2 h-6 px-2 text-xs text-gray-200 bg-black bg-opacity-50 rounded flex items-center">
+          {`s${seasonId}e${episodeId}`}
         </div>
       )}
       {(qualityIcon || item?.ac3 || item?.advert) && (

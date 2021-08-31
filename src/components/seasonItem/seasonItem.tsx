@@ -25,7 +25,7 @@ const SeasonItem: React.FC<Props> = ({ item, season, onEpisodeFocus, onEpisodeBl
             {
               itemId: item.id,
             },
-            { videoId: episode.id, seasonId: season.id },
+            { episodeId: `${episode.number}`, seasonId: `${season.number}` },
           ),
           {
             item,

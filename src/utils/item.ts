@@ -1,14 +1,14 @@
 import { ItemDetails, Season, Video, WatchingStatus } from 'api';
 
-export function getItemVideoToPlay(item?: ItemDetails, videoId?: string, seasonId?: string) {
+export function getItemVideoToPlay(item?: ItemDetails, episodeId?: string, seasonId?: string) {
   const video =
-    item?.videos?.find(({ id, watching }) => (videoId ? +videoId === +id : watching.status !== WatchingStatus.Watched)) ||
+    item?.videos?.find(({ number, watching }) => (episodeId ? +episodeId === +number : watching.status !== WatchingStatus.Watched)) ||
     item?.videos?.[0];
   const season =
-    item?.seasons?.find(({ id, watching }) => (seasonId ? +seasonId === +id : watching.status !== WatchingStatus.Watched)) ||
+    item?.seasons?.find(({ number, watching }) => (seasonId ? +seasonId === +number : watching.status !== WatchingStatus.Watched)) ||
     item?.seasons?.[0];
   const episode =
-    season?.episodes.find(({ id, watching }) => (videoId ? +videoId === +id : watching.status !== WatchingStatus.Watched)) ||
+    season?.episodes.find(({ number, watching }) => (episodeId ? +episodeId === +number : watching.status !== WatchingStatus.Watched)) ||
     season?.episodes[0];
 
   return [(video || episode)!, season] as const;

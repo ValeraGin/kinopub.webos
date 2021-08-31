@@ -23,13 +23,12 @@ const HistoryList: React.FC<Props> = ({ title, items, loading, onScrollToEnd, sc
       <Title className={titleClassName}>{title}</Title>
       <div className={cx('flex flex-wrap', className)}>
         {map(items, ({ item, media, last_seen }) => (
-          <VideoItem key={last_seen} item={item}>
-            {media.snumber > 0 && (
-              <div className="absolute top-2 right-2 h-6 px-2 text-xs text-gray-200 bg-black bg-opacity-50 rounded flex items-center">
-                {`s${media.snumber}e${media.number}`}
-              </div>
-            )}
-          </VideoItem>
+          <VideoItem
+            key={last_seen}
+            item={item}
+            playOnClick
+            {...(media.snumber > 0 ? { episodeId: `${media.number}`, seasonId: `${media.snumber}` } : {})}
+          />
         ))}
         {loading && map([...new Array(15)], (_, idx) => <VideoItem key={idx} />)}
       </div>
