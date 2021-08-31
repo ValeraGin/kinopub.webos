@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom';
 import map from 'lodash/map';
 
-import { Season, Video } from 'api';
+import { Bool, Season, Video, WatchingStatus } from 'api';
 import Button from 'components/button';
 import ItemsList from 'components/itemsList';
 import Link from 'components/link';
@@ -47,6 +47,7 @@ const ItemView: React.FC = () => {
 
   const { watchingToggleAsync } = useApiMutation('watchingToggle');
   const { watchingToggleWatchlistAsync } = useApiMutation('watchingToggleWatchlist');
+  const { watchingMarkTimeAsync } = useApiMutation('watchingMarkTime');
 
   const trailer = useMemo(() => data?.item.trailer, [data?.item]);
   const [videoToPlay, season] = useMemo(() => getItemVideoToPlay(data?.item), [data?.item]);
@@ -56,6 +57,10 @@ const ItemView: React.FC = () => {
   const audios = useMemo(() => mapAudios(videoToPlay?.audios || []), [videoToPlay]);
   const subtitles = useMemo(() => mapSubtitles(videoToPlay?.subtitles || []), [videoToPlay]);
   const isSerial = useMemo(() => Boolean(data?.item?.seasons), [data?.item]);
+  const isWatching = useMemo(
+    () => (isSerial ? data?.item?.subscribed : videoToPlay?.watching.status === WatchingStatus.Watching),
+    [data?.item, isSerial, videoToPlay],
+  );
 
   const handleOnPlayClick = useCallback(() => {
     if (data?.item) {
@@ -106,9 +111,17 @@ const ItemView: React.FC = () => {
   );
 
   const handleOnVisibilityClick = useCallback(async () => {
-    await watchingToggleWatchlistAsync([itemId!]);
+    if (isSerial) {
+      await watchingToggleWatchlistAsync([itemId!]);
+    } else {
+      if (isWatching) {
+        await watchingToggleAsync([itemId!, videoToPlay.number, 0, Bool.False]);
+      } else {
+        await watchingMarkTimeAsync([itemId!, 30, videoToPlay.number]);
+      }
+    }
     refetch();
-  }, [itemId, watchingToggleWatchlistAsync, refetch]);
+  }, [itemId, isSerial, isWatching, videoToPlay, watchingToggleWatchlistAsync, watchingToggleAsync, watchingMarkTimeAsync, refetch]);
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -159,15 +172,9 @@ const ItemView: React.FC = () => {
                 </Button>
               )}
 
-              {typeof data?.item?.subscribed === 'boolean' && (
-                <Button
-                  icon={data?.item?.subscribed ? 'visibility_off' : 'visibility'}
-                  onClick={handleOnVisibilityClick}
-                  className="text-blue-600"
-                >
-                  {data?.item.subscribed ? 'Не буду смотреть' : 'Буду смотреть'}
-                </Button>
-              )}
+              <Button icon={isWatching ? 'visibility_off' : 'visibility'} onClick={handleOnVisibilityClick} className="text-blue-600">
+                {isWatching ? 'Не буду смотреть' : 'Буду смотреть'}
+              </Button>
             </div>
           </div>
         </div>
