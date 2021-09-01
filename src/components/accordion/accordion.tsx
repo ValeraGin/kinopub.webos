@@ -31,7 +31,7 @@ const Accordion: React.FC<Props> = ({ open, onToggle, title, subtitle, className
 
   return (
     <div className="flex flex-col w-full">
-      <Spottable onClick={handleClickThrottled} className={cx('p-1 cursor-pointer', className)} disabled={disabled}>
+      <Spottable onClick={handleClickThrottled} className={cx('px-2 py-1 rounded cursor-pointer', className)} disabled={disabled}>
         <div className="flex flex-col">
           <div className="flex items-center">
             <Text>{title}</Text>

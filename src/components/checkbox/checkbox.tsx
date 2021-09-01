@@ -32,7 +32,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ defaultChecked, checked, onChange, 
   return (
     <Spottable
       component="label"
-      className={cx('text-gray-200 p-2', className)}
+      className={cx('text-gray-200 px-2 py-1 rounded', className)}
       // @ts-expect-error
       onKeyPress={handleKeyPress}
       role="button"

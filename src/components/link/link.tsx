@@ -29,7 +29,7 @@ const Link: React.FC<Props> = ({ href, state, children, icon, iconOnly = !childr
     <Spottable
       {...props}
       className={cx(
-        'whitespace-nowrap cursor-pointer p-1',
+        'whitespace-nowrap rounded cursor-pointer px-2 py-1',
         {
           'text-gray-200': !active,
           'text-red-600': active,
