@@ -4,7 +4,7 @@ export const KeyboardCodes = {
   Enter: [13, 16777221],
   Play: [71, 415],
   Pause: [19, 74, 413],
-  PlayPause: [32, 179],
+  PlayPause: [32, 179, 10252],
   Back: [461, 10009],
   Backspace: 8,
   Escape: 27,
