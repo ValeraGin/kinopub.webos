@@ -17,12 +17,12 @@ export function getItemVideoToPlay(item?: ItemDetails, episodeId?: string, seaso
 export function getItemTitle(item?: ItemDetails, video?: Video, season?: Season) {
   const title = item?.title || '';
 
-  return season ? `${title} (s${season.number}e${video?.number || 1})` : title;
+  return season ? `${title} (s${video?.snumber || 1}e${video?.number || 1})` : title;
 }
 
 export function getItemDescription(item?: ItemDetails, video?: Video, season?: Season) {
   const title = video?.title || '';
-  const episode = `s${season?.number || 1}e${video?.number || 1}`;
+  const episode = `s${video?.snumber || 1}e${video?.number || 1}`;
 
   return season ? (title ? `${title} (${episode})` : episode) : title;
 }
