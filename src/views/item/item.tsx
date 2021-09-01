@@ -218,7 +218,7 @@ const ItemView: React.FC = () => {
                   <Text className="text-gray-500">Длительность</Text>
                   <div className="flex">
                     {durationTotal === durationAverage ? (
-                      <Text className="pl-1">{durationTotal}</Text>
+                      <Text className="pl-2">{durationTotal}</Text>
                     ) : (
                       <>
                         <div className="flex mr-2">
@@ -238,16 +238,16 @@ const ItemView: React.FC = () => {
               {data?.item?.plot && (
                 <div className="py-2">
                   <Text className="text-gray-500">Описание</Text>
-                  <Text className="text-gray-300 pl-1">{data?.item?.plot}</Text>
+                  <Text className="text-gray-300 pl-2">{data?.item?.plot}</Text>
                 </div>
               )}
 
               {audios.length > 0 && (
                 <div className="py-2">
                   <Text className="text-gray-500">Перевод</Text>
-                  <div className="flex flex-wrap">
+                  <div className="flex flex-wrap pl-2">
                     {map(audios, (voice, idx) => (
-                      <Text className="w-1/2 px-1" key={idx}>
+                      <Text className="w-1/2" key={idx}>
                         {voice.name}
                       </Text>
                     ))}
@@ -258,7 +258,7 @@ const ItemView: React.FC = () => {
               {subtitles.length > 0 && (
                 <div className="py-2">
                   <Text className="text-gray-500">Субтитры</Text>
-                  <div className="flex flex-wrap pl-1">
+                  <div className="flex flex-wrap pl-2">
                     {map(subtitles, (subtitle, idx) => (
                       <Text className="w-1/6" key={idx}>
                         {subtitle.name}
