@@ -149,12 +149,12 @@ const ItemView: React.FC = () => {
           />
 
           {data?.item && (
-            <div className="absolute flex bottom-4 left-4 right-4">
-              <Button icon="play_circle_outline" onClick={handleOnPlayClick} className="text-red-600 mr-2 bg-black bg-opacity-70">
+            <div className="absolute flex p-4 bottom-0 left-0 right-0 bg-black bg-opacity-70">
+              <Button icon="play_circle_outline" onClick={handleOnPlayClick} className="text-red-600">
                 Смотреть{isSerial ? ` s${videoToPlay.snumber}e${videoToPlay.number}` : ''}
               </Button>
 
-              <Button icon="bookmark" onClick={handleOnBookmarksClick} className="text-yellow-600 mr-2 bg-black bg-opacity-70">
+              <Button icon="bookmark" onClick={handleOnBookmarksClick} className="text-yellow-600">
                 В закладки
               </Button>
 
@@ -163,18 +163,14 @@ const ItemView: React.FC = () => {
               </Popup>
 
               {trailer ? (
-                <Button icon="videocam" onClick={handleOnTrailerClick} className="text-green-600 mr-2 bg-black bg-opacity-70">
+                <Button icon="videocam" onClick={handleOnTrailerClick} className="text-green-600">
                   Трейлер
                 </Button>
               ) : (
                 <div />
               )}
 
-              <Button
-                icon={isWatching ? 'visibility_off' : 'visibility'}
-                onClick={handleOnVisibilityClick}
-                className="text-blue-600 mr-2 bg-black bg-opacity-70"
-              >
+              <Button icon={isWatching ? 'visibility_off' : 'visibility'} onClick={handleOnVisibilityClick} className="text-blue-600">
                 {isWatching ? 'Не буду смотреть' : 'Буду смотреть'}
               </Button>
             </div>
