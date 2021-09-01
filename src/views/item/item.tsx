@@ -151,7 +151,7 @@ const ItemView: React.FC = () => {
           {data?.item && (
             <div className="absolute flex bottom-4 left-4 right-4">
               <Button icon="play_circle_outline" onClick={handleOnPlayClick} className="text-red-600 mr-2 bg-black bg-opacity-70">
-                Смотреть
+                Смотреть{isSerial ? ` s${videoToPlay.snumber}e${videoToPlay.number}` : ''}
               </Button>
 
               <Button icon="bookmark" onClick={handleOnBookmarksClick} className="text-yellow-600 mr-2 bg-black bg-opacity-70">
