@@ -7,7 +7,11 @@ module.exports = {
   },
   style: {
     postcss: {
-      plugins: [require('tailwindcss'), require('autoprefixer')],
+      plugins: [
+        require('tailwindcss'),
+        require('autoprefixer'),
+        process.env.PROCESS_CSS_VARIABLES === 'true' && require('postcss-css-variables'),
+      ].filter(Boolean),
     },
   },
   webpack: {

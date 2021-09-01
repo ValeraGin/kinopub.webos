@@ -80,6 +80,7 @@
     "husky": "7.0.2",
     "import-sort-style-vmv": "2.0.2",
     "lint-staged": "11.1.2",
+    "postcss-css-variables": "0.17.0",
     "prettier": "2.3.2",
     "prettier-eslint": "13.0.0",
     "prettier-plugin-import-sort": "0.0.7",
