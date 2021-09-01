@@ -1,10 +1,7 @@
 import { useCallback, useRef } from 'react';
 import React from 'react';
-import cx from 'classnames';
 
-import Spottable from 'components/spottable';
-
-import { isKey } from 'utils/keyboard';
+import Button from 'components/button';
 
 export type CheckboxProps = {
   defaultChecked?: boolean;
@@ -23,35 +20,24 @@ const Checkbox: React.FC<CheckboxProps> = ({ defaultChecked, checked, onChange, 
     },
     [onChange],
   );
-  const handleKeyPress = useCallback((e: KeyboardEvent) => {
-    if (isKey(e, 'Enter')) {
-      inputRef.current?.click();
-    }
+  const handleClick = useCallback(() => {
+    inputRef.current?.click();
   }, []);
 
   return (
-    <Spottable
-      component="label"
-      className={cx('text-gray-200 px-2 py-1 rounded', className)}
-      // @ts-expect-error
-      onKeyPress={handleKeyPress}
-      role="button"
-      disabled={disabled}
-    >
-      <div className="inline-flex items-center cursor-pointer">
-        <input
-          type="checkbox"
-          {...props}
-          ref={inputRef}
-          className="inline-block w-4 h-4"
-          defaultChecked={defaultChecked}
-          checked={checked}
-          onChange={handleChange}
-          disabled={disabled}
-        />
-        <span className="inline-block ml-2 whitespace-nowrap">{children}</span>
-      </div>
-    </Spottable>
+    <Button className={className} onClick={handleClick} disabled={disabled}>
+      <input
+        type="checkbox"
+        {...props}
+        ref={inputRef}
+        className="inline-block w-4 h-4"
+        defaultChecked={defaultChecked}
+        checked={checked}
+        onChange={handleChange}
+        disabled={disabled}
+      />
+      <span className="inline-block ml-2 whitespace-nowrap">{children}</span>
+    </Button>
   );
 };
 

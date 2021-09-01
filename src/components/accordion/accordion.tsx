@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
-import cx from 'classnames';
 
+import Button from 'components/button';
 import Icon from 'components/icon';
-import Spottable from 'components/spottable';
 import Text from 'components/text';
 import useChangebleState from 'hooks/useChangebleState';
 import useThrottledCallback from 'hooks/useThrottledCallback';
@@ -31,7 +30,7 @@ const Accordion: React.FC<Props> = ({ open, onToggle, title, subtitle, className
 
   return (
     <div className="flex flex-col w-full">
-      <Spottable onClick={handleClickThrottled} className={cx('px-2 py-1 rounded cursor-pointer', className)} disabled={disabled}>
+      <Button onClick={handleClickThrottled} className={className} disabled={disabled}>
         <div className="flex flex-col">
           <div className="flex items-center">
             <Text>{title}</Text>
@@ -40,7 +39,7 @@ const Accordion: React.FC<Props> = ({ open, onToggle, title, subtitle, className
           </div>
           {!visible && subtitle && <Text className="mt-2">{subtitle}</Text>}
         </div>
-      </Spottable>
+      </Button>
       {visible && children}
     </div>
   );
