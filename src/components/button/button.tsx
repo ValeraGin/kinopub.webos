@@ -4,14 +4,14 @@ import cx from 'classnames';
 import Icon from 'components/icon';
 import Spottable from 'components/spottable';
 
-type Props = {
+export type ButtonProps = {
   icon?: string;
   iconOnly?: boolean;
   autoFocus?: boolean;
   className?: string;
 } & React.ComponentProps<typeof Spottable>;
 
-const Button: React.FC<Props> = ({ children, icon, iconOnly = !children, autoFocus, className, ...props }) => {
+const Button: React.FC<ButtonProps> = ({ children, icon, iconOnly = !children, autoFocus, className, ...props }) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {

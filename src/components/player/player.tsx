@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import VideoPlayer, { VideoPlayerBase, VideoPlayerBaseProps } from '@enact/moonstone/VideoPlayer';
 import Spotlight from '@enact/spotlight';
 
+import BackButton from 'components/backButton';
 import Button from 'components/button';
 import Media, { AudioTrack, SourceTrack, StreamingType, SubtitleTrack } from 'components/media';
 import Text from 'components/text';
@@ -153,7 +154,12 @@ const Player: React.FC<PlayerProps> = ({
   return (
     <>
       <Settings visible={isSettingsOpen} onClose={handleSettingsClose} player={playerRef} />
-      {isPaused && <Text className="absolute z-10 top-0 p-4">{title}</Text>}
+      {isPaused && (
+        <div className="absolute z-10 top-0 px-4 pt-2 flex items-center">
+          <BackButton className="mr-2" />
+          <Text>{title}</Text>
+        </div>
+      )}
       {isPaused && <Button className="absolute z-101 bottom-8 right-10 text-blue-600" icon="settings" onClick={handleSettingsOpen} />}
       {isLoaded && startTime! > 0 && <StartFrom startTime={startTime} player={playerRef} />}
 

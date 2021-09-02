@@ -19,6 +19,7 @@ const ICONS_MAP = {
   thumb_up: <>&#xe8dc;</>,
   graphic_eq: <>&#xe1b8;</>,
   filter_list: <>&#xe152;</>,
+  arrow_back: <>&#xe5c4;</>,
 } as const;
 
 export type IconName = keyof typeof ICONS_MAP;

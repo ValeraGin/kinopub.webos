@@ -75,3 +75,14 @@ export function registerButtonHandler(key: KeyboardCodesKeys | KeyboardCodesKeys
     BUTTON_HANDLERS = BUTTON_HANDLERS.filter((h) => h.handler !== handler);
   };
 }
+
+export function triggerButtonClick(key: KeyboardCodesKeys) {
+  const [keyCode] = castArray(KeyboardCodes[key]);
+
+  window.dispatchEvent(
+    new KeyboardEvent('keydown', {
+      key,
+      keyCode,
+    }),
+  );
+}
