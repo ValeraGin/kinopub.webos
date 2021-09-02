@@ -1,4 +1,5 @@
 import { useLocation } from 'react-router-dom';
+import cx from 'classnames';
 import map from 'lodash/map';
 
 import Link from 'components/link';
@@ -116,18 +117,20 @@ const menuItems: (MenuItem | null)[][] = [
   ].filter(Boolean),
 ];
 
-type Props = {};
+type Props = {
+  className?: string;
+};
 
-const Menu: React.FC<Props> = (props) => {
+const Menu: React.FC<Props> = ({ className, ...props }) => {
   const location = useLocation();
 
   return (
-    <nav className="group h-screen flex flex-col justify-between" {...props}>
+    <nav className={cx('h-screen flex flex-col justify-between', className)} {...props}>
       {map(menuItems, (list, idx) => (
         <ul key={idx}>
           {map(list, (item: MenuItem) => (
             <li key={item.href}>
-              <Link href={item.href} icon={item.icon} active={location.pathname.startsWith(item.href)} className="px-2 py-1 rounded-r">
+              <Link href={item.href} icon={item.icon} active={location.pathname.startsWith(item.href)}>
                 {item.name}
               </Link>
             </li>

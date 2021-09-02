@@ -44,3 +44,11 @@ video {
 [class*='Input_decorator'] {
   @apply m-0 !important;
 }
+
+.bg-black.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.bg-black.bg-opacity-70 {
+  background-color: rgba(0, 0, 0, 0.7);
+}
