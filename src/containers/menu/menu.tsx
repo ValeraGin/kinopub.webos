@@ -125,7 +125,7 @@ const Menu: React.FC<Props> = ({ className, ...props }) => {
   const location = useLocation();
 
   return (
-    <nav className={cx('h-screen flex flex-col justify-between', className)} {...props}>
+    <nav className={cx('h-screen w-52 flex flex-col justify-between overflow-y-auto', className)} {...props}>
       {map(menuItems, (list, idx) => (
         <ul key={idx}>
           {map(list, (item: MenuItem) => (
