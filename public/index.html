@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Kinopub WebOS</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2QFN9YLY57"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2QFN9YLY57');
+    </script>
+    <script type="text/javascript">
+      window.addEventListener('error', function(ev) {
+        var stack = (ev.error && ev.error.stack) || null;
+        var errorInfo = {
+          stack,
+          message: ev.message,
+          url: ev.filename,
+          line: ev.lineno,
+          column: ev.colno,
+          ua: navigator.userAgent,
+        };
+        console.log(JSON.stringify(errorInfo));
+        if (ev.message && ev.message.indexOf('ChunkLoadError') !== -1) {
+          window.location.reload();
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

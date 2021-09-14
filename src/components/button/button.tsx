@@ -1,38 +1,48 @@
-import EnactButton, { ButtonProps } from '@enact/moonstone/Button';
-import styled from 'styled-components';
+import { useEffect, useRef } from 'react';
+import cx from 'classnames';
 
-import Icon from '../icon';
+import Icon from 'components/icon';
+import Spottable from 'components/spottable';
 
-const StyledButton = styled(EnactButton)`
-  color: inherit;
-  text-decoration: none;
-`;
-
-const ButtonInner = styled.div<{ iconOnly: boolean }>`
-  display: flex;
-  align-items: center;
-  color: inherit;
-  text-decoration: none;
-
-  ${Icon} {
-    margin-right: ${(props) => !props.iconOnly && '0.5rem'};
-  }
-`;
-
-type Props = {
+export type ButtonProps = {
   icon?: string;
   iconOnly?: boolean;
-  onClick?: React.MouseEventHandler;
-} & ButtonProps;
+  autoFocus?: boolean;
+  className?: string;
+} & React.ComponentProps<typeof Spottable>;
 
-const Button: React.FC<Props> = ({ icon, iconOnly, children, ...props }) => {
+const Button: React.FC<ButtonProps> = ({ children, icon, iconOnly = !children, autoFocus, className, ...props }) => {
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let frameId: number;
+
+    if (autoFocus) {
+      frameId = requestAnimationFrame(() => {
+        // @ts-expect-error
+        wrapperRef.current?.node?.focus();
+      });
+    }
+
+    return () => {
+      if (frameId) {
+        cancelAnimationFrame(frameId);
+      }
+    };
+  }, [wrapperRef, autoFocus]);
+
   return (
-    <StyledButton {...props}>
-      <ButtonInner iconOnly={iconOnly}>
-        {icon && <Icon name={icon} />}
+    <Spottable
+      {...props}
+      ref={wrapperRef}
+      className={cx('text-gray-200 whitespace-nowrap cursor-pointer rounded px-2 py-1', className)}
+      role="button"
+    >
+      <div className="flex items-center">
+        {icon && <Icon className={cx({ 'mr-2': !iconOnly })} name={icon} />}
         {!iconOnly && children}
-      </ButtonInner>
-    </StyledButton>
+      </div>
+    </Spottable>
   );
 };
 

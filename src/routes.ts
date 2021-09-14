@@ -1,21 +1,26 @@
+import { ExtractRouteParams } from 'react-router';
 import { generatePath as baseGeneratePath } from 'react-router-dom';
 
 export const PATHS = {
   Index: '/',
+  Home: '/home',
   Search: '/search',
-  Watching: '/watching',
-  Category: '/category/:categoryId',
+  Watching: '/watching/:watchingType?',
+  Releases: '/releases/:releaseType?',
+  Category: '/category/:categoryType',
+  Genre: '/genres/:genreType',
   Channels: '/channels',
-  Channel: '/channels/:channelId',
+  Channel: '/channels/id:channelId',
   Bookmarks: '/bookmarks',
-  Bookmark: '/bookmarks/:bookmarkId',
-  Collections: '/collections',
-  Collection: '/collections/:collectionId',
+  Bookmark: '/bookmarks/id:bookmarkId',
+  Collections: '/collections/:collectionType?',
+  Collection: '/collections/id:collectionId',
   History: '/history',
-  Item: '/item/:itemId',
-  Video: '/video/:videoId',
-  Trailer: '/trailer/:trailerId',
+  Item: '/item/id:itemId',
+  Video: '/video/id:itemId',
+  Trailer: '/trailer/id:trailerId',
   Pair: '/pair',
+  Donate: '/donate',
   Speed: '/speed',
   Settings: '/settings',
 };
@@ -23,18 +28,24 @@ export const PATHS = {
 export type PathValuesType = typeof PATHS[keyof typeof PATHS];
 
 export type RouteParams = {
-  categoryId?: string;
   channelId?: string;
   collectionId?: string;
   bookmarkId?: string;
   itemId?: string;
-  videoId?: string;
   trailerId?: string;
+  genreType?: string;
+  releaseType?: string;
+  categoryType?: string;
+  watchingType?: string;
+  collectionType?: string;
 };
 
-export function generatePath(pattern: PathValuesType, params?: RouteParams, search?: Record<string, string | number>) {
-  // @ts-expect-error
+export function generatePath<S extends PathValuesType>(
+  pattern: S,
+  params?: ExtractRouteParams<S> | null,
+  search?: Record<string, string> | string,
+) {
   const query = search ? `?${new URLSearchParams(search)}` : '';
 
-  return baseGeneratePath(pattern, params) + query;
+  return baseGeneratePath(pattern, params ?? undefined) + query;
 }

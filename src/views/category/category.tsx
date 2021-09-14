@@ -1,44 +1,56 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import flatMap from 'lodash/flatMap';
-import uniqBy from 'lodash/uniqBy';
+import { useLocation, useParams } from 'react-router-dom';
 
-import ItemsList from '../../components/itemsList';
-import useApiInfinite from '../../hooks/useApiInfinite';
-import MainLayout from '../../layouts/main';
-import { RouteParams } from '../../routes';
+import { ItemType, ItemsParams } from 'api';
+import Seo from 'components/seo';
+import Text from 'components/text';
+import FilterItems from 'containers/filterItems';
+import ItemsListInfinite from 'containers/itemsListInfinite';
+import useApiInfinite from 'hooks/useApiInfinite';
+import useSearchParams from 'hooks/useSearchParams';
+import useSessionState from 'hooks/useSessionState';
 
-type Props = {};
+const CATEGORY_TYPES: Record<ItemType, string> = {
+  movie: 'Фильмы',
+  serial: 'Сериалы',
+  concert: 'Концерты',
+  documovie: 'Документальные фильмы',
+  docuserial: 'Документальные сериалы',
+  tvshow: 'ТВ Шоу',
+};
 
-const CategoryView: React.FC<Props> = () => {
-  const { categoryId } = useParams<RouteParams>();
-  const [canFetchNextPage, setCanFetchNextPage] = useState(false);
-  const { data, isLoading, isFetchingNextPage, fetchNextPage } = useApiInfinite('items', {
-    type: categoryId,
-  });
-  const items = useMemo(
-    () =>
-      uniqBy(
-        flatMap(data?.pages, (page) => page.items),
-        'id',
-      ),
-    [data?.pages],
-  );
+const getCategoryByType = (categoryType?: ItemType) => {
+  return (categoryType ? CATEGORY_TYPES[categoryType] : categoryType) || '';
+};
 
-  const handleLoadMore = useCallback(() => {
-    if (canFetchNextPage) {
-      fetchNextPage();
-    }
-  }, [canFetchNextPage, fetchNextPage]);
+const CategoryView: React.FC = () => {
+  const { categoryType } = useParams<{ categoryType: ItemType }>();
+  const searchParams = useSearchParams();
+  const location = useLocation<{ params?: ItemsParams; title?: string }>();
+  const { params, title = getCategoryByType(categoryType) } = location.state || {};
+  const [filterParams, setFilterParams] = useSessionState<ItemsParams | null>(`${categoryType}:filter:params`, null);
 
-  useEffect(() => {
-    setCanFetchNextPage(true);
-  }, [items.length]);
+  const queryResult = useApiInfinite('items', [
+    {
+      ...searchParams,
+      ...params,
+      ...filterParams,
+      type: categoryType,
+    },
+  ]);
 
   return (
-    <MainLayout>
-      <ItemsList items={items} loading={isLoading || isFetchingNextPage} onLoadMore={handleLoadMore} />
-    </MainLayout>
+    <>
+      <Seo title={title} />
+      <ItemsListInfinite
+        title={
+          <>
+            <Text>{title}</Text>
+            <FilterItems type={categoryType} storageKey={categoryType} onFilter={setFilterParams} />
+          </>
+        }
+        queryResult={queryResult}
+      />
+    </>
   );
 };
 

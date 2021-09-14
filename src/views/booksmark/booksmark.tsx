@@ -1,23 +1,22 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
-import ItemsList from '../../components/itemsList';
-import Text from '../../components/text';
-import useApi from '../../hooks/useApi';
-import MainLayout from '../../layouts/main';
-import { RouteParams } from '../../routes';
+import Seo from 'components/seo';
+import ItemsListInfinite from 'containers/itemsListInfinite';
+import useApiInfinite from 'hooks/useApiInfinite';
+import { RouteParams } from 'routes';
 
-type Props = {};
-
-const BookmarkView: React.FC<Props> = () => {
+const BookmarkView: React.FC = () => {
   const { bookmarkId } = useParams<RouteParams>();
-  const { data, isLoading } = useApi('bookmarkItems', bookmarkId);
+  const location = useLocation<{ title?: string }>();
+  const queryResult = useApiInfinite('bookmarkItems', [bookmarkId!]);
+  const { title = queryResult?.data?.pages?.[0]?.folder?.title } = location.state || {};
 
   return (
-    <MainLayout>
-      <Text>{data?.folder.title}</Text>
-      <ItemsList items={data?.items} loading={isLoading} />
-    </MainLayout>
+    <>
+      <Seo title={`Закладка: ${title}`} />
+      <ItemsListInfinite title={title} queryResult={queryResult} />
+    </>
   );
 };
 

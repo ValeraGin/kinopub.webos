@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { detect } from '@enact/core/platform';
 import { deviceinfo } from '@enact/webos/deviceinfo';
 
-const pkg = require('../../package.json');
+import { APP_INFO, APP_TITLE } from 'utils/app';
 
 function useDeviceInfo() {
   const [software, setSoftware] = useState('');
@@ -12,19 +12,28 @@ function useDeviceInfo() {
     const platform = detect();
 
     setHardware(navigator.platform);
-    setSoftware(platform.platformName);
+    setSoftware(`${platform.platformName} (${APP_INFO})`);
 
-    deviceinfo((device) => {
-      setHardware(device['modelName']);
-      setSoftware(`${platform.platformName} ${device['version']} (${pkg.name} ${pkg.version})`);
-    });
+    deviceinfo(
+      // @ts-expect-error
+      (device: { modelName: string; sdkVersion: string; version: string }) => {
+        setHardware(`${device.modelName}${device.version ? ` (${device.version})` : ''}`);
+        setSoftware(
+          `${platform.platformName} ${
+            device.sdkVersion ||
+            // @ts-expect-error
+            platform[platform.platformName]
+          } (${APP_INFO})`,
+        );
+      },
+    );
   }, []);
 
   const deviceInfo = useMemo(
     () => ({
       software,
       hardware,
-      title: pkg.description,
+      title: APP_TITLE,
     }),
     [software, hardware],
   );

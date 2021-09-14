@@ -1,93 +1,76 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Switch, useHistory } from 'react-router-dom';
-import { Panels, PanelsProps } from '@enact/moonstone/Panels';
-import styled from 'styled-components';
 
-import useApiMutation from '../../hooks/useApiMutation';
-import useDeviceInfo from '../../hooks/useDeviceInfo';
-import useStorageState from '../../hooks/useStorageState';
-import { PATHS } from '../../routes';
+import Spinner from 'components/spinner';
+import Text from 'components/text';
+import useButtonEffect from 'hooks/useButtonEffect';
+import useDeviceAuthorizationEffect, { AuthorizationStep } from 'hooks/useDeviceAuthorizationEffect';
+import { PATHS } from 'routes';
 
-const StyledPanels = styled(Panels)`
-  article {
-    padding: 0;
-  }
-`;
-
-type Props = {} & PanelsProps;
-
-const useBackButtonEffect = () => {
+const Views: React.FC = ({ children, ...props }) => {
   const history = useHistory();
+  const [showNotice, setShowNotice] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
+  const [authorizationStep, setAuthorizationStep] = useState<AuthorizationStep>();
 
-  useEffect(() => {
-    const listiner = (e: KeyboardEvent) => {
-      if (e.keyCode === 461) {
-        history.goBack();
+  const handleBackButtonClick = useCallback(() => {
+    if (history.location.pathname !== PATHS.Home) {
+      history.goBack();
+    } else if (showNotice) {
+      window.close();
+    } else {
+      setShowNotice(true);
+
+      setTimeout(() => {
+        setShowNotice(false);
+      }, 5 * 1000);
+    }
+  }, [history, showNotice]);
+
+  const handleAuthorization = useCallback(
+    (authorizationStep: AuthorizationStep) => {
+      setAuthorizationStep(authorizationStep);
+
+      const path = history.location.pathname;
+      if (authorizationStep === 'authorized') {
+        if (path === PATHS.Pair || path === PATHS.Index) {
+          history.replace(PATHS.Home);
+        }
       }
-    };
-
-    window.addEventListener('keydown', listiner);
-
-    return () => {
-      window.removeEventListener('keydown', listiner);
-    };
-  }, [history]);
-};
-
-const useDeviceAuthorizationEffect = () => {
-  const history = useHistory();
-  const deviceInfo = useDeviceInfo();
-  const { deviceAuthorization } = useApiMutation('deviceAuthorization');
-  const { deviceNotify } = useApiMutation('deviceNotify');
-  const [isLogged] = useStorageState<boolean>('is_logged');
-
-  const handleOnConfirm = useCallback(
-    (userCode: string, verificationUri: string) => {
-      history.push(PATHS.Pair, {
-        userCode,
-        verificationUri,
-      });
     },
     [history],
   );
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      deviceNotify([deviceInfo]);
-    }, 500);
+      setShowSpinner(authorizationStep === 'processing');
+    }, 1000);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [deviceInfo, deviceNotify]);
+  }, [authorizationStep]);
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (!isLogged) {
-        deviceAuthorization([deviceInfo, handleOnConfirm]);
-      }
-    }, 500);
+  useButtonEffect('Back', handleBackButtonClick);
+  useDeviceAuthorizationEffect(handleAuthorization);
 
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [isLogged, deviceInfo, handleOnConfirm, deviceAuthorization]);
-
-  useEffect(() => {
-    if (isLogged) {
-      history.push(PATHS.Index);
-    }
-  }, [isLogged, history]);
-};
-
-const Views: React.FC<Props> = ({ children, ...props }) => {
-  useBackButtonEffect();
-  useDeviceAuthorizationEffect();
+  if (showSpinner) {
+    return <Spinner />;
+  }
 
   return (
-    <StyledPanels noCloseButton {...props}>
+    <div {...props}>
+      {showNotice && (
+        <div className="fixed top-2 right-2 p-4 z-999 shadow-xl rounded-xl bg-gray-500 bg-opacity-70">
+          <Text>
+            Чтобы закрыть приложение,
+            <br />
+            нажмите кнопку "назад" ещё раз
+          </Text>
+        </div>
+      )}
       <Switch>{children}</Switch>
-    </StyledPanels>
+    </div>
   );
 };
 

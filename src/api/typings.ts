@@ -86,6 +86,7 @@ export type Country = {
 };
 
 export type DeviceSettingBoolean = {
+  type: undefined;
   label: string;
   value: Bool;
 };
@@ -169,6 +170,7 @@ export type Tracklist = {
 
 export type Subtitle = {
   lang: string;
+
   /**
    * Смещение относительно видео-потока
    */
@@ -178,6 +180,11 @@ export type Subtitle = {
    * Доступно в файле-исходнике, вшиты в него отдельным стримом
    */
   embed: boolean;
+
+  /**
+   * Форсированные субтитры (перевод вывисок, других языков и тд)
+   */
+  forced: boolean;
 
   file: string;
 
@@ -243,6 +250,7 @@ export type Video = {
   thumbnail: string;
 
   number: number;
+  snumber: number;
 
   /**
    * Время в секундах
@@ -384,6 +392,8 @@ export type Item = {
   kinopoisk_rating: number;
   kinopoisk_votes: number;
   rating: number;
+  rating_votes: number;
+  rating_percentage: number;
   views: number;
   comments: number;
 
@@ -481,7 +491,7 @@ export type Collection = {
   posters: Posters;
 };
 
-export type History = {
+export type HistoryItem = {
   /**
    * Время где остановились
    */
@@ -629,37 +639,56 @@ export type DeviceSettingsParams = {
   [key in keyof DeviceSettings]?: DeviceSettings[key] extends DeviceSettingBoolean ? boolean : number;
 };
 
-export type TypesResponse = Type[];
+export type TypesResponse = {
+  items: Type[];
+} & Response;
 
-export type GendersResponse = Gender[];
+export type GendersResponse = {
+  items: Gender[];
+} & Response;
 
-export type CountriesResponse = Country[];
+export type CountriesResponse = {
+  items: Country[];
+} & Response;
+
+export type SubtitlesResponse = {
+  items: { id: string; title: string }[];
+} & Response;
+
+export type ItemType = 'movie' | 'serial' | 'tvshow' | 'concert' | 'documovie' | 'docuserial';
+
+export type GenderType = 'movie' | 'music' | 'docu' | 'tvshow';
 
 export type ItemsParams = {
   /**
    * Тип видео контента
    */
-  type?: string;
+  type?: ItemType;
 
   /**
    * Поиск по заголовку, минимум 3 символа. Выборка по типу LIKE ‘$ASD’
    */
-  title?: string;
+  title?: string | null;
 
   /**
    * id жанра. Для множественного поиска список через запятую.
    */
-  genre?: string;
+  genre?: string | null;
 
   /**
    * id страны. Для множественного поиска список через запятую.
    */
-  country?: string;
+  country?: string | null;
 
   /**
    * Год. Для поиска в промежутке year1-year2
    */
-  year?: string;
+  year?: string | null;
+
+  /**
+   * Субититы
+   */
+  subtitles?: string | null;
 
   /**
    * Статус сериала, завершен/снимается
@@ -709,9 +738,9 @@ export type ItemsParams = {
    * * views
    * * watchers
    */
-  sort?: string;
+  sort?: string | null;
 
-  period?: string;
+  period?: string | null;
 
   /**
    * Массив идентификаторов качеств
@@ -750,7 +779,7 @@ export type ItemsWithPagination = {
   pagination: Pagination;
 };
 
-export type ItemsSearchResponse<Sectioned extends Bool> = (Sectioned extends Bool.True
+export type ItemsSearchResponse<Sectioned extends Bool | undefined> = (Sectioned extends Bool.True
   ? {
       items: {
         [key: string]: ItemsWithPagination;
@@ -818,7 +847,7 @@ export type BookmarksResponse = {
 export type BookmarkItemsResponse = {
   folder: Bookmark;
   items: Item[];
-} & Response;
+} & PaginationResponse;
 
 export type ItemBookmarksResponse = {
   folders: Bookmark[];
@@ -867,7 +896,7 @@ export type WatchingToggleWatchlistResponse = {
 
 export type CollectionsResponse = {
   items: Collection[];
-} & Response;
+} & PaginationResponse;
 
 export type CollectionItemsResponse = {
   collection: Collection;
@@ -875,5 +904,5 @@ export type CollectionItemsResponse = {
 };
 
 export type HistoryResponse = {
-  history: History[];
+  history: HistoryItem[];
 } & PaginationResponse;

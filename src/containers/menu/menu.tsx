@@ -1,36 +1,22 @@
 import { useLocation } from 'react-router-dom';
+import cx from 'classnames';
 import map from 'lodash/map';
-import styled from 'styled-components';
 
-import Link from '../../components/link';
-import { PATHS, generatePath } from '../../routes';
+import Link from 'components/link';
+import { PATHS, generatePath } from 'routes';
 
-const Nav = styled.nav`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`;
-
-const List = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-`;
-
-const ListItem = styled.li<{ active: boolean }>`
-  color: ${(props) => props.active && 'var(--main-color)'};
-`;
-
-const menuItems: {
+type MenuItem = {
   name: string;
   icon: string;
   href: string;
-}[][] = [
+};
+
+const menuItems: (MenuItem | null)[][] = [
   [
     {
       name: 'Главная',
       icon: 'home',
-      href: PATHS.Index,
+      href: PATHS.Home,
     },
     {
       name: 'Поиск',
@@ -40,7 +26,7 @@ const menuItems: {
     {
       name: 'Я смотрю',
       icon: 'notifications_active',
-      href: PATHS.Watching,
+      href: generatePath(PATHS.Watching),
     },
     {
       name: 'Закладки',
@@ -48,49 +34,76 @@ const menuItems: {
       href: PATHS.Bookmarks,
     },
     {
+      name: 'История',
+      icon: 'history',
+      href: PATHS.History,
+    },
+    {
       name: 'Подборки',
       icon: 'list',
-      href: PATHS.Collections,
+      href: generatePath(PATHS.Collections),
     },
-  ],
+  ].filter(Boolean),
   [
+    {
+      name: 'Новинки',
+      icon: 'new_releases',
+      href: generatePath(PATHS.Releases),
+    },
     {
       name: 'Фильмы',
       icon: 'movie',
-      href: generatePath(PATHS.Category, { categoryId: 'movie' }),
+      href: generatePath(PATHS.Category, { categoryType: 'movie' }),
     },
     {
       name: 'Сериалы',
       icon: 'tv',
-      href: generatePath(PATHS.Category, { categoryId: 'serial' }),
+      href: generatePath(PATHS.Category, { categoryType: 'serial' }),
+    },
+    {
+      name: 'Мультфильмы',
+      icon: 'toys',
+      href: generatePath(PATHS.Genre, { genreType: '23' }),
+    },
+    {
+      name: 'Аниме',
+      icon: 'auto_awesome',
+      href: generatePath(PATHS.Genre, { genreType: '25' }),
     },
     {
       name: 'Концерты',
       icon: 'library_music',
-      href: generatePath(PATHS.Category, { categoryId: 'concert' }),
+      href: generatePath(PATHS.Category, { categoryType: 'concert' }),
     },
     {
       name: 'Докуфильмы',
       icon: 'archive',
-      href: generatePath(PATHS.Category, { categoryId: 'documovie' }),
+      href: generatePath(PATHS.Category, { categoryType: 'documovie' }),
     },
     {
       name: 'Докусериалы',
       icon: 'description',
-      href: generatePath(PATHS.Category, { categoryId: 'docuserial' }),
+      href: generatePath(PATHS.Category, { categoryType: 'docuserial' }),
     },
     {
       name: 'ТВ Шоу',
       icon: 'live_tv',
-      href: generatePath(PATHS.Category, { categoryId: 'tvshow' }),
+      href: generatePath(PATHS.Category, { categoryType: 'tvshow' }),
     },
     {
       name: 'Спорт',
       icon: 'sports_soccer',
       href: generatePath(PATHS.Channels),
     },
-  ],
+  ].filter(Boolean),
   [
+    process.env.REACT_APP_HIDE_DONATE_MENU === 'true'
+      ? null
+      : {
+          name: 'Донат',
+          icon: 'favorite',
+          href: PATHS.Donate,
+        },
     {
       name: 'Спидтест',
       icon: 'speed',
@@ -101,28 +114,30 @@ const menuItems: {
       icon: 'settings',
       href: PATHS.Settings,
     },
-  ],
+  ].filter(Boolean),
 ];
 
-type Props = {};
+type Props = {
+  className?: string;
+};
 
-const Menu: React.FC<Props> = (props) => {
+const Menu: React.FC<Props> = ({ className, ...props }) => {
   const location = useLocation();
 
   return (
-    <Nav {...props}>
+    <nav className={cx('h-screen w-52 flex flex-col justify-between overflow-y-auto', className)} {...props}>
       {map(menuItems, (list, idx) => (
-        <List key={idx}>
-          {map(list, (item) => (
-            <ListItem key={item.href} active={location.pathname === item.href}>
-              <Link href={item.href} icon={item.icon}>
+        <ul key={idx}>
+          {map(list, (item: MenuItem) => (
+            <li key={item.href}>
+              <Link href={item.href} icon={item.icon} active={location.pathname.startsWith(item.href)}>
                 {item.name}
               </Link>
-            </ListItem>
+            </li>
           ))}
-        </List>
+        </ul>
       ))}
-    </Nav>
+    </nav>
   );
 };
 

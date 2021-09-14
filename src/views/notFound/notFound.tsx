@@ -1,9 +1,5 @@
-import MainLayout from '../../layouts/main';
-
-type Props = {};
-
-const NotFoundView: React.FC<Props> = () => {
-  return <MainLayout>Not found</MainLayout>;
+const NotFoundView: React.FC = () => {
+  return <>Not found</>;
 };
 
 export default NotFoundView;

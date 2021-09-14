@@ -1,42 +1,45 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-import GridListImageItem from '@enact/moonstone/GridListImageItem';
-import styled from 'styled-components';
+import cx from 'classnames';
 
-import { Collection } from '../../api';
-import { PATHS, generatePath } from '../../routes';
+import { Collection } from 'api';
+import Icon from 'components/icon';
+import ImageItem from 'components/imageItem';
+import { PATHS, generatePath } from 'routes';
 
-const Wrapper = styled.div`
-  display: inline-flex;
-  position: relative;
-  height: 20rem !important;
-  width: 20%;
-`;
-
-const GridItem = styled(GridListImageItem)`
-  width: 100%;
-`;
+import { numberToHuman } from 'utils/number';
 
 type Props = {
   collection?: Collection;
+  className?: string;
 };
 
-const CollectionItem: React.FC<Props> = ({ collection }) => {
+const CollectionItem: React.FC<Props> = ({ collection, className }) => {
   const history = useHistory();
+  const views = useMemo(() => (collection?.views && numberToHuman(collection?.views)) || '', [collection?.views]);
   const handleOnClick = useCallback(() => {
     if (collection?.id) {
       history.push(
         generatePath(PATHS.Collection, {
           collectionId: collection.id,
         }),
+        {
+          collection,
+          title: collection.title,
+        },
       );
     }
-  }, [collection?.id, history]);
+  }, [collection, history]);
 
   return (
-    <Wrapper>
-      <GridItem source={collection?.posters.medium} caption={collection?.title} onClick={handleOnClick} />
-    </Wrapper>
+    <ImageItem onClick={handleOnClick} source={collection?.posters.medium} caption={collection?.title} className={cx('h-72', className)}>
+      {views && (
+        <div className="absolute top-2 right-2 h-6 pr-2 text-xs text-gray-200 bg-black bg-opacity-50 rounded flex items-center">
+          <Icon name="visibility" />
+          {views}
+        </div>
+      )}
+    </ImageItem>
   );
 };
 

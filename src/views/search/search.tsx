@@ -1,57 +1,53 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import filter from 'lodash/filter';
-import flatMap from 'lodash/flatMap';
+import { useCallback } from 'react';
 import orderBy from 'lodash/orderBy';
-import uniqBy from 'lodash/uniqBy';
-import styled from 'styled-components';
 
-import { Item } from '../../api';
-import Input from '../../components/input';
-import ItemsList from '../../components/itemsList';
-import useApiInfinite from '../../hooks/useApiInfinite';
-import useRouteState from '../../hooks/useRouteState';
-import MainLayout from '../../layouts/main';
+import { Item } from 'api';
+import Input from 'components/input';
+import Seo from 'components/seo';
+import Text from 'components/text';
+import ItemsListInfinite from 'containers/itemsListInfinite';
+import useApiInfinite from 'hooks/useApiInfinite';
+import useRouteState from 'hooks/useRouteState';
+import useSearchParams from 'hooks/useSearchParams';
 
-type Props = {};
+function orderItems(items: Item[]) {
+  return orderBy(items, 'year', 'desc');
+}
 
-const SearchInput = styled(Input)`
-  margin-bottom: 1rem;
-`;
-
-const SearchView: React.FC<Props> = () => {
-  const location = useLocation<{ type?: string; field?: string }>();
-  const [canFetchNextPage, setCanFetchNextPage] = useState(false);
+const SearchView: React.FC = () => {
+  const searchParams = useSearchParams();
   const [query, setQuery] = useRouteState('q', '');
-  const { data, isLoading, isFetchingNextPage, fetchNextPage } = useApiInfinite('itemsSearch', {
-    q: query,
-    type: location.state?.type,
-    field: location.state?.field,
-  });
-  const items = useMemo(() => uniqBy(filter(flatMap(data?.pages, (page) => page.items as Item[])), 'id'), [data?.pages]);
-  const orderedItems = useMemo(() => orderBy(items, 'year', 'desc'), [items]);
+  const queryResult = useApiInfinite('itemsSearch', [
+    {
+      ...searchParams,
+      q: query,
+    },
+  ]);
   const handleQueryChange = useCallback(
-    ({ value }) => {
+    (value) => {
       setQuery(value);
     },
     [setQuery],
   );
-  const handleLoadMore = useCallback(() => {
-    if (canFetchNextPage) {
-      fetchNextPage();
-      setCanFetchNextPage(false);
-    }
-  }, [canFetchNextPage, fetchNextPage]);
-
-  useEffect(() => {
-    setCanFetchNextPage(true);
-  }, [items.length]);
 
   return (
-    <MainLayout>
-      <SearchInput placeholder="Название фильма или сериала..." value={query} onChange={handleQueryChange} />
-      <ItemsList items={orderedItems} loading={(isLoading || isFetchingNextPage) && query.length >= 3} onLoadMore={handleLoadMore} />
-    </MainLayout>
+    <>
+      <Seo title="Поиск" />
+
+      <ItemsListInfinite
+        title={
+          <div className="w-full">
+            <div className="flex justify-between items-center mb-3 h-9">
+              <Text>Поиск</Text>
+            </div>
+            <Input autoFocus placeholder="Название фильма или сериала..." value={query} onChange={handleQueryChange} />
+          </div>
+        }
+        showResult={query.length > 3}
+        queryResult={queryResult}
+        processItems={orderItems}
+      />
+    </>
   );
 };
 

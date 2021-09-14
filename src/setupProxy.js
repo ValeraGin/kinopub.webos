@@ -25,7 +25,7 @@ const createProxy = (target, headers) => ({
 
 module.exports = function setupProxy(app) {
   app.use(
-    [`^${process.env.REACT_APP_KINOPUB_API_BASE_URL}`],
+    [`${process.env.REACT_APP_KINOPUB_API_BASE_URL}`],
     createProxyMiddleware(createProxy(process.env.PROXY_KINOPUB_API_BASE_URL || DEFAULT_TARGET)),
   );
 };

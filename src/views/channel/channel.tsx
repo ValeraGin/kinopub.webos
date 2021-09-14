@@ -2,18 +2,15 @@ import { useCallback, useMemo } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { Channel } from 'api';
+import Player, { PlayerProps } from 'components/player';
+import Seo from 'components/seo';
 
-import Player, { PlayerProps } from '../../components/player';
-import FillLayout from '../../layouts/fill';
+import { mapSources } from 'utils/video';
 
-import { mapSources } from '../../utils/video';
-
-type Props = {};
-
-const ChannelView: React.FC<Props> = () => {
+const ChannelView: React.FC = () => {
   const history = useHistory();
   const location = useLocation<{ channel: Channel }>();
-  const { channel } = location.state;
+  const { channel } = location.state || {};
 
   const playerProps = useMemo<PlayerProps>(() => {
     return {
@@ -21,10 +18,7 @@ const ChannelView: React.FC<Props> = () => {
       poster: channel.logos.m,
       sources: mapSources([
         {
-          url: {
-            http: channel.stream,
-            hls4: channel.stream,
-          },
+          url: channel.stream,
         },
       ]),
     };
@@ -35,9 +29,10 @@ const ChannelView: React.FC<Props> = () => {
   }, [history]);
 
   return (
-    <FillLayout>
+    <>
+      <Seo title={`Канал: ${channel.title}`} />
       <Player {...playerProps} onEnded={handleOnEnded} />
-    </FillLayout>
+    </>
   );
 };
 

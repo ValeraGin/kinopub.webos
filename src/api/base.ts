@@ -1,8 +1,17 @@
-import isObject from 'lodash/isObject';
+import isArray from 'lodash/isArray';
+import { serialize } from 'object-to-formdata';
 
-type Param = string | number | boolean | Param[];
+type Primitive = string | number | boolean;
 
-export const stringifyParams = (params: { [key: string]: any }) =>
+type Param = Primitive | null | undefined | Param[] | { [key: string]: Param };
+
+type Params = Record<string, Param> | null;
+
+function isPrimitive(value: any): value is Primitive {
+  return value !== Object(value);
+}
+
+export const stringifyParams = (params?: Params) =>
   JSON.stringify(params, (_, value) => {
     if (value === null || value === '') {
       return undefined;
@@ -11,51 +20,64 @@ export const stringifyParams = (params: { [key: string]: any }) =>
     return value;
   });
 
-export const normalizeParams = (params: { [key: string]: any }) =>
+export const encodeParam = (param: Param) =>
+  encodeURIComponent(isPrimitive(param) ? (param as Primitive) : stringifyParams(param as Record<string, Param>));
+
+export const normalizeArrayParams = (key: string, params: Param[]) =>
+  params.map((param, idx) => `${encodeParam(`${key}[${idx}]`)}=${encodeParam(param)}`).join('&');
+
+export const normalizeParams = (params?: Params) =>
   Object.keys(params || {})
-    .filter((key) => params[key] !== '' && params[key] !== null && params[key] !== undefined)
-    .map((key) => `${key}=${encodeURIComponent(isObject(params[key]) ? stringifyParams(params[key]) : params[key])}`)
+    .filter((key) => params?.[key] !== '' && params?.[key] !== null && params?.[key] !== undefined)
+    .map((key) => (isArray(params?.[key]) ? normalizeArrayParams(key, params?.[key]! as Param[]) : `${key}=${encodeParam(params?.[key])}`))
     .join('&');
 
 class BaseApiClient {
   protected baseUrl: string;
 
   constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
+    this.baseUrl = baseUrl.startsWith('http')
+      ? baseUrl
+      : window.location.protocol.startsWith('http')
+      ? `${window.location.protocol}//${baseUrl}`
+      : `http://${baseUrl}`;
   }
 
-  private async request<T>(method: 'GET' | 'POST', url: string, params?: Record<string, Param>, data?: Object) {
+  private async request<T>(method: 'GET' | 'POST', url: string, params?: Params, data?: Params) {
     const accessToken = this.getAccessToken();
 
-    const headers = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    };
-
-    if (accessToken) {
-      headers['Authorization'] = `Bearer ${accessToken}`;
+    if (accessToken && !params?.['grant_type']) {
+      params = {
+        ...params,
+        access_token: accessToken,
+      };
     }
 
-    const response = await fetch(`${this.baseUrl}${url}?${normalizeParams(params)}`, {
-      method,
-      headers,
-      body: stringifyParams(data),
-    });
+    try {
+      const response = await fetch(`${this.baseUrl}${url}?${normalizeParams(params)}`, {
+        method,
+        body: data && serialize(data),
+      });
 
-    if (response.status === 401) {
-      this.clearTokens();
+      if (response.status === 401) {
+        this.clearTokens();
+      }
+
+      const json = await response.json();
+
+      return json as T;
+    } catch (ex) {
+      return {
+        error: (ex as Error).toString(),
+      } as unknown as T;
     }
-
-    const json = await response.json();
-
-    return json as T;
   }
 
-  protected get<T>(url: string, params?: Record<string, Param>) {
+  protected get<T>(url: string, params?: Params) {
     return this.request<T>('GET', url, params);
   }
 
-  protected post<T>(url: string, data?: Object, params?: Record<string, Param>) {
+  protected post<T>(url: string, data?: Params, params?: Params) {
     return this.request<T>('POST', url, params, data);
   }
 

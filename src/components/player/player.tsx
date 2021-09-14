@@ -1,209 +1,77 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import VideoPlayer, { Video, VideoPlayerBase, VideoPlayerBaseProps } from '@enact/moonstone/VideoPlayer';
-import Hls from 'hls.js';
-import VTTConverter from 'srt-webvtt';
-import styled from 'styled-components';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import VideoPlayer, { VideoPlayerBase, VideoPlayerBaseProps } from '@enact/moonstone/VideoPlayer';
+import Spotlight from '@enact/spotlight';
 
-import useAsyncEffect from '../../hooks/useAsyncEffect';
-import Popup from '../popup';
-import Text from '../text';
-import Settings, { AudioSetting, SourceSetting, SubtitleSetting } from './settings';
+import BackButton from 'components/backButton';
+import Button from 'components/button';
+import Media, { AudioTrack, SourceTrack, StreamingType, SubtitleTrack } from 'components/media';
+import Text from 'components/text';
+import useButtonEffect from 'hooks/useButtonEffect';
+import useStorageState from 'hooks/useStorageState';
 
-const Wrapper = styled.div`
-  video {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-`;
-
-const Title = styled(Text)<{ visible?: boolean }>`
-  position: absolute;
-  padding: 0 1rem;
-  z-index: 1;
-  visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
-`;
-
-const useCurrentAudio = (audios: AudioSetting[], nodeRef: React.MutableRefObject<HTMLDivElement>) => {
-  const [currentAudio, setCurrentAudio] = useState<AudioSetting>(audios?.[0]);
-
-  useEffect(() => {
-    if (nodeRef.current) {
-      const videoTag = nodeRef.current.querySelector('video');
-      for (let i = 0, ln = videoTag?.['audioTracks']?.length; i < ln; i++) {
-        const track = videoTag?.['audioTracks'][i];
-
-        if (track.id === currentAudio.id) {
-          track.enabled = true;
-        }
-      }
-    }
-  }, [currentAudio, nodeRef]);
-
-  return [currentAudio, setCurrentAudio] as const;
-};
-
-const useCurrentSource = (sources: SourceSetting[], nodeRef: React.MutableRefObject<HTMLDivElement>) => {
-  const [currentSource, setCurrentSource] = useState<SourceSetting>(sources[0]);
-
-  useEffect(() => {
-    let hls: Hls;
-    if (nodeRef.current && currentSource.hls) {
-      const videoTag = nodeRef.current.querySelector('video');
-
-      if (videoTag) {
-        if (Hls.isSupported()) {
-          hls = new Hls();
-
-          hls.loadSource(currentSource.hls);
-          hls.attachMedia(videoTag);
-          hls.on(Hls.Events.MANIFEST_PARSED, () => {
-            videoTag.play();
-          });
-        } else if (videoTag.canPlayType('application/vnd.apple.mpegurl')) {
-          videoTag.src = currentSource.hls;
-          videoTag.addEventListener('loadedmetadata', () => {
-            videoTag.play();
-          });
-        }
-      }
-    }
-
-    return () => {
-      if (hls) {
-        hls.destroy();
-      }
-    };
-  }, [currentSource.hls, nodeRef]);
-
-  return [currentSource, setCurrentSource] as const;
-};
-
-const useCurrentSubtitle = (subtitles: SubtitleSetting[], nodeRef: React.MutableRefObject<HTMLDivElement>) => {
-  const [currentSubtitle, setCurrentSubtitle] = useState<SubtitleSetting>(null);
-
-  useAsyncEffect(async () => {
-    if (nodeRef.current) {
-      const videoTag = nodeRef.current.querySelector('video');
-
-      if (videoTag) {
-        for (let i = 0, ln = videoTag['textTracks'].length; i < ln; i++) {
-          const track = videoTag['textTracks'][i];
-
-          track.mode = 'disabled';
-        }
-
-        const trackTags = videoTag.querySelectorAll('track');
-        trackTags.forEach((trackTag) => {
-          videoTag.removeChild(trackTag);
-        });
-
-        if (currentSubtitle) {
-          const track = document.createElement('track');
-
-          track.kind = 'captions';
-          track.id = currentSubtitle.id;
-          track.srclang = currentSubtitle.lang;
-          track.label = currentSubtitle.label;
-
-          if (currentSubtitle.src.endsWith('.srt')) {
-            const file = await (await fetch(currentSubtitle.src)).blob();
-            const converter = new VTTConverter(file);
-            track.src = await converter.getURL();
-          } else {
-            track.src = currentSubtitle.src;
-          }
-
-          videoTag.appendChild(track);
-
-          setTimeout(() => {
-            for (let i = 0, ln = videoTag['textTracks'].length; i < ln; i++) {
-              const track = videoTag['textTracks'][i];
-
-              track.mode = track.id === currentSubtitle.id ? 'showing' : 'disabled';
-            }
-          }, 500);
-        }
-      }
-    }
-  }, [currentSubtitle, nodeRef]);
-
-  return [currentSubtitle, setCurrentSubtitle] as const;
-};
-
-const usePopup = (playerRef: React.MutableRefObject<VideoPlayerBase>, hasSettings: boolean) => {
-  const [visible, setVisible] = useState(false);
-
-  const handleVisibilityChange = useCallback(
-    (newVisible: boolean) => {
-      setVisible(newVisible);
-
-      if (playerRef.current && !newVisible) {
-        playerRef.current.play();
-      }
-    },
-    [playerRef],
-  );
-
-  useEffect(() => {
-    const listiner = (e: KeyboardEvent) => {
-      if (e.code === 'ArrowUp') {
-        if (hasSettings) {
-          setVisible(true);
-
-          if (playerRef.current) {
-            playerRef.current.pause();
-          }
-        }
-      }
-    };
-
-    window.addEventListener('keydown', listiner);
-
-    return () => {
-      window.removeEventListener('keydown', listiner);
-    };
-  }, [visible, playerRef, hasSettings]);
-
-  return [visible, handleVisibilityChange] as const;
-};
+import Settings from './settings';
+import StartFrom from './startFrom';
 
 export type PlayerProps = {
   title: string;
   description?: string;
   poster: string;
-  audios?: AudioSetting[];
-  sources: SourceSetting[];
-  subtitles?: SubtitleSetting[];
+  audios?: AudioTrack[];
+  sources: SourceTrack[];
+  subtitles?: SubtitleTrack[];
+  startTime?: number;
+  timeSyncInterval?: number;
+  streamingType?: StreamingType;
   onPlay?: () => void;
   onPause?: (currentTime: number) => void;
   onEnded?: (currentTime: number) => void;
+  onTimeSync?: (currentTime: number) => void | Promise<void>;
 } & VideoPlayerBaseProps;
 
-const Player: React.FC<PlayerProps> = ({ title, description, poster, audios, sources, subtitles, onPlay, onPause, onEnded, ...props }) => {
-  const playerRef = useRef<VideoPlayerBase>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const [titleVisible, setTitleVisible] = useState(true);
-  const hasSettings = useMemo(() => sources.length > 1 || audios?.length > 1 || subtitles?.length > 0, [audios, sources, subtitles]);
-  const [popupVisible, setPopupVisible] = usePopup(playerRef, hasSettings);
-
-  const [currentAudio, setCurrentAudio] = useCurrentAudio(audios, wrapperRef);
-  const [currentSource, setCurrentSource] = useCurrentSource(sources, wrapperRef);
-  const [currentSubtitle, setCurrentSubtitle] = useCurrentSubtitle(subtitles, wrapperRef);
+const Player: React.FC<PlayerProps> = ({
+  title,
+  description,
+  poster,
+  audios,
+  sources,
+  subtitles,
+  startTime,
+  timeSyncInterval = 30,
+  streamingType,
+  onPlay,
+  onPause,
+  onEnded,
+  onTimeSync,
+  ...props
+}) => {
+  const playerRef = useRef<VideoPlayerBase>();
+  const [isPaused, setIsPaused] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isPauseByOKClickActive] = useStorageState<boolean>('is_pause_by_ok_click_active');
 
   const handlePlay = useCallback(() => {
-    setTitleVisible(false);
-    setPopupVisible(false);
+    setIsPaused(false);
+    setIsSettingsOpen(false);
     onPlay?.();
-  }, [onPlay, setPopupVisible]);
+  }, [onPlay]);
   const handlePause = useCallback(
     (e) => {
-      setTitleVisible(true);
-      onPause?.(e.target.currentTime);
+      setIsPaused(true);
+      onPause?.(e.currentTime);
     },
     [onPause],
+  );
+  const handlePlayPause = useCallback(
+    (e: KeyboardEvent) => {
+      const current: any = Spotlight.getCurrent();
+      if ((!current || !current.offsetHeight || !current.offsetWidth) && playerRef.current && isPauseByOKClickActive) {
+        const video: any = playerRef.current.getVideoNode();
+        video.playPause();
+        return false;
+      }
+    },
+    [playerRef, isPauseByOKClickActive],
   );
   const handleEnded = useCallback(
     (e) => {
@@ -211,35 +79,110 @@ const Player: React.FC<PlayerProps> = ({ title, description, poster, audios, sou
     },
     [onEnded],
   );
+  const handleTimeSync = useCallback(async () => {
+    if (playerRef.current && onTimeSync) {
+      const video: any = playerRef.current.getVideoNode();
+
+      const currentTime = video['currentTime'];
+
+      await onTimeSync(currentTime);
+    }
+  }, [onTimeSync, playerRef]);
+  const handleLoadedMetadata = useCallback(() => {
+    setIsLoaded(true);
+  }, []);
+  const handleSettingsOpen = useCallback(() => {
+    if (playerRef.current) {
+      setIsSettingsOpen(true);
+
+      const video: any = playerRef.current.getVideoNode();
+      video.pause();
+    }
+  }, [playerRef]);
+  const handleSettingsClose = useCallback(() => {
+    if (playerRef.current) {
+      setIsSettingsOpen(false);
+
+      const video: any = playerRef.current.getVideoNode();
+      video.play();
+    }
+  }, []);
+  const handlePauseButton = useCallback(() => {
+    if (playerRef.current) {
+      const video: any = playerRef.current.getVideoNode();
+      video.pause();
+    }
+  }, [playerRef]);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    if (isPaused) {
+      timeoutId = setTimeout(() => {
+        setIsPaused(false);
+      }, 5 * 1000);
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [isPaused]);
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (onTimeSync) {
+      intervalId = setInterval(handleTimeSync, timeSyncInterval * 1000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [timeSyncInterval, onTimeSync, handleTimeSync]);
+
+  useButtonEffect('Back', handleTimeSync);
+  useButtonEffect('Blue', handleSettingsOpen);
+  useButtonEffect('Play', handleSettingsClose);
+  useButtonEffect('Pause', handlePauseButton);
+  useButtonEffect('Enter', handlePlayPause);
+  useButtonEffect('ArrowUp', handleSettingsOpen);
 
   return (
-    <Wrapper ref={wrapperRef}>
-      <Title visible={titleVisible}>{title}</Title>
-      <Popup visible={popupVisible} onVisibilityChange={setPopupVisible}>
-        {hasSettings && (
-          <Settings
-            audios={audios}
-            currentAudio={currentAudio}
-            onAudioChange={setCurrentAudio}
-            sources={sources}
-            currentSource={currentSource}
-            onSourceChange={setCurrentSource}
-            subtitles={subtitles}
-            currentSubtitle={currentSubtitle}
-            onSubtitleChange={setCurrentSubtitle}
-          />
-        )}
-      </Popup>
+    <>
+      <Settings visible={isSettingsOpen} onClose={handleSettingsClose} player={playerRef} />
+      {isPaused && (
+        <div className="absolute z-10 top-0 px-4 pt-2 flex items-center">
+          <BackButton className="mr-2" />
+          <Text>{title}</Text>
+        </div>
+      )}
+      {isPaused && <Button className="absolute z-101 bottom-8 right-10 text-blue-600" icon="settings" onClick={handleSettingsOpen} />}
+      {isLoaded && startTime! > 0 && <StartFrom startTime={startTime} player={playerRef} />}
 
-      {
+      <VideoPlayer
+        {...props}
         //@ts-expect-error
-        <VideoPlayer {...props} title={description} poster={poster} ref={playerRef}>
-          <Video onPlay={handlePlay} onPause={handlePause} onEnded={handleEnded}>
-            <source src={currentSource.src} type={currentSource.type} />
-          </Video>
-        </VideoPlayer>
-      }
-    </Wrapper>
+        ref={playerRef}
+        locale="ru"
+        poster={poster}
+        title={description}
+        jumpBy={15}
+        onPlay={handlePlay}
+        onPause={handlePause}
+        onEnded={handleEnded}
+        onLoadedMetadata={handleLoadedMetadata}
+        streamingType={streamingType}
+        isSettingsOpen={isSettingsOpen}
+        audioTracks={audios}
+        sourceTracks={sources}
+        subtitleTracks={subtitles}
+        videoComponent={<Media />}
+      />
+    </>
   );
 };
 

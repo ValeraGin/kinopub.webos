@@ -1,30 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import map from 'lodash/map';
-import styled from 'styled-components';
 
-import Button from '../../components/button';
-import Text from '../../components/text';
-import useApi from '../../hooks/useApi';
-import MainLayout from '../../layouts/main';
-
-const Locations = styled.div`
-  display: flex;
-  justify-content: space-around;
-`;
-
-const Location = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Actions = styled.div`
-  padding-top: 3rem;
-  display: flex;
-  justify-content: center;
-`;
-
-type Props = {};
+import Button from 'components/button';
+import Seo from 'components/seo';
+import Text from 'components/text';
+import Title from 'components/title';
+import useApi from 'hooks/useApi';
 
 function updateSpeedReducer(state: { [location: string]: string }, action: { type: string; payload: string }) {
   return {
@@ -33,10 +14,12 @@ function updateSpeedReducer(state: { [location: string]: string }, action: { typ
   };
 }
 
-const SpeedView: React.FC<Props> = () => {
+const SpeedView: React.FC = () => {
   const { data } = useApi('serverLocations');
   const [speed, setSpeed] = useReducer(updateSpeedReducer, {});
   const [started, setStarted] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState('');
 
   const servers = useMemo(
     () =>
@@ -51,26 +34,31 @@ const SpeedView: React.FC<Props> = () => {
       })),
     [data?.items],
   );
-  const workers = useMemo(
-    () =>
-      map(servers, (server) => {
-        const worker = new window['Speedtest']();
+  const workers = useMemo(() => {
+    // @ts-expect-error
+    if (!loaded && !window['Speedtest']) {
+      return [];
+    }
 
-        worker._settings.test_order = 'IP_D';
+    return map(servers, (server) => {
+      // @ts-expect-error
+      const worker = new window['Speedtest']();
 
-        worker.setSelectedServer(server);
+      worker._settings.test_order = 'IP_D';
+      worker._settings.xhr_dlMultistream = 1;
 
-        worker.onupdate = ({ testState, dlStatus }) => {
-          setSpeed({
-            type: server.location,
-            payload: dlStatus || ((testState === 1 || testState === 2) && 'Начинаем'),
-          });
-        };
+      worker.setSelectedServer(server);
 
-        return worker;
-      }),
-    [servers, setSpeed],
-  );
+      worker.onupdate = ({ testState, dlStatus }: { testState: number; dlStatus: string }) => {
+        setSpeed({
+          type: server.location,
+          payload: dlStatus || ((testState === 1 || testState === 2) && 'Начинаем') || '',
+        });
+      };
+
+      return worker;
+    });
+  }, [servers, setSpeed, loaded]);
   const [currentWorkerIndex, setCurrentWorkerIndex] = useState(0);
 
   const handleStart = useCallback(() => {
@@ -112,6 +100,12 @@ const SpeedView: React.FC<Props> = () => {
     const script = document.createElement('script');
     script.src = './speedtest.js';
     script.async = true;
+    script.onload = () => {
+      setLoaded(true);
+    };
+    script.onerror = (error) => {
+      setError(`Не удалось загрузить скрипт для замера скорости: ${error}`);
+    };
 
     document.head.appendChild(script);
 
@@ -121,31 +115,46 @@ const SpeedView: React.FC<Props> = () => {
   }, []);
 
   return (
-    <MainLayout>
-      <Text>Проверка скорости</Text>
+    <>
+      <Seo title="Проверка скорости" />
+      <Title className="mb-10">Проверка скорости</Title>
 
-      <Locations>
+      {error ? (
+        <div className="m-1 mb-10">
+          <Text className="text-red-600">{error}</Text>
+        </div>
+      ) : (
+        loaded &&
+        servers.length > 0 &&
+        !workers.length && (
+          <div className="m-1 mb-10">
+            <Text className="text-red-600">Не удалось создать ни одного воркера для замера скорости</Text>
+          </div>
+        )
+      )}
+
+      <div className="flex justify-around">
         {map(data?.items, (location) => (
-          <Location key={location.id}>
+          <div className={`flex flex-col items-center w-1/${data?.items.length}`} key={location.id}>
             <Text>{location.name}</Text>
             {speed[location.location] || '0.00'}
             <Text>Mbit/s</Text>
-          </Location>
+          </div>
         ))}
-      </Locations>
+      </div>
 
-      <Actions>
+      <div className="flex justify-center pt-12">
         {started ? (
           <Button icon="stop" onClick={handleStop}>
             Стоп
           </Button>
         ) : (
-          <Button icon="play_arrow" onClick={handleStart}>
+          <Button icon="play_arrow" onClick={handleStart} disabled={!workers.length}>
             Начать
           </Button>
         )}
-      </Actions>
-    </MainLayout>
+      </div>
+    </>
   );
 };
 

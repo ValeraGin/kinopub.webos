@@ -1,18 +1,18 @@
 import React from 'react';
 
-import ChannelsList from '../../components/channelsList';
-import useApi from '../../hooks/useApi';
-import MainLayout from '../../layouts/main';
+import ChannelsList from 'components/channelsList';
+import Seo from 'components/seo';
+import useApi from 'hooks/useApi';
 
-type Props = {};
-
-const CollectionsView: React.FC<Props> = () => {
+const CollectionsView: React.FC = () => {
   const { data, isLoading } = useApi('channels');
+  const title = 'Каналы';
 
   return (
-    <MainLayout>
-      <ChannelsList channels={data?.channels} loading={isLoading} />
-    </MainLayout>
+    <>
+      <Seo title={title} />
+      <ChannelsList title={title} channels={data?.channels} loading={isLoading} />
+    </>
   );
 };
 

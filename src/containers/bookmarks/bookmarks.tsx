@@ -1,49 +1,85 @@
-import React, { useCallback, useMemo } from 'react';
-import CheckboxItem from '@enact/moonstone/CheckboxItem';
+import React, { useCallback, useMemo, useState } from 'react';
 import map from 'lodash/map';
-import styled from 'styled-components';
 
-import { Bookmark } from '../../api';
-import useApi from '../../hooks/useApi';
-import useApiMutation from '../../hooks/useApiMutation';
+import { Bookmark } from 'api';
+import Button from 'components/button';
+import Checkbox from 'components/checkbox';
+import Input from 'components/input';
+import useApi from 'hooks/useApi';
+import useApiMutation from 'hooks/useApiMutation';
+import useButtonEffect from 'hooks/useButtonEffect';
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-`;
-
-const BookmarkItem = styled.div`
-  flex-basis: 20%;
-  padding: 1rem;
-`;
+import { isKey } from 'utils/keyboard';
 
 type Props = {
   itemId: string;
 };
 
 const Bookmarks: React.FC<Props> = ({ itemId }) => {
-  const { data } = useApi('bookmarks');
-  const { data: itemBookmarks } = useApi('itemBookmarks', itemId);
-  const { bookmarkToggleItem } = useApiMutation('bookmarkToggleItem');
+  const [createNew, setCreateNew] = useState(false);
+  const [newBookmark, setNewBookmark] = useState('');
+  const { data, refetch: refetchBookmarks } = useApi('bookmarks');
+  const { data: itemBookmarks, dataUpdatedAt, refetch } = useApi('itemBookmarks', [itemId]);
+  const { bookmarkToggleItemAsync } = useApiMutation('bookmarkToggleItem');
+  const { bookmarkCreateAsync } = useApiMutation('bookmarkCreate');
   const bookmarksIds = useMemo(() => itemBookmarks?.folders.map((bookmark) => bookmark.id) || [], [itemBookmarks?.folders]);
 
   const handleCheckboxToggle = useCallback(
-    (bookmark: Bookmark) => () => {
-      bookmarkToggleItem([itemId, bookmark.id]);
+    (bookmark: Bookmark) => async () => {
+      await bookmarkToggleItemAsync([itemId, bookmark.id]);
+      refetch();
     },
-    [itemId, bookmarkToggleItem],
+    [itemId, bookmarkToggleItemAsync, refetch],
+  );
+  const handleCreateNewBookmark = useCallback(async () => {
+    if (newBookmark) {
+      const data = (await bookmarkCreateAsync([newBookmark])) as unknown as { folder: Bookmark };
+
+      await bookmarkToggleItemAsync([itemId, data.folder.id]);
+      await refetchBookmarks();
+      await refetch();
+    }
+    setCreateNew(false);
+    setNewBookmark('');
+    return false;
+  }, [itemId, newBookmark, bookmarkCreateAsync, refetch, refetchBookmarks, bookmarkToggleItemAsync]);
+
+  const handleKeyDown = useCallback<React.KeyboardEventHandler>(
+    (e) => {
+      if (isKey(e, 'Enter')) {
+        handleCreateNewBookmark();
+      }
+    },
+    [handleCreateNewBookmark],
   );
 
+  useButtonEffect('Green', handleCreateNewBookmark);
+
   return (
-    <Wrapper>
-      {map(data?.items, (bookmark) => (
-        <BookmarkItem key={bookmark.updated}>
-          <CheckboxItem defaultSelected={bookmarksIds.includes(bookmark.id)} onToggle={handleCheckboxToggle(bookmark)}>
-            {bookmark.title}
-          </CheckboxItem>
-        </BookmarkItem>
-      ))}
-    </Wrapper>
+    <>
+      <div className="flex flex-wrap" key={dataUpdatedAt}>
+        {map(data?.items, (bookmark) => (
+          <div className="w-1/5 p-1" key={bookmark.updated}>
+            <Checkbox defaultChecked={bookmarksIds.includes(bookmark.id)} onChange={handleCheckboxToggle(bookmark)}>
+              {bookmark.title}
+            </Checkbox>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex h-10">
+        {createNew ? (
+          <div className="flex">
+            <Input autoFocus placeholder="Новая закладка" value={newBookmark} onChange={setNewBookmark} onKeyDown={handleKeyDown} />
+            <Button icon="done" className="ml-1 text-green-600" onClick={handleCreateNewBookmark} />
+          </div>
+        ) : (
+          <Button icon="bookmark" onClick={() => setCreateNew(true)}>
+            Новая закладка
+          </Button>
+        )}
+      </div>
+    </>
   );
 };
 

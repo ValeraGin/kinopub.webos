@@ -29,6 +29,7 @@ import {
   OnConfirm,
   ServerLocationsReponse,
   StreamingTypesReponse,
+  SubtitlesResponse,
   TokensResponse,
   TypesResponse,
   UserReponse,
@@ -50,7 +51,7 @@ class KinopubApiClient extends BaseApiClient {
 
   private clientSecret: string;
 
-  private accessTokenCheckIntervaId: NodeJS.Timeout;
+  private accessTokenCheckIntervaId!: NodeJS.Timeout | null;
 
   constructor(
     clientId: string = KINOPUB_API_CLIENT_ID,
@@ -64,7 +65,7 @@ class KinopubApiClient extends BaseApiClient {
   }
 
   clearTimers() {
-    clearInterval(this.accessTokenCheckIntervaId);
+    clearInterval(this.accessTokenCheckIntervaId!);
 
     this.accessTokenCheckIntervaId = null;
   }
@@ -80,7 +81,7 @@ class KinopubApiClient extends BaseApiClient {
         this.clearTimers();
 
         await this.saveTokens(response);
-        this.deviceNotify(deviceInfo);
+        await this.deviceNotify(deviceInfo);
         onSuccess?.();
         return;
 
@@ -88,6 +89,31 @@ class KinopubApiClient extends BaseApiClient {
         this.clearTimers();
         throw response.error;
     }
+  }
+
+  private async requestUserCode(deviceInfo: DeviceInfo, onConfirm?: OnConfirm) {
+    this.clearTokens();
+
+    const { interval, code, user_code, verification_uri } = await this.requestDeviceCode();
+
+    if (user_code) {
+      await onConfirm?.(user_code, verification_uri);
+    } else {
+      throw new Error(`Did't received user_code`);
+    }
+
+    return new Promise<void>((resolve, reject) => {
+      this.clearTimers();
+      this.accessTokenCheckIntervaId = setInterval(async () => {
+        const response = await this.requestTokens(code);
+
+        try {
+          await this.processTokensReponse(response, deviceInfo, resolve);
+        } catch (ex) {
+          reject(ex);
+        }
+      }, (interval || 10) * 1000);
+    });
   }
 
   /**
@@ -136,33 +162,21 @@ class KinopubApiClient extends BaseApiClient {
   /**
    * Авторизация устройства
    */
-  async deviceAuthorization(deviceInfo: DeviceInfo, onConfirm?: OnConfirm) {
-    const accessToken = this.getAccessToken();
+  async deviceAuthorization(deviceInfo: DeviceInfo, onConfirm?: OnConfirm): Promise<void> {
+    this.clearTimers();
+
     const refreshToken = this.getRefreshToken();
 
-    if (accessToken) {
-      this.deviceNotify(deviceInfo);
-    } else if (refreshToken) {
+    if (refreshToken) {
       const response = await this.refreshTokens(refreshToken);
 
-      await this.processTokensReponse(response, deviceInfo);
+      return this.processTokensReponse(response, deviceInfo);
     } else {
-      const { interval, code, user_code, verification_uri } = await this.requestDeviceCode();
-
-      onConfirm(user_code, verification_uri);
-
-      await new Promise<void>((resolve, reject) => {
-        this.clearTimers();
-        this.accessTokenCheckIntervaId = setInterval(async () => {
-          const response = await this.requestTokens(code);
-
-          try {
-            await this.processTokensReponse(response, deviceInfo, resolve);
-          } catch (ex) {
-            reject(ex);
-          }
-        }, interval * 1000);
-      });
+      try {
+        return await this.requestUserCode(deviceInfo, onConfirm);
+      } catch (ex) {
+        return this.deviceAuthorization(deviceInfo, onConfirm);
+      }
     }
   }
 
@@ -326,6 +340,13 @@ class KinopubApiClient extends BaseApiClient {
   }
 
   /**
+   * Спиоск субтитров
+   */
+  subtitles() {
+    return this.get<SubtitlesResponse>(`/v1/subtitles`);
+  }
+
+  /**
    * Видео контент
    */
   items(params: ItemsParams, page?: number, perpage?: number) {
@@ -363,7 +384,7 @@ class KinopubApiClient extends BaseApiClient {
    * У больших сериалов ссылки занимают львиную долю объема ответа причем большинство из этих ссылок не используется в рамках 1 запроса.
    * В следующей версии значение по умолчанию станет 1, а через версию параметр станет недоступным и ссылки нужно будет всегда получать в отдельном запросе.
    */
-  itemMedia(id: string, nolinks?: Bool) {
+  itemMedia(id: string, nolinks: Bool = Bool.True) {
     return this.get<ItemMediaResponse>(`/v1/items/${id}`, { nolinks });
   }
 
@@ -448,9 +469,11 @@ class KinopubApiClient extends BaseApiClient {
   /**
    * Список фильмов/сериалов в папке
    * @param id Идентификатор закладки
+   * @param page Текущая страница
+   * @param perpage Количество на страницу
    */
-  bookmarkItems(id: string) {
-    return this.get<BookmarkItemsResponse>(`/v1/bookmarks/${id}`);
+  bookmarkItems(id: string, page?: number, perpage?: number) {
+    return this.get<BookmarkItemsResponse>(`/v1/bookmarks/${id}`, { page, perpage });
   }
 
   /**
@@ -545,9 +568,10 @@ class KinopubApiClient extends BaseApiClient {
    * @param id Идентификатор фильма/сериала/и тд
    * @param video Номер видео/эпизода, начинается с 1. Если отсутствует, модификации подвергаются все эпизоды сезона
    * @param season Номер сезона, присутствует только у сериалов, начинается с 1.
+   * @param status 1 отметить как просмотрено, 0 отметить как не просмотрено
    */
-  watchingToggle(id: string, video?: number, season?: number) {
-    return this.get<WatchingToggleResponse>(`/v1/watching/toggle`, { id, video, season });
+  watchingToggle(id: string, video?: number, season?: number, status?: Bool) {
+    return this.get<WatchingToggleResponse>(`/v1/watching/toggle`, { id, video, season, status });
   }
 
   /**

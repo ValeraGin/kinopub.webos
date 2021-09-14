@@ -1,49 +1,91 @@
-import ItemsList from '../../components/itemsList';
-import Scrollable from '../../components/scrollable';
-import Text from '../../components/text';
-import useApi from '../../hooks/useApi';
-import MainLayout from '../../layouts/main';
+import { useMemo } from 'react';
+import dayjs from 'dayjs';
 
-type Props = {};
+import { ItemsParams } from 'api';
+import ItemsList from 'components/itemsList';
+import Link from 'components/link';
+import Scrollable from 'components/scrollable';
+import Seo from 'components/seo';
+import useApi from 'hooks/useApi';
+import { PATHS, generatePath } from 'routes';
 
-const HomeView: React.FC<Props> = () => {
-  const { data: popularMovies, isLoading: popularMoviesLoading } = useApi('itemsPopular', 'movie', 0, 12);
-  const { data: newMovies, isLoading: newMoviesLoading } = useApi('items', { type: 'movie', sort: 'created-' }, 0, 12);
-
-  const { data: popularSerials, isLoading: popularSerialsLoading } = useApi('items', { type: 'serial', sort: 'watchers-' }, 0, 12);
-  const { data: newSerials, isLoading: newSerialsLoading } = useApi('items', { type: 'serial', sort: 'created-' }, 0, 12);
-
-  const { data: newConcerts, isLoading: newConcertsLoading } = useApi('items', { type: 'concert', sort: 'created-' }, 0, 12);
-  const { data: newDocuMovies, isLoading: newDocuMoviesLoading } = useApi('items', { type: 'documovie', sort: 'created-' }, 0, 12);
-  const { data: newDocuSerials, isLoading: newDocuSerialsLoading } = useApi('items', { type: 'docuserial', sort: 'created-' }, 0, 12);
-  const { data: newTVShows, isLoading: newTVShowsLoading } = useApi('items', { type: 'tvshow', sort: 'created-' }, 0, 12);
+const ItemsSection: React.FC<{ title: string; params: ItemsParams }> = ({ title, params }) => {
+  const { data, isLoading } = useApi('items', [params, 0, 10]);
+  const href = useMemo(() => generatePath(PATHS.Category, { categoryType: params.type }), [params]);
 
   return (
-    <MainLayout>
+    <div className="pb-2">
+      <ItemsList
+        title={
+          <Link href={href} state={{ params, title }} className="w-full">
+            {title}
+          </Link>
+        }
+        titleClassName="ml-0"
+        items={data?.items}
+        loading={isLoading}
+        scrollable={false}
+      />
+    </div>
+  );
+};
+
+const lastMonth = dayjs().add(-1, 'month').unix();
+
+const PopularMovies: React.FC = () => {
+  return <ItemsSection title="Популярные фильмы" params={{ type: 'movie', sort: 'views-', conditions: [`created>=${lastMonth}`] }} />;
+};
+
+const NewMovies: React.FC = () => {
+  return <ItemsSection title="Новые фильмы" params={{ type: 'movie', sort: 'created-' }} />;
+};
+
+const PopularSerials: React.FC = () => {
+  return <ItemsSection title="Популярные сериалы" params={{ type: 'serial', sort: 'watchers-' }} />;
+};
+
+const NewSerials: React.FC = () => {
+  return <ItemsSection title="Новые сериалы" params={{ type: 'serial', sort: 'created-' }} />;
+};
+
+const NewConcerts: React.FC = () => {
+  return <ItemsSection title="Новые концерты" params={{ type: 'concert', sort: 'created-' }} />;
+};
+
+const NewDocuMovies: React.FC = () => {
+  return <ItemsSection title="Новые документальные фильмы" params={{ type: 'documovie', sort: 'created-' }} />;
+};
+
+const NewDocuSerials: React.FC = () => {
+  return <ItemsSection title="Новые документальные сериалы" params={{ type: 'docuserial', sort: 'created-' }} />;
+};
+
+const NewTVShows: React.FC = () => {
+  return <ItemsSection title="Новые ТВ шоу" params={{ type: 'tvshow', sort: 'created-' }} />;
+};
+
+const HomeView: React.FC = () => {
+  return (
+    <>
+      <Seo title="Главная" />
       <Scrollable>
-        <Text>Популярные фильмы</Text>
-        <ItemsList items={popularMovies?.items} loading={popularMoviesLoading} scrollable={false} />
-        <Text>Новые фильмы</Text>
-        <ItemsList items={newMovies?.items} loading={newMoviesLoading} scrollable={false} />
+        <PopularMovies />
 
-        <Text>Популярные сериалы</Text>
-        <ItemsList items={popularSerials?.items} loading={popularSerialsLoading} scrollable={false} />
-        <Text>Новые сериалы</Text>
-        <ItemsList items={newSerials?.items} loading={newSerialsLoading} scrollable={false} />
+        <NewMovies />
 
-        <Text>Новые концерты</Text>
-        <ItemsList items={newConcerts?.items} loading={newConcertsLoading} scrollable={false} />
+        <PopularSerials />
 
-        <Text>Новые документальные фильмы</Text>
-        <ItemsList items={newDocuMovies?.items} loading={newDocuMoviesLoading} scrollable={false} />
+        <NewSerials />
 
-        <Text>Новые документальные сериалы</Text>
-        <ItemsList items={newDocuSerials?.items} loading={newDocuSerialsLoading} scrollable={false} />
+        <NewConcerts />
 
-        <Text>Новые ТВ шоу</Text>
-        <ItemsList items={newTVShows?.items} loading={newTVShowsLoading} scrollable={false} />
+        <NewDocuMovies />
+
+        <NewDocuSerials />
+
+        <NewTVShows />
       </Scrollable>
-    </MainLayout>
+    </>
   );
 };
 

@@ -1,6 +1,14 @@
 {
-  "extends": "eslint-config-enact",
+  "extends": ["prettier", "react-app"],
+  "plugins": ["prettier"],
   "rules": {
-    "no-shadow": "off"
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ],
+    "max-len": "off",
+    "complexity": "off"
   }
 }

@@ -1,40 +1,67 @@
 import filter from 'lodash/filter';
 import map from 'lodash/map';
+import orderBy from 'lodash/orderBy';
 import toUpper from 'lodash/toUpper';
 
-import { Audio, Streaming, Subtitle } from '../api';
-import { AudioSetting, SourceSetting, SubtitleSetting } from '../components/player/settings';
+import { Audio, Streaming, Subtitle } from 'api';
+import { AudioTrack, SourceTrack, SubtitleTrack } from 'components/media';
 
-export function mapAudios(audios: Audio[]): AudioSetting[] {
-  return map(audios, (audio) => ({
-    id: `${audio.index}`,
-    lang: audio.lang,
-    label: filter([
+const formatIdx = (idx: number) => (idx < 10 ? `0${idx}` : idx);
+
+export function mapAudios(audios: Audio[], ac3ByDefault?: boolean, savedAudioName?: string): AudioTrack[] {
+  return map(audios, (audio, idx) => {
+    const name = filter([
       audio.type?.title && audio.author?.title ? `${audio.type?.title}.` : audio.type?.title,
       audio.author?.title,
       audio.type?.title || audio.author?.title ? `(${toUpper(audio.lang)})` : toUpper(audio.lang),
-      audio.codec !== 'aac' && toUpper(audio.codec),
-    ]).join(' '),
-  }));
+      audio.codec === 'ac3' && toUpper(audio.codec),
+    ]).join(' ');
+    const number = `${formatIdx(idx + 1)}.`;
+
+    return {
+      name,
+      number,
+      lang: audio.lang,
+      default: (savedAudioName && savedAudioName === name) || (!savedAudioName && ac3ByDefault && audio.codec === 'ac3'),
+    };
+  });
 }
 
 export function mapSources(
   files: { url: string | { [key in Streaming]?: string }; quality?: string }[],
   streamingType?: Streaming,
-): SourceSetting[] {
-  return map(files, (file) => ({
-    src: typeof file.url === 'string' ? file.url : file.url.http,
-    hls: typeof file.url !== 'string' ? (streamingType !== 'http' ? file.url[streamingType] || file.url.hls4 : null) : null,
-    type: 'video/mp4',
-    quality: file.quality,
-  }));
+  savedSourceName?: string,
+): SourceTrack[] {
+  return orderBy(
+    map(files, (file) => {
+      const src = (typeof file.url === 'string' ? file.url : file.url[streamingType!] || file.url.http!) as string;
+      const name = file.quality!;
+
+      return {
+        src,
+        name,
+        type: src.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4',
+        default: savedSourceName === name,
+      };
+    }),
+    ({ name }) => parseInt(name),
+    'desc',
+  );
 }
 
-export function mapSubtitles(subtitles: Subtitle[]): SubtitleSetting[] {
-  return map(subtitles, (subtitle, idx) => ({
-    id: `${subtitle.lang}_${idx}`,
-    src: subtitle.url,
-    lang: subtitle.lang,
-    label: toUpper(subtitle.lang),
-  }));
+export function mapSubtitles(subtitles: Subtitle[], forcedByDefault?: boolean, savedSubtitleName?: string): SubtitleTrack[] {
+  return map(subtitles, (subtitle, idx) => {
+    const name = `${toUpper(subtitle.lang)}${subtitle.forced ? ' Forced' : ''}`;
+    const number = `${formatIdx(idx + 1)}.`;
+
+    return {
+      name,
+      number,
+      src: subtitle.url,
+      lang: subtitle.lang,
+      default:
+        (savedSubtitleName && savedSubtitleName === name) ||
+        (!savedSubtitleName && forcedByDefault && subtitle.forced && subtitle.lang === 'rus'),
+    };
+  });
 }

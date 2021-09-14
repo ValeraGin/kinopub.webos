@@ -1,18 +1,21 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { ItemDetails, Season, Streaming, Video } from '../../api';
-import Player, { PlayerProps } from '../../components/player';
-import useApiMutation from '../../hooks/useApiMutation';
-import useStorageState from '../../hooks/useStorageState';
-import FillLayout from '../../layouts/fill';
+import { ItemDetails, Season, Streaming, Video, WatchingStatus } from 'api';
+import { AudioTrack, SubtitleTrack } from 'components/media';
+import { SourceTrack } from 'components/media/media';
+import Player, { PlayerProps } from 'components/player';
+import Seo from 'components/seo';
+import useApi from 'hooks/useApi';
+import useApiMutation from 'hooks/useApiMutation';
+import useDeepMemo from 'hooks/useDeepMemo';
+import useSearchParam from 'hooks/useSearchParam';
+import useStorageState from 'hooks/useStorageState';
 
-import { getItemTitle } from '../../utils/item';
-import { mapAudios, mapSources, mapSubtitles } from '../../utils/video';
+import { getItemDescription, getItemTitle, getItemVideoToPlay } from 'utils/item';
+import { mapAudios, mapSources, mapSubtitles } from 'utils/video';
 
-type Props = {};
-
-const useNextVideo = (item: ItemDetails, season: Season, video: Video) =>
+const useNextVideo = (item: ItemDetails, video: Video, season?: Season) =>
   useMemo(() => {
     const nextVideo = (item.videos || season?.episodes)?.find(({ number }) => number === video.number + 1);
 
@@ -20,13 +23,13 @@ const useNextVideo = (item: ItemDetails, season: Season, video: Video) =>
       return nextVideo;
     }
 
-    const nextSeason = item.seasons?.find(({ number }) => number === season.number + 1);
+    const nextSeason = item.seasons?.find(({ number }) => number === (season?.number || 0) + 1);
     if (nextSeason) {
       return nextSeason.episodes[0];
     }
   }, [item, season, video]);
 
-const usePreviousVideo = (item: ItemDetails, season: Season, video: Video) =>
+const usePreviousVideo = (item: ItemDetails, video: Video, season?: Season) =>
   useMemo(() => {
     const previousVideo = (item.videos || season?.episodes)?.find(({ number }) => number === video.number - 1);
 
@@ -34,46 +37,72 @@ const usePreviousVideo = (item: ItemDetails, season: Season, video: Video) =>
       return previousVideo;
     }
 
-    const previousSeason = item.seasons?.find(({ number }) => number === season.number - 1);
+    const previousSeason = item.seasons?.find(({ number }) => number === (season?.number || 0) - 1);
     if (previousSeason) {
       return previousSeason.episodes[previousSeason.episodes.length - 1];
     }
   }, [item, season, video]);
 
-const usePrevNextVideos = (item: ItemDetails, season: Season, video: Video) => {
-  const nextVideo = useNextVideo(item, season, video);
-  const previousVideo = usePreviousVideo(item, season, video);
+const usePrevNextVideos = (item: ItemDetails, video: Video, season?: Season) => {
+  const nextVideo = useNextVideo(item, video, season);
+  const previousVideo = usePreviousVideo(item, video, season);
 
   return [previousVideo, nextVideo] as const;
 };
 
-const VideoView: React.FC<Props> = () => {
+const VideoView: React.FC = () => {
   const history = useHistory();
+  const episodeId = useSearchParam('episodeId');
+  const seasonId = useSearchParam('seasonId');
   const location = useLocation<{ title: string; item: ItemDetails; video: Video; season: Season }>();
-  const { watchingMarkTime } = useApiMutation('watchingMarkTime');
+  const { item } = location.state || {};
+
+  const [video, season] = useMemo(() => getItemVideoToPlay(item, episodeId, seasonId), [item, episodeId, seasonId]);
+  const { watchingMarkTimeAsync } = useApiMutation('watchingMarkTime');
   const [streamingType] = useStorageState<Streaming>('streaming_type');
-  const { item, video, season } = location.state;
+  const [isAC3ByDefaultActive] = useStorageState<boolean>('is_ac3_by_default_active');
+  const [isForcedByDefaultActive] = useStorageState<boolean>('is_forced_by_default_active');
+  const [savedAudioName, setSavedAudioName] = useStorageState<string>(`item_${item.id}_saved_audio_name`);
+  const [savedSourceName, setSavedSourceName] = useStorageState<string>(`item_${item.id}_saved_source_name`);
+  const [savedSubtitleName, setSavedSubtitleName] = useStorageState<string>(`item_${item.id}_saved_subtitle_name`);
 
   const [currentVideo, setCurrentVideo] = useState(video);
-  const [previousVideo, nextVideo] = usePrevNextVideos(item, season, currentVideo);
+  const [previousVideo, nextVideo] = usePrevNextVideos(item, currentVideo, season);
+
+  const currentVideoLinks = useApi('itemMediaLinks', [currentVideo.id]);
 
   const saveCurrentTime = useCallback(
-    ({ number }: Video, currentTime: number) => {
-      watchingMarkTime([item.id, currentTime, number, season?.number]);
+    async ({ number }: Video, currentTime: number) => {
+      await watchingMarkTimeAsync([item.id, currentTime, number, season?.number]);
     },
-    [watchingMarkTime, item, season],
+    [watchingMarkTimeAsync, item, season],
   );
 
-  const playerProps = useMemo<PlayerProps>(
-    () => ({
-      title: getItemTitle(item, currentVideo, season),
-      description: currentVideo.title,
-      poster: item.posters.wide || item.posters.big,
-      audios: mapAudios(currentVideo.audios),
-      sources: mapSources(currentVideo.files, streamingType),
-      subtitles: mapSubtitles(currentVideo.subtitles),
-    }),
-    [item, season, currentVideo, streamingType],
+  const playerProps = useDeepMemo(
+    () =>
+      currentVideoLinks?.data
+        ? ({
+            title: getItemTitle(item, currentVideo, season),
+            description: getItemDescription(item, currentVideo, season),
+            poster: item.posters.wide || item.posters.big,
+            audios: mapAudios(currentVideo.audios, isAC3ByDefaultActive, savedAudioName),
+            sources: mapSources(currentVideoLinks.data.files, streamingType, savedSourceName),
+            subtitles: mapSubtitles(currentVideoLinks.data.subtitles, isForcedByDefaultActive, savedSubtitleName),
+            startTime: currentVideo.watching.status === WatchingStatus.Watching ? currentVideo.watching.time : 0,
+          } as PlayerProps)
+        : null,
+    [
+      item,
+      season,
+      currentVideo,
+      currentVideoLinks?.data,
+      streamingType,
+      isAC3ByDefaultActive,
+      isForcedByDefaultActive,
+      savedAudioName,
+      savedSourceName,
+      savedSubtitleName,
+    ],
   );
 
   const handlePause = useCallback(
@@ -119,17 +148,54 @@ const VideoView: React.FC<Props> = () => {
     [saveCurrentTime, currentVideo, nextVideo],
   );
 
+  const handleTimeSync = useCallback(
+    async (currentTime: number) => {
+      await saveCurrentTime(currentVideo, currentTime);
+    },
+    [saveCurrentTime, currentVideo],
+  );
+
+  const handleAudioChange = useCallback(
+    (audioTrack: AudioTrack) => {
+      setSavedAudioName(audioTrack?.name);
+    },
+    [setSavedAudioName],
+  );
+
+  const handleSourceChange = useCallback(
+    (sourceTrack: SourceTrack) => {
+      setSavedSourceName(sourceTrack?.name);
+    },
+    [setSavedSourceName],
+  );
+
+  const handleSubtitleChange = useCallback(
+    (subtitleTrack: SubtitleTrack) => {
+      setSavedSubtitleName(subtitleTrack?.name);
+    },
+    [setSavedSubtitleName],
+  );
+
   return (
-    <FillLayout>
-      <Player
-        key={currentVideo.id}
-        {...playerProps}
-        onPause={handlePause}
-        onEnded={handleOnEnded}
-        onJumpBackward={handleJumpBackward}
-        onJumpForward={handleJumpForward}
-      />
-    </FillLayout>
+    <>
+      <Seo title={`Просмотр: ${item.title} - Видео`} />
+      {playerProps && (
+        <Player
+          key={currentVideo.id}
+          {...playerProps}
+          streamingType={streamingType}
+          onPause={handlePause}
+          onEnded={handleOnEnded}
+          onJumpBackward={handleJumpBackward}
+          onJumpForward={handleJumpForward}
+          onTimeSync={handleTimeSync}
+          // @ts-expect-error
+          onAudioChange={handleAudioChange}
+          onSourceChange={handleSourceChange}
+          onSubtitleChange={handleSubtitleChange}
+        />
+      )}
+    </>
   );
 };
 

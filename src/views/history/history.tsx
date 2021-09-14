@@ -1,9 +1,17 @@
-import MainLayout from '../../layouts/main';
+import Seo from 'components/seo';
+import HistoryListInfinite from 'containers/historyListInfinite';
+import useApiInfinite from 'hooks/useApiInfinite';
 
-type Props = {};
+const HistoryView: React.FC = () => {
+  const queryResult = useApiInfinite('history');
+  const title = 'История просмотров';
 
-const HistoryView: React.FC<Props> = () => {
-  return <MainLayout>History</MainLayout>;
+  return (
+    <>
+      <Seo title={title} />
+      <HistoryListInfinite title={title} queryResult={queryResult} />;
+    </>
+  );
 };
 
 export default HistoryView;

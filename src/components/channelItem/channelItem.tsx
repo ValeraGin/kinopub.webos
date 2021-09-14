@@ -1,27 +1,16 @@
 import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import GridListImageItem from '@enact/moonstone/GridListImageItem';
-import styled from 'styled-components';
 
-import { Channel } from '../../api';
-import { PATHS, generatePath } from '../../routes';
-
-const Wrapper = styled.div`
-  display: inline-flex;
-  position: relative;
-  height: 10rem !important;
-  width: 20%;
-`;
-
-const GridItem = styled(GridListImageItem)`
-  width: 100%;
-`;
+import { Channel } from 'api';
+import ImageItem from 'components/imageItem';
+import { PATHS, generatePath } from 'routes';
 
 type Props = {
   channel?: Channel;
+  className?: string;
 };
 
-const ChannelItem: React.FC<Props> = ({ channel }) => {
+const ChannelItem: React.FC<Props> = ({ channel, className }) => {
   const history = useHistory();
   const handleOnClick = useCallback(() => {
     if (channel?.id) {
@@ -31,16 +20,13 @@ const ChannelItem: React.FC<Props> = ({ channel }) => {
         }),
         {
           channel,
+          title: channel.name,
         },
       );
     }
   }, [channel, history]);
 
-  return (
-    <Wrapper>
-      <GridItem source={channel?.logos.s} caption={channel?.title} onClick={handleOnClick} />
-    </Wrapper>
-  );
+  return <ImageItem onClick={handleOnClick} source={channel?.logos.s} caption={channel?.title} className={className} />;
 };
 
 export default ChannelItem;

@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+body {
+  @apply bg-black;
+}
+
+video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.enact-fit {
+  padding: 0 !important;
+}
+
+.spottable:focus {
+  @apply bg-red-600 !important;
+  @apply text-gray-200 !important;
+}
+
+[class*='Slider_slider'].spottable:focus {
+  background: transparent !important;
+}
+
+[class*='Spinner_bg'] {
+  background: transparent !important;
+}
+
+[class*='MoonstoneDecorator_root'] {
+  font-size: 1.3rem !important;
+  line-height: 1.75rem !important;
+}
+
+[class*='Input_decorator'] {
+  @apply m-0 !important;
+}
+
+.bg-black.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.bg-black.bg-opacity-70 {
+  background-color: rgba(0, 0, 0, 0.7);
+}

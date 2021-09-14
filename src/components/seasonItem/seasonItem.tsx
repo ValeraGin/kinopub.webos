@@ -1,81 +1,76 @@
 import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import ExpandableItem from '@enact/moonstone/ExpandableItem';
-import GridListImageItem from '@enact/moonstone/GridListImageItem';
 import map from 'lodash/map';
-import styled, { css } from 'styled-components';
 
-import { Item, Season, Video, WatchingStatus } from '../../api';
-import { PATHS, generatePath } from '../../routes';
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const EpisodeItem = styled(GridListImageItem)<{ watched?: boolean }>`
-  width: 9rem;
-  height: 15rem !important;
-
-  [role='img'] {
-    position: relative;
-    ${(props) =>
-      props.watched &&
-      css`
-        :before {
-          content: 'Просмотрено';
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding-left: 1rem;
-          padding-top: 5rem;
-          background: rgba(0, 0, 0, 0.5);
-        }
-      `}
-  }
-`;
+import { Item, Season, Video, WatchingStatus } from 'api';
+import Accordion from 'components/accordion';
+import ImageItem from 'components/imageItem';
+import { PATHS, generatePath } from 'routes';
 
 type Props = {
   item: Item;
   season: Season;
+  onEpisodeFocus?: (episode: Video) => void;
+  onEpisodeBlur?: (episode: Video) => void;
 };
 
-const SeasonItem: React.FC<Props> = ({ item, season }) => {
+const SeasonItem: React.FC<Props> = ({ item, season, onEpisodeFocus, onEpisodeBlur }) => {
   const history = useHistory();
   const handleEpisodeClick = useCallback(
     (episode: Video) => () => {
       if (episode?.id) {
         history.push(
-          generatePath(PATHS.Video, {
-            videoId: episode.id,
-          }),
+          generatePath(
+            PATHS.Video,
+            {
+              itemId: item.id,
+            },
+            { episodeId: `${episode.number}`, seasonId: `${season.number}` },
+          ),
           {
             item,
-            video: episode,
-            season,
           },
         );
       }
     },
     [item, season, history],
   );
+  const handleEpisodeFocus = useCallback(
+    (episode: Video) => () => {
+      onEpisodeFocus?.(episode);
+    },
+    [onEpisodeFocus],
+  );
+  const handleEpisodeBlur = useCallback(
+    (episode: Video) => () => {
+      onEpisodeBlur?.(episode);
+    },
+    [onEpisodeBlur],
+  );
 
   return (
-    <Wrapper>
-      <ExpandableItem title={`Сезон ${season.number}`}>
-        {map(season.episodes, (episode) => (
-          <EpisodeItem
-            key={episode.id}
-            source={episode.thumbnail}
-            caption={`Эпизод ${episode.number}`}
-            onClick={handleEpisodeClick(episode)}
-            watched={episode.watched === WatchingStatus.Watched}
-          />
-        ))}
-      </ExpandableItem>
-    </Wrapper>
+    <div className="flex flex-col">
+      <Accordion title={season.title ? `${season.number}. ${season.title}` : `Сезон ${season.number}`}>
+        <div className="flex flex-wrap">
+          {map(season.episodes, (episode) => (
+            <ImageItem
+              key={episode.id}
+              source={episode.thumbnail}
+              caption={episode.title ? `${episode.number}. ${episode.title}` : `Эпизод ${episode.number}`}
+              onClick={handleEpisodeClick(episode)}
+              onFocus={handleEpisodeFocus(episode)}
+              onBlur={handleEpisodeBlur(episode)}
+            >
+              {episode.watched === WatchingStatus.Watched && (
+                <div className="absolute flex justify-center items-center rounded-xl bg-black bg-opacity-70 top-0 bottom-0 left-0 right-0">
+                  Просмотрено
+                </div>
+              )}
+            </ImageItem>
+          ))}
+        </div>
+      </Accordion>
+    </div>
   );
 };
 

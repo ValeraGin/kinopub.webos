@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from 'react';
 import find from 'lodash/find';
 
-import { Bool } from '../api';
+import { Bool } from 'api';
+
 import useApi from './useApi';
 import useStorageState from './useStorageState';
 
@@ -11,13 +12,13 @@ function useStreamingTypeEffect() {
   const [, setStreamingType] = useStorageState<string>('streaming_type');
 
   const selectedStreamingType = useMemo(
-    () => find(deviceInfo?.device.settings.streamingType.value, ({ selected }) => selected === Bool.True),
+    () => find(deviceInfo?.device?.settings?.streamingType?.value, ({ selected }) => selected === Bool.True),
     [deviceInfo?.device],
   );
-  const streamingType = useMemo(() => find(streamingTypes?.items, (streamingType) => streamingType?.id === selectedStreamingType?.id), [
-    streamingTypes?.items,
-    selectedStreamingType,
-  ]);
+  const streamingType = useMemo(
+    () => find(streamingTypes?.items, (streamingType) => streamingType?.id === selectedStreamingType?.id),
+    [streamingTypes?.items, selectedStreamingType],
+  );
 
   useEffect(() => {
     if (streamingType?.code) {

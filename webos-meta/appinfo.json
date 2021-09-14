@@ -1,6 +1,5 @@
 {
   "id": "kinopub.webos",
-  "version": "1.0.2",
   "vendor": "LGE-SVL",
   "type": "web",
   "main": "index.html",
@@ -8,6 +7,7 @@
   "icon": "icon.png",
   "miniicon": "icon-mini.png",
   "largeIcon": "icon-large.png",
+  "splashBackground": "splashBackground.png",
   "uiRevision": 2,
   "disableBackHistoryAPI": true
 }
